@@ -1,0 +1,6 @@
+framework module Pods_MEMInstallerTests {
+  umbrella header "Pods-MEMInstallerTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

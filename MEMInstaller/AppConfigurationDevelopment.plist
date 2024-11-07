@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>TurnLoggerOn</key>
+	<false/>
+	<key>RequestTimeOut</key>
+	<integer>20</integer>
+	<key>APIVersion</key>
+	<string>v1</string>
+	<key>MinLogLevel</key>
+	<string>default</string>
+	<key>RequestHeaders</key>
+	<dict>
+		<key>PROJECT_ID</key>
+		<string>10089654183</string>
+		<key>X-Catalyst-Environment</key>
+		<string>Development</string>
+		<key>X-CATALYST-USER</key>
+		<string>user</string>
+	</dict>
+	<key>OAuthScopes</key>
+	<string>ZohoCatalyst.zcql.CREATE,ZohoCatalyst.files.READ,ZohoCatalyst.tables.columns.READ,ZohoCatalyst.tables.rows.CREATE,ZohoCatalyst.projects.users.READ,ZohoCatalyst.files.CREATE,ZohoCatalyst.tables.rows.UPDATE,ZohoCatalyst.tables.READ,ZohoCatalyst.cache.READ,ZohoCatalyst.tables.rows.READ,ZohoCatalyst.tables.rows.DELETE,ZohoCatalyst.mltools.READ,ZohoCatalyst.projects.users.CREATE,ZohoCatalyst.functions.execute.CUSTOM,ZohoCatalyst.files.DELETE,ZohoCatalyst.catalyst.search.READ,ZohoCatalyst.folders.READ,ZohoCatalyst.projects.config.READ,Stratus.fileop.ALL</string>
+	<key>APIBaseURL</key>
+	<string>https://api.catalyst.zoho.com</string>
+	<key>AccountsPortalDomain</key>
+	<string>https://accounts.zohoportal.com</string>
+	<key>ProjectID</key>
+	<string>21317000000012001</string>
+	<key>RedirectURLScheme</key>
+	<string>meminstaller</string>
+	<key>PortalID</key>
+	<string>10089654183</string>
+	<key>ClientSecretID</key>
+	<string>9c6a6c1b7af87d7f6bf8edbb55bd3bc4d116c633f3</string>
+	<key>ClientID</key>
+	<string>10089654183.J93QNGFGQTDKZ3JJKSQS7YBTC6BJ0R</string>
+	<key>JWTClientID</key>
+	<string>10089654183.R3890SLQ3QRU7RPURJQSRW5J9NKVCW</string>
+	<key>JWTClientSecret</key>
+	<string>94c6e6575fc618795b751f466b14011201b78dd8c2</string>
+	<key>notificationAppID</key>
+	<string>{{notificationAppID}}</string>
+	<key>zcqlParser</key>
+	<string>V1</string>
+</dict>
+</plist>

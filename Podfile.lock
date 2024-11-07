@@ -1,0 +1,26 @@
+PODS:
+  - MEMToast (1.0)
+  - ZCatalyst (2.1.2)
+  - Zip (2.1.2)
+
+DEPENDENCIES:
+  - MEMToast
+  - ZCatalyst (= 2.1.2)
+  - Zip
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Zip
+  https://zrepository.zoho.com/zohocorp/user/Harisaravanan/Podspecs.git:
+    - MEMToast
+  https://zrepository.zoho.com/zohocorp/zoho/zohopodspecs.git:
+    - ZCatalyst
+
+SPEC CHECKSUMS:
+  MEMToast: b7b63fa37cc780c65455dfccd578550505c916cf
+  ZCatalyst: 02afc3729915f092216312f5746966540de87e54
+  Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
+
+PODFILE CHECKSUM: 1250d0d3613940e4aedba418b3bcf0147e51236a
+
+COCOAPODS: 1.16.2

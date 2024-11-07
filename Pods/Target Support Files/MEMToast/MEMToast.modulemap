@@ -1,0 +1,6 @@
+framework module MEMToast {
+  umbrella header "MEMToast-umbrella.h"
+
+  export *
+  module * { export * }
+}

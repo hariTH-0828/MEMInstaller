@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  MEMInstaller
+
+  Created by Hariharan R S on 05/11/24.
+  
+*/
+
+
+"com.learn.meminstaller.loginview.welcome" = "Welcome to MEMInstaller";
+"com.learn.meminstaller.loginview.description" = "Now Inhouse application are easy to install with this application, no more expiration link";
+"com.learn.meminstaller.home.title" = "Home";
+"com.learn.meminstaller.setting.title" = "Settings";
+"com.learn.meminstaller.setting.footnote" = "2024, Zoho Corporation Pvt. Ltd., All Rights Reserved.";
