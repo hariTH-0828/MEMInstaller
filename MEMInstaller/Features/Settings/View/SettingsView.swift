@@ -15,7 +15,6 @@ struct SettingView: View {
         self.userprofile = userprofile
     }
     
-    // Toast property
     @State var toastMessage: String? = nil
     @State var isPresentToast: Bool = false
     
