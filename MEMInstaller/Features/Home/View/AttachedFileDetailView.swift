@@ -19,23 +19,8 @@ private enum PListCellIdentifiers: String, CaseIterable {
 
 struct AttachedFileDetailView: View {
     @ObservedObject var viewModel: HomeViewModel
-    
-    #if RELEASE
+    @State var isPresentExport: Bool = false
     let bundleProperty: BundleProperties
-    #endif
-    
-    #if DEBUG
-    let bundleProperty = BundleProperties(
-        bundleName: "Zorroware",
-        bundleVersionShort: "1.0",
-        bundleVersion: "1",
-        bundleIdentifier: "com.zoho.inhouse.zorroware",
-        minimumOSVersion: "17.0",
-        requiredDeviceCompability: ["arm64"],
-        supportedPlatform: ["iOS"],
-        bundleIcon: "AppIcon60x60@2x.png"
-    )
-    #endif
     
     private let propertyListCellData: [PListCellIdentifiers: String] = [:]
     
@@ -67,6 +52,27 @@ struct AttachedFileDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationTitle(bundleProperty.bundleName ?? "Unknown")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Export", systemImage: "square.and.arrow.down") {
+                        viewModel.generatePrivacyList {
+                            isPresentExport.toggle()
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $isPresentExport, content: {
+                ActivityViewRepresentable(activityItems: viewModel.shareItem) { completion, error in
+                    if let error = error {
+                        viewModel.presentToast(message: error.localizedDescription)
+                    }else if completion {
+                        viewModel.presentToast(message:"File successfully saved")
+                    }else {
+                        viewModel.presentToast(message:"Activity Dismissed")
+                    }
+                }
+                .presentationDetents([.medium, .large])
+            })
         }
     }
     
@@ -123,7 +129,7 @@ struct AttachedFileDetailView: View {
     @ViewBuilder
     private func installBtnView() -> some View {
         Button(action: {
-            viewModel.extractAppBundle()
+            viewModel.executeInstall("https://packages-development.zohostratus.com/plist/ZohoFaciMap.plist")
         }, label: {
             Text("Install")
                 .font(.system(size: 18, weight: .semibold))
@@ -156,5 +162,5 @@ struct AttachedFileDetailView: View {
 }
 
 #Preview {
-    AttachedFileDetailView(viewModel: HomeViewModel())
+    AttachedFileDetailView(viewModel: HomeViewModel(), bundleProperty: BundleProperties(bundleName: "Default App", bundleVersionShort: "1.0", bundleVersion: "1111", bundleIdentifier: "com.default.bundlename.ios"))
 }

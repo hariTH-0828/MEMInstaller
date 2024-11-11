@@ -49,13 +49,13 @@ struct BundleProperties: Decodable, Identifiable {
     
     // Custom initializer for testing purposes
     init(
-        bundleName: String? = nil,
-        bundleVersionShort: String? = nil,
-        bundleVersion: String? = nil,
-        bundleIdentifier: String? = nil,
+        bundleName: String?,
+        bundleVersionShort: String?,
+        bundleVersion: String?,
+        bundleIdentifier: String?,
         minimumOSVersion: String? = nil,
-        requiredDeviceCompability: [String]? = nil,
-        supportedPlatform: [String]? = nil,
+        requiredDeviceCompability: [String] = ["arm64"],
+        supportedPlatform: [String] = ["iPhoneOS"],
         bundleIcon: String? = nil
     ) {
         self.bundleName = bundleName

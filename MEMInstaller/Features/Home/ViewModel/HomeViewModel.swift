@@ -25,6 +25,9 @@ class HomeViewModel: ObservableObject {
     // Property Handler
     private let plistHandler = PropertyListHandler()
     
+    // Attachment View
+    @Published var shareItem: [URL] = []
+    
     // FileManager
     private let fileManager = FileManager.default
     private let appCacheDirectory = ZFFileManager.shared.getAppCacheDirectory()
@@ -165,6 +168,34 @@ class HomeViewModel: ObservableObject {
             self.bundleProperties = try decoder.decode(BundleProperties.self, from: jsonData)
         }catch {
             presentToast(message: error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Execute Install
+    func executeInstall(_ url: String) {
+        let itmsServicesURLString = "itms-services://?action=download-manifest&url=\(url)"
+
+        if let itmsServiceURL = URL(string: itmsServicesURLString) {
+            UIApplication.shared.open(itmsServiceURL)
+        }
+    }
+    
+    func generatePrivacyList(completion: @escaping () -> Void) {
+        // MARK: UPDATE URL OF YOU FILE
+        let fileName = sourceURL?.lastPathComponent
+        
+        guard let fileName, let fileURL = URL(string: "https://packages-development.zohostratus.com/ipa/\(fileName)") else {
+            ZLogs.shared.log(.warning, message: "Invalid file url")
+            return
+        }
+  
+        let plistURL = plistHandler.createPlistFile(url: fileURL.absoluteString, content: plistDictionary)
+        switch plistURL {
+        case .success(let pathLocation):
+            shareItem = [pathLocation]
+            completion()
+        case .failure(let failure):
+            presentToast(message: failure.localizedDescription)
         }
     }
     

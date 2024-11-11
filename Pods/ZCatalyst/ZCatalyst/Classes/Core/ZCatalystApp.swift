@@ -114,6 +114,21 @@ public class ZCatalystApp
         }
     }
     
+    public func getOAuthToken(completion: @escaping (String) -> Void, failure: @escaping (Error) -> Void) {
+        if ZCatalystApp.shared.isUserSignedIn() {
+            ZCatalystAuthHandler.getOAuthToken { result in
+                switch result {
+                case .success(let token):
+                    completion(token)
+                case .error(let error):
+                    failure(error)
+                }
+            }
+        }else {
+            failure(ZCatalystError.unAuthenticatedError(code: ErrorCode.noPermission, message: ErrorMessage.invalidConfigurationForDefaultLogin, details: nil))
+        }
+    }
+    
     public func handleCustomLogin( withJWT token : String, completion : @escaping ( Error? ) -> Void )
     {
         if ZCatalystApp.shared.isUserSignedIn()

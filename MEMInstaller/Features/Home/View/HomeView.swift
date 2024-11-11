@@ -31,17 +31,18 @@ struct HomeView: View {
                 }
             }
             .sheet(item: $viewModel.bundleProperties, content: { property in
-                #if RELEASE
                 AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
                     .presentationDragIndicator(.visible)
-                #endif
-                
-                #if DEBUG
-                AttachedFileDetailView(viewModel: viewModel)
-                #endif
             })
             .sheet(isPresented: $isPresentSetting, content: {
                 SettingView(userprofile: viewModel.userprofile!)
+            })
+            .onAppear(perform: {
+                ZCatalystManager.getAccessToken { token in
+                    ZLogs.shared.log(.info, message: "Token: \(token)")
+                } failure: { error in
+                    ZLogs.shared.error(error.localizedDescription)
+                }
             })
         }
     }

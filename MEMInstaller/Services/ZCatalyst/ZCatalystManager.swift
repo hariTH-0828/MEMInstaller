@@ -33,7 +33,7 @@ public class ZCatalystManager {
         ZCatalystApp.shared.isUserSignedIn() ? .logIn : .logOut
     }
     
-    class func getCurrentLoggedUserProfile(completion: @escaping (Swift.Result<ZCatalystUser, Error>) -> Void) {
+    public class func getCurrentLoggedUserProfile(completion: @escaping (Swift.Result<ZCatalystUser, Error>) -> Void) {
         ZCatalystApp.shared.getCurrentUser { result in
             switch result {
             case .success(let user):
@@ -41,6 +41,14 @@ public class ZCatalystManager {
             case .error(let error):
                 completion(.failure(error))
             }
+        }
+    }
+    
+    public class func getAccessToken(completion: @escaping (String) -> Void, failure: @escaping (Error) -> Void) {
+        ZCatalystApp.shared.getOAuthToken { token in
+            completion(token)
+        } failure: { error in
+            failure(error)
         }
     }
     
