@@ -16,6 +16,7 @@ struct ZError {
         case nilCheckFailed
         case noDataFound
         case failedToGetCacheSize
+        case noFileFound
         
         var errorDescription: String? {
             switch self {
@@ -31,6 +32,8 @@ struct ZError {
                 return NSLocalizedString("No data available", comment: "Displayed when data is unavailable.")
             case .failedToGetCacheSize:
                 return NSLocalizedString("Failed to get cache size", comment: "Displayed when failed to get cache directory size.")
+            case .noFileFound:
+                return NSLocalizedString("No file has been found", comment: "Displayed when there is not file exist in the provided url.")
             }
         }
     }

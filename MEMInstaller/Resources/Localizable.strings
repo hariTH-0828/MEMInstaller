@@ -11,4 +11,5 @@
 "com.learn.meminstaller.loginview.description" = "Now Inhouse application are easy to install with this application, no more expiration link";
 "com.learn.meminstaller.home.title" = "Home";
 "com.learn.meminstaller.setting.title" = "Settings";
+"com.learn.meminstaller.setting.cache-clear" = "Clear cache";
 "com.learn.meminstaller.setting.footnote" = "2024, Zoho Corporation Pvt. Ltd., All Rights Reserved.";

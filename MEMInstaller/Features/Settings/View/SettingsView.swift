@@ -9,7 +9,16 @@ import SwiftUI
 
 struct SettingView: View {
     @State private var shouldShowLogoutSheet: Bool = false
+    @State var isPresentShareLog: Bool = false
+    
     let userprofile: ZCUserProfile
+    
+    var logFileURL: URL {
+        return ZLogs.shared.exportLogFile()
+    }
+    
+    // Cache size
+    @State private var totalCacheSize: String = "0"
     
     init(userprofile: ZCUserProfile) {
         self.userprofile = userprofile
@@ -23,11 +32,22 @@ struct SettingView: View {
         NavigationStack {
             Form {
                 userProfileView()
+                
+                Section {
+                    shareLogsView()
+                    removeLogFileView()
+                }
+                
+                clearCacheView()
+                
                 logoutSectionView()
             }
             .navigationTitle("com.learn.meminstaller.setting.title")
             .navigationBarTitleDisplayMode(.inline)
             .showToast(message: toastMessage, isShowing: $isPresentToast)
+            .sheet(isPresented: $isPresentShareLog, content: {
+                handleExportLogFile()
+            })
         }
     }
     
@@ -51,6 +71,59 @@ struct SettingView: View {
                     .foregroundStyle(StyleManager.colorStyle.secondary)
                     .padding(.leading, 8)
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func shareLogsView() -> some View {
+        Button(action: {
+            FileManager.default.fileExists(atPath: logFileURL.path()) ? isPresentShareLog.toggle() : presentToast(message: "Error: No file found")
+        }, label: {
+            ZLabel {
+                Text("Share your logs")
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                    .font(.system(size: 16, weight: .regular))
+            } icon: {
+                Image("log")
+                    .resizable()
+                    .frame(width: 16, height: 17)
+            }
+        })
+    }
+    
+    @ViewBuilder
+    private func removeLogFileView() -> some View {
+        Button(action: {
+            removeLogFileFromCache()
+        }, label: {
+            ZLabel {
+                Text("Remove logs")
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                    .font(.system(size: 16, weight: .regular))
+            } icon: {
+                Image(systemName: "trash")
+                    .foregroundStyle(.gray)
+            }
+        })
+    }
+    
+    @ViewBuilder
+    private func clearCacheView() -> some View {
+        Section {
+            List {
+                Button(action: { clearCacheData() }) {
+                    ZLabel {
+                        Text("com.learn.meminstaller.setting.cache-clear")
+                            .foregroundStyle(StyleManager.colorStyle.alert)
+                    } icon: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(StyleManager.colorStyle.alert)
+                    }
+
+                }
+            }
+        } footer: {
+            Text("Cache memory size: " + totalCacheSize)
         }
     }
     
@@ -94,6 +167,41 @@ struct SettingView: View {
     private func presentToast(message: String) {
         toastMessage = message
         isPresentToast = true
+    }
+    
+    private func clearCacheData() {
+        do {
+            try ZFFileManager.shared.clearAllCache()
+            self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
+            presentToast(message: "Cache cleared")
+        }catch {
+            presentToast(message: error.localizedDescription)
+        }
+    }
+    
+    private func removeLogFileFromCache() {
+        if FileManager.default.fileExists(atPath: logFileURL.path()) {
+            do {
+                try FileManager.default.removeItem(atPath: logFileURL.path())
+                presentToast(message: "Deleted \(logFileURL.lastPathComponent)")
+            }catch {
+                presentToast(message: "Failed to remove \(logFileURL.lastPathComponent)")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func handleExportLogFile() -> some View {
+        ActivityViewRepresentable(activityItems: [logFileURL]) { completion, error in
+            if let error = error {
+                presentToast(message: error.localizedDescription)
+            }else if completion {
+                presentToast(message: "File saved successfully")
+            }else {
+                presentToast(message: "Something went wrong")
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 

@@ -19,6 +19,7 @@ protocol ColorStyleProtocol {
     var quaternarySystemFill: Color { get }
     var tabBarShadow: Color { get }
     var secondary: Color { get }
+    var alert: Color { get }
 }
 
 struct StyleManager {

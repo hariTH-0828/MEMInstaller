@@ -68,5 +68,9 @@ struct Colors: ColorStyleProtocol {
     private var lightModeTint: UIColor {
         return UIColor(red: 0.18, green: 0.35, blue: 1.00, alpha: 1.00)
     }
+    
+    var alert: Color {
+        return .red
+    }
 }
 
