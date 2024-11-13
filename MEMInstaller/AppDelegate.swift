@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import ZCatalyst
+import SSOKit
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let sourceApp = options[.sourceApplication] as? String
         let annotation = options[.annotation] as Any
         
-        ZCatalystApp.shared.handleLoginRedirection(url, sourceApplication: sourceApp, annotation: annotation)
+        ZSSOKit.handle(url, sourceApplication: sourceApp, annotation: annotation)
         return true
     }
     

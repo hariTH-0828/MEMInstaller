@@ -10,10 +10,12 @@ import Zip
 
 @MainActor
 class HomeViewModel: ObservableObject {
-    @Published private(set) var userprofile: ZCUserProfile?
+    @Published private(set) var userprofile: ZUserProfile?
     @Published private(set) var appIcon: Data?
     @Published var bundleProperties: BundleProperties?
     @Published var isFileLoaded: Bool = false
+    
+    let userDataManager = UserDataManager()
     
     private var sourceURL: URL?
     var plistDictionary: [String: Any] = [:] {
@@ -42,11 +44,7 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - User Profile
     private func retriveLoggedUserFromKeychain() {
-        do {
-            self.userprofile = try KeychainService.retrieve(forKey: KCKeys.loggedUserProfile)
-        }catch {
-            presentToast(message: error.localizedDescription)
-        }
+        self.userprofile = userDataManager.retriveLoggedUserFromKeychain()
     }
     
     // MARK: - Bundle Info

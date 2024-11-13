@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "جارٍ التحميل...";
+"zohoSSO.manage" = "إدارة";
+"zohoSSO.select" = "تحديد";
+"zohoSSO.close" = "إغلاق";
+"zohoSSO.addaccount" = "إضافة حساب";
+"zohoSSO.open" = "مفتوح";
+"zohoSSO.remove" = "إزالة";
+"zohoSSO.continue" = "متابعة";
+"zohoSSO.cancel" = "إلغاء";
+"zohoSSO.rooted.alert" = "جهازك مُخترق الحماية. تابع على مسؤوليتك الخاصة حيث أن استخدام جهاز مُخترق الحماية سيجعل التطبيق عرضة للهجمات الضارة.";
+"zohoSSO.dcchooser.title" = "حدد منطقتك";
+"zohoSSO.Cancel" = "إلغاء";
+"zohoSSO.dcchooser.china" = "الصين";
+"zohoSSO.dcchooser.other" = "أخرى";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

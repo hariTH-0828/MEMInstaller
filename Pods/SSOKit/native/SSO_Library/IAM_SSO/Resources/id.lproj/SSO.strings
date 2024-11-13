@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Memuat...";
+"zohoSSO.manage" = "Kelola";
+"zohoSSO.select" = "Pilih";
+"zohoSSO.close" = "Tutup";
+"zohoSSO.addaccount" = "Tambahkan Akun";
+"zohoSSO.open" = "Buka";
+"zohoSSO.remove" = "Hapus";
+"zohoSSO.continue" = "Lanjutkan";
+"zohoSSO.cancel" = "Batalkan";
+"zohoSSO.rooted.alert" = "Perangkat Anda sudah di-jailbreak. Lanjutkan dengan risiko Anda sendiri karena menggunakan perangkat di-jailbreak akan membuat aplikasi rentan terhadap serangan berbahaya.";
+"zohoSSO.dcchooser.title" = "Pilih wilayah Anda";
+"zohoSSO.Cancel" = "Batalkan";
+"zohoSSO.dcchooser.china" = "Tiongkok";
+"zohoSSO.dcchooser.other" = "Lainnya";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

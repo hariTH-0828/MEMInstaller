@@ -8,5 +8,5 @@
 import Foundation
 
 struct KCKeys {
-    static let loggedUserProfile: String = "ZCLoggedUserProfile"
+    static let loggedUserProfile: String = "ZLoggedUserProfile"
 }

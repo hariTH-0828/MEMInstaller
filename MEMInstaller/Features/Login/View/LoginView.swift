@@ -52,17 +52,26 @@ struct LoginView: View {
     
     @ViewBuilder
     private func loginButtonView(_ geometry: GeometryProxy) -> some View {
-        Button(action: { appViewModel.login() }, label: {
-            Text("Login")
-                .frame(width: geometry.size.width / 1.5, height: 35)
-                .font(.system(size: 22, weight: .medium))
-                .foregroundStyle(.white)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(StyleManager.colorStyle.tintColor)
-                )
-                .padding()
+        Button(action: { appViewModel.IAMLogin() }, label: {
+            Label(
+                title: {
+                    Text("com.learn.meminstaller.loginview.loginBtn")
+                        .font(.system(size: 18, weight: .regular))
+                },
+                icon: {
+                    Image("zoho-logo")
+                        .resizable()
+                        .frame(width: 35, height: 20)
+                }
+            )
+            .frame(width: geometry.size.width / 1.5, height: 35)
+            .foregroundStyle(.white)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(StyleManager.colorStyle.tintColor)
+            )
+            .padding()
         })
     }
 }

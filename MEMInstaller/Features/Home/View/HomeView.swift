@@ -18,7 +18,7 @@ struct HomeView: View {
             ZStack {
                 EmptyStateView(isPresentFiles: $isPresentFiles)
             }
-            .navigationTitle("Home")
+            .navigationTitle("com.learn.meminstaller.home.title")
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
             .toolbar { settingToolBarItem() }
             .fileImporter(isPresented: $isPresentFiles, allowedContentTypes: [.ipa]) { result in
@@ -37,25 +37,14 @@ struct HomeView: View {
             .sheet(isPresented: $isPresentSetting, content: {
                 SettingView(userprofile: viewModel.userprofile!)
             })
-            .onAppear(perform: {
-                ZCatalystManager.getAccessToken { token in
-                    ZLogs.shared.log(.info, message: "Token: \(token)")
-                } failure: { error in
-                    ZLogs.shared.error(error.localizedDescription)
-                }
-            })
         }
     }
     
     private func settingToolBarItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: { isPresentSetting.toggle() }, label: {
-                let userName = viewModel.userprofile?.firstName ?? "Unknown"
-                if let uiImage = imageWith(name: userName) {
-                    userImageView(uiImage)
-                }else {
-                    settingIconView()
-                }
+                let userName = viewModel.userprofile?.displayName ?? "Unknown"
+                userImageView(imageWith(name: userName)!)
             })
         }
     }
@@ -66,15 +55,6 @@ struct HomeView: View {
             .resizable()
             .frame(width: 35, height: 35)
             .clipShape(Circle())
-    }
-    
-    @ViewBuilder
-    private func settingIconView() -> some View {
-        Image("gear")
-            .resizable()
-            .renderingMode(.template)
-            .frame(width: 25, height: 25)
-            .foregroundStyle(StyleManager.colorStyle.systemGray)
     }
 }
 

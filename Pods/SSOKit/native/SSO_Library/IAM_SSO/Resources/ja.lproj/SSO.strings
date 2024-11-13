@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "読み込み中...";
+"zohoSSO.manage" = "管理";
+"zohoSSO.select" = "選択";
+"zohoSSO.close" = "閉じる";
+"zohoSSO.addaccount" = "アカウントを追加";
+"zohoSSO.open" = "開く";
+"zohoSSO.remove" = "削除";
+"zohoSSO.continue" = "続行";
+"zohoSSO.cancel" = "キャンセル";
+"zohoSSO.rooted.alert" = "デバイスはジェイルブレークされています。ジェイルブレークされたデバイスを使用すると、悪意ある攻撃に対してアプリが脆弱になるため、ご自身の責任で続行してください。";
+"zohoSSO.dcchooser.title" = "地域を選択";
+"zohoSSO.Cancel" = "キャンセル";
+"zohoSSO.dcchooser.china" = "中国";
+"zohoSSO.dcchooser.other" = "その他";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

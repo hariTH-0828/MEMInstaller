@@ -1,26 +1,32 @@
 PODS:
+  - CryptoSwift (1.8.3)
   - MEMToast (1.0)
-  - ZCatalyst (2.1.2)
+  - SSOKit (2.0.19):
+    - SSOKit/CryptoSwiftSDK (= 2.0.19)
+  - SSOKit/CryptoSwiftSDK (2.0.19):
+    - CryptoSwift
   - Zip (2.1.2)
 
 DEPENDENCIES:
   - MEMToast
-  - ZCatalyst (= 2.1.2)
+  - SSOKit (= 2.0.19)
   - Zip
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - CryptoSwift
     - Zip
   https://zrepository.zoho.com/zohocorp/user/Harisaravanan/Podspecs.git:
     - MEMToast
   https://zrepository.zoho.com/zohocorp/zoho/zohopodspecs.git:
-    - ZCatalyst
+    - SSOKit
 
 SPEC CHECKSUMS:
+  CryptoSwift: 967f37cea5a3294d9cce358f78861652155be483
   MEMToast: b7b63fa37cc780c65455dfccd578550505c916cf
-  ZCatalyst: 02afc3729915f092216312f5746966540de87e54
+  SSOKit: a443e7eca405d6bcd4dd78d60c958b0c1720926b
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 1250d0d3613940e4aedba418b3bcf0147e51236a
+PODFILE CHECKSUM: b13003bcd1e7764f109fe40a541c434cd5f8372e
 
 COCOAPODS: 1.16.2

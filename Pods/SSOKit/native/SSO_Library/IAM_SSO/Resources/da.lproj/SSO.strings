@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Indlæser...";
+"zohoSSO.manage" = "Administrer";
+"zohoSSO.select" = "Vælg";
+"zohoSSO.close" = "Luk";
+"zohoSSO.addaccount" = "Tilføj konto";
+"zohoSSO.open" = "Åbn";
+"zohoSSO.remove" = "Fjern";
+"zohoSSO.continue" = "Fortsæt";
+"zohoSSO.cancel" = "Annuller";
+"zohoSSO.rooted.alert" = "Din enhed er jailbroken. Hvis du fortsætter, er det på egen risiko. Brug af en jailbroken enhed gør appen sårbar over for ondsindede angreb.";
+"zohoSSO.dcchooser.title" = "Vælg din region";
+"zohoSSO.Cancel" = "Annuller";
+"zohoSSO.dcchooser.china" = "Kina";
+"zohoSSO.dcchooser.other" = "Andet";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

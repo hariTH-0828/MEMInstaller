@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Betöltés...";
+"zohoSSO.manage" = "Kezelés";
+"zohoSSO.select" = "Kiválasztás";
+"zohoSSO.close" = "Bezárás";
+"zohoSSO.addaccount" = "Fiók hozzáadása";
+"zohoSSO.open" = "Megnyitás";
+"zohoSSO.remove" = "Eltávolítás";
+"zohoSSO.continue" = "Tovább";
+"zohoSSO.cancel" = "Mégse";
+"zohoSSO.rooted.alert" = "Eszköze hálózatfüggetlenítve van. Saját felelősségre lépjen tovább, mert egy hálózatfüggetlenített eszköz sebezhetővé teszi az alkalmazást a rosszindulatú támadásokkal szemben.";
+"zohoSSO.dcchooser.title" = "Válassza ki régióját";
+"zohoSSO.Cancel" = "Mégse";
+"zohoSSO.dcchooser.china" = "Kína";
+"zohoSSO.dcchooser.other" = "Egyéb";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

@@ -37,4 +37,35 @@ struct ZError {
             }
         }
     }
+    
+    enum IAMError: Error, LocalizedError {
+        case userProfileNotFound
+        case notSignedIn
+        case tokenRetrievalFailed
+        
+        var errorDescription: String? {
+            switch self {
+            case .userProfileNotFound:
+                return NSLocalizedString("User profile not found", comment: "Error when get current logged user profile")
+            case .notSignedIn:
+                return NSLocalizedString("User not signed in", comment: "Error when user check if the user is signin")
+            case .tokenRetrievalFailed:
+                return NSLocalizedString("Failed to retrive token", comment: "Error when try to fetch the access token")
+            }
+        }
+    }
+    
+    enum KeyChainError: Error, LocalizedError {
+        case failedToSave
+        case failedToRetrieve
+        
+        var errorDescription: String? {
+            switch self {
+            case .failedToSave:
+                return NSLocalizedString("Failed to save data to the Keychain", comment: "Keychain error when attempting to save data")
+            case .failedToRetrieve:
+                return NSLocalizedString("Failed to retrieve data from the Keychain", comment: "Keychain error when attempting to retrieve data")
+            }
+        }
+    }
 }

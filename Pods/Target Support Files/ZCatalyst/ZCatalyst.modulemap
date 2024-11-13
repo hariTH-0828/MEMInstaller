@@ -1,6 +1,0 @@
-framework module ZCatalyst {
-  umbrella header "ZCatalyst-umbrella.h"
-
-  export *
-  module * { export * }
-}

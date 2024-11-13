@@ -8,7 +8,8 @@
 
 
 "com.learn.meminstaller.loginview.welcome" = "Welcome to MEMInstaller";
-"com.learn.meminstaller.loginview.description" = "Now Inhouse application are easy to install with this application, no more expiration link";
+"com.learn.meminstaller.loginview.description" = "Your all-in-one solution for easy, secure in-house app installation. Streamline access and manage internal applications effortlessly.";
+"com.learn.meminstaller.loginview.loginBtn" = "Sign in with Zoho";
 "com.learn.meminstaller.home.title" = "Home";
 "com.learn.meminstaller.setting.title" = "Settings";
 "com.learn.meminstaller.setting.cache-clear" = "Clear cache";

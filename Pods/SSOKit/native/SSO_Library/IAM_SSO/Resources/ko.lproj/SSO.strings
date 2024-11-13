@@ -1,0 +1,24 @@
+/*
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "로드 중...";
+"zohoSSO.manage" = "관리";
+"zohoSSO.select" = "선택";
+"zohoSSO.close" = "닫기";
+"zohoSSO.addaccount" = "계정 추가";
+"zohoSSO.open" = "열기";
+"zohoSSO.remove" = "제거";
+"zohoSSO.continue" = "계속";
+"zohoSSO.cancel" = "취소";
+"zohoSSO.rooted.alert" = "귀하의 장치가 탈옥되었습니다. 탈옥된 장치를 사용할 경우 앱이 악성 공격에 취약하게 될 수 있으므로 자신의 책임하에 계속 진행하십시오.";
+"zohoSSO.dcchooser.title" = "지역 선택";
+"zohoSSO.Cancel" = "취소";
+"zohoSSO.dcchooser.china" = "중국";
+"zohoSSO.dcchooser.other" = "기타";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

@@ -11,7 +11,7 @@ struct SettingView: View {
     @State private var shouldShowLogoutSheet: Bool = false
     @State var isPresentShareLog: Bool = false
     
-    let userprofile: ZCUserProfile
+    let userprofile: ZUserProfile
     
     var logFileURL: URL {
         return ZLogs.shared.exportLogFile()
@@ -20,7 +20,7 @@ struct SettingView: View {
     // Cache size
     @State private var totalCacheSize: String = "0"
     
-    init(userprofile: ZCUserProfile) {
+    init(userprofile: ZUserProfile) {
         self.userprofile = userprofile
     }
     
@@ -54,14 +54,14 @@ struct SettingView: View {
     @ViewBuilder
     private func userProfileView() -> some View {
         HStack(alignment: .top) {
-            Image(uiImage: imageWith(name: userprofile.firstName)!)
+            Image(uiImage: imageWith(name: userprofile.displayName)!)
                 .resizable()
                 .frame(width: 45, height: 45)
                 .clipped()
                 .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(userprofile.firstName) \(userprofile.lastName ?? "")")
+                Text("\(userprofile.displayName)")
                     .font(.system(size: 17, weight: .semibold))
                     .padding(.leading, 8)
                 
@@ -228,7 +228,7 @@ struct presentLogoutView: View {
                 .defaultOutlineButtonStyle(foregroundColor: Color.primary)
                 
                 Button(role: .destructive) {
-                    AppViewModel.shared.logout()
+//                    AppViewModel.shared.logout()
                     showLogoutAlert.toggle()
                 } label: {
                     Text("Sign out")
@@ -242,6 +242,6 @@ struct presentLogoutView: View {
 }
 
 #Preview {
-    SettingView(userprofile: ZCUserProfile(id: 3948120384042, zuId: 2349820348520, firstName: "Hariharan", lastName: "R S", email: "hariharan.rs@zohocorp.com", status: "Available", role: ZCUserRole(id: 342340528301, name: "App administrator")))
+    SettingView(userprofile: ZUserProfile(name: "Hariharan R S", displayName: "Harith", email: "hariharan.rs@zohocorp.com", profileImageData: Data()))
 }
 

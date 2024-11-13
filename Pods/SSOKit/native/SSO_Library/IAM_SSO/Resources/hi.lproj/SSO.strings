@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "लोड हो रहा है…";
+"zohoSSO.manage" = "प्रबंधित करें";
+"zohoSSO.select" = "चयन करें";
+"zohoSSO.close" = "बंद करें";
+"zohoSSO.addaccount" = "खाता जोड़ें";
+"zohoSSO.open" = "खोलें";
+"zohoSSO.remove" = "निकालें";
+"zohoSSO.continue" = "जारी रखें";
+"zohoSSO.cancel" = "रद्द करें";
+"zohoSSO.rooted.alert" = "आपकी डिवाइस जेलब्रोकन है। अपने स्वयं के जोखिम पर आगे बढ़ें क्योंकि किसी जेलब्रोकन डिवाइस का उपयोग करने से ऐप पर दुर्भावनापूर्ण आक्रमण करने का खतरा उत्पन्न हो जाएगा।";
+"zohoSSO.dcchooser.title" = "अपने क्षेत्र का चयन करें";
+"zohoSSO.Cancel" = "रद्द करें";
+"zohoSSO.dcchooser.china" = "चीन";
+"zohoSSO.dcchooser.other" = "अन्य";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

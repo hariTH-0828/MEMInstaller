@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Caricamento in corso...";
+"zohoSSO.manage" = "Gestisci";
+"zohoSSO.select" = "Seleziona";
+"zohoSSO.close" = "Chiudi";
+"zohoSSO.addaccount" = "Aggiungi account";
+"zohoSSO.open" = "Apri";
+"zohoSSO.remove" = "Rimuovi";
+"zohoSSO.continue" = "Continua";
+"zohoSSO.cancel" = "Annulla";
+"zohoSSO.rooted.alert" = "Il tuo dispositivo ha subito un jailbreak. Procedi a tuo proprio rischio poiché l'uso di un dispositivo jailbroken renderà l'app vulnerabile ad attacchi malevolo.";
+"zohoSSO.dcchooser.title" = "Seleziona la tua regione";
+"zohoSSO.Cancel" = "Annulla";
+"zohoSSO.dcchooser.china" = "Cina";
+"zohoSSO.dcchooser.other" = "Altro";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

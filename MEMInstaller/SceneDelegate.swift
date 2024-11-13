@@ -5,8 +5,8 @@
 //  Created by Hariharan R S on 05/11/24.
 //
 
-import ZCatalyst
 import SwiftUI
+import SSOKit
 
 @available(iOS  13.0,*)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -17,12 +17,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = UIHostingController(rootView: ContentView())
         window.makeKeyAndVisible()
         
-        ZCatalystManager.initiate(window: window)
+        ZIAMManager.initiate(window: window)
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let context = URLContexts.first {
-            ZCatalystApp.shared.handleLoginRedirection(context.url, sourceApplication: context.options.sourceApplication, annotation: context.options.annotation as Any)
+            ZSSOKit.handle(context.url, sourceApplication: context.options.sourceApplication, annotation: context.options.annotation)
         }
     }
 }

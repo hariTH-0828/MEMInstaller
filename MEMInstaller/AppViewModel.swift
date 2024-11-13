@@ -12,75 +12,41 @@ class AppViewModel: ObservableObject {
     static var shared: AppViewModel = AppViewModel()
     
     @Published private(set) var isUserLoggedIn: UserLoggedStatus = .logOut
+    let userDataManager = UserDataManager()
     
     // Toast
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
     private init() {
-        self.isUserLoggedIn = ZCatalystManager.isUserSignedIn()
+        self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
     }
     
-    func login() {
+    func IAMLogin() {
         Task {
             // Safe: Delete existing user keychain
-            try KeychainService.delete(forKey: KCKeys.loggedUserProfile)
+            try? KeychainService.delete(forKey: KCKeys.loggedUserProfile)
             
-            await ZCatalystManager.presentLoginView {[weak self] result in
-                guard let self else { return }
+            do {
+                let userLoggedInStatus = try await ZIAMManager.presentIAMLoginViewController()
+                ZLogs.shared.info("IAM Login success")
                 
-                switch result {
-                case .success(let loggedStatus):
-                    // Login success: Fetch login user info and store into keychain
-                    self.loginSuccessHandler(loggedStatus)
-                case .failure(let error):
-                    presentToast(message: error.localizedDescription)
-                }
-            }
-        }
-    }
-    
-    private func loginSuccessHandler(_ status: UserLoggedStatus) {
-        // Fetch user from ZCatalystManager
-        ZCatalystManager.getCurrentLoggedUserProfile {[weak self] result in
-            guard let self else { return }
-            
-            switch result {
-            case .success(let userprofile):
-                let zcuserprofile = ZCUserProfile.fromZCatalystUser(userprofile)
-                ZLogs.shared.info("Login: \(zcuserprofile.email)")
-                
-                // Save user into keychain
-                try? KeychainService.save(value: zcuserprofile, forKey: KCKeys.loggedUserProfile)
-                ZLogs.shared.log(.info, message: "Successfully saved logged user info into keychain")
-                
-                // Login success: Navigate to Login view to Home View
-                withAnimation(.spring(duration: 1.5)) {
-                    self.isUserLoggedIn = status
-                }
-            case .failure(let error):
-                ZLogs.shared.log(.error, message: error.localizedDescription)
+                // Handle success login and save user profile into keychain
+                self.loginSuccessHandler(userLoggedInStatus)
+            }catch {
                 presentToast(message: error.localizedDescription)
             }
         }
     }
     
-    func logout() {
-        Task {
-            await ZCatalystManager.logout {[weak self] result in
-                guard let self else { return }
-                
-                switch result {
-                case .success(let loggedStatus):
-                    do {
-                        // Logout success: Remove user credential from keychain
-                        try logoutSuccessHandler(loggedStatus)
-                    }catch {
-                        self.presentToast(message: error.localizedDescription)
-                    }
-                case .failure(let error):
-                    self.presentToast(message: error.localizedDescription)
-                }
+    private func loginSuccessHandler(_ status: UserLoggedStatus) {
+        
+        let isSaveSuccess = userDataManager.saveLoggedUserIntoKeychain()
+        
+        if isSaveSuccess {
+            // Login success: Navigate to Login view to Home View
+            withAnimation(.spring(duration: 1.5)) {
+                self.isUserLoggedIn = status
             }
         }
     }
