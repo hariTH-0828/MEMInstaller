@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct SettingView: View {
+    @ObservedObject var viewModel: HomeViewModel
     @State private var shouldShowLogoutSheet: Bool = false
     @State var isPresentShareLog: Bool = false
-    
-    let userprofile: ZUserProfile
     
     var logFileURL: URL {
         return ZLogs.shared.exportLogFile()
@@ -19,10 +18,6 @@ struct SettingView: View {
     
     // Cache size
     @State private var totalCacheSize: String = "0"
-    
-    init(userprofile: ZUserProfile) {
-        self.userprofile = userprofile
-    }
     
     // Toast properties
     @State var toastMessage: String? = nil
@@ -53,23 +48,25 @@ struct SettingView: View {
     
     @ViewBuilder
     private func userProfileView() -> some View {
-        HStack(alignment: .top) {
-            Image(uiImage: imageWith(name: userprofile.displayName)!)
-                .resizable()
-                .frame(width: 45, height: 45)
-                .clipped()
-                .clipShape(Circle())
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(userprofile.displayName)")
-                    .font(.system(size: 17, weight: .semibold))
-                    .padding(.leading, 8)
+        if let userprofile = viewModel.userprofile {
+            HStack(alignment: .top) {
+                Image(uiImage: imageWith(name: userprofile.displayName)!)
+                    .resizable()
+                    .frame(width: 45, height: 45)
+                    .clipped()
+                    .clipShape(Circle())
                 
-                Text(userprofile.email)
-                    .lineLimit(1)
-                    .font(.system(size: 15, weight: .regular))
-                    .foregroundStyle(StyleManager.colorStyle.secondary)
-                    .padding(.leading, 8)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(userprofile.displayName)")
+                        .font(.system(size: 17, weight: .semibold))
+                        .padding(.leading, 8)
+                    
+                    Text(userprofile.email)
+                        .lineLimit(1)
+                        .font(.system(size: 15, weight: .regular))
+                        .foregroundStyle(StyleManager.colorStyle.secondary)
+                        .padding(.leading, 8)
+                }
             }
         }
     }
@@ -242,6 +239,6 @@ struct presentLogoutView: View {
 }
 
 #Preview {
-    SettingView(userprofile: ZUserProfile(name: "Hariharan R S", displayName: "Harith", email: "hariharan.rs@zohocorp.com", profileImageData: Data()))
+    SettingView(viewModel: HomeViewModel(StratusRepositoryImpl()))
 }
 

@@ -16,8 +16,6 @@ class HomeViewModel: ObservableObject {
     @Published var isFileLoaded: Bool = false
     
     @Published var isLoading: Bool = true
-    @Published var isPresentFile: Bool = false
-    @Published var isPresentSetting: Bool = false
     @Published private(set) var buckets: [BucketModel] = []
     
     let userDataManager = UserDataManager()
@@ -222,3 +220,11 @@ class HomeViewModel: ObservableObject {
         isPresentToast = true
     }
 }
+
+
+
+/*
+ 
+ BucketModel(bucketName: "packages", projectDetails: ProjectDetail(projectName: "ZInstaller", projectId: 21317000000012001), createdBy: CreatedBy(firstName: "Hariharan", lastName: "R S", emailId: "hariharan.rs@zohocorp.com", userType: "Admin"), createdTime: "Nov 04, 2024 04:10 PM", bucketURL: "https://packages-development.zohostratus.com")
+ 
+ */

@@ -7,12 +7,14 @@
 
 import Foundation
 
-struct BucketModel: Codable {
+struct BucketModel: Codable, Hashable {
     let bucketName: String
     let projectDetails: ProjectDetail
     let createdBy: CreatedBy
     let createdTime: String
     let bucketURL: String
+    
+    var id: Self { return self }
     
     enum CodingKeys: String, CodingKey {
         case bucketName = "bucket_name"
@@ -23,21 +25,25 @@ struct BucketModel: Codable {
     }
 }
 
-struct ProjectDetail: Codable {
+struct ProjectDetail: Codable, Hashable {
     let projectName: String
-    let id: Decimal
+    let projectId: Decimal
+    
+    var id: Self { return self }
     
     enum CodingKeys: String, CodingKey {
         case projectName = "project_name"
-        case id = "id"
+        case projectId = "id"
     }
 }
 
-struct CreatedBy: Codable {
+struct CreatedBy: Codable, Hashable {
     let firstName: String
     let lastName: String
     let emailId: String
     let userType: String
+    
+    var id: Self { return self }
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"

@@ -42,6 +42,9 @@
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
+		52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */; };
+		52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */; };
+		52E109DF2CE66ED7002D1EDD /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */; };
 		52F393A62CE47ABD00C9B23C /* UserManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */; };
 		52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393A72CE47AFF00C9B23C /* UserDataManager.swift */; };
 		52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393B22CE5202D00C9B23C /* ConnectionStatus.swift */; };
@@ -118,6 +121,9 @@
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
+		52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
+		52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManagerProtocol.swift; sourceTree = "<group>"; };
 		52F393A72CE47AFF00C9B23C /* UserDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataManager.swift; sourceTree = "<group>"; };
 		52F393B22CE5202D00C9B23C /* ConnectionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus.swift; sourceTree = "<group>"; };
@@ -210,6 +216,7 @@
 		523F71D12CDB323100D564E7 /* MEMInstaller */ = {
 			isa = PBXGroup;
 			children = (
+				52E109D92CE66B6E002D1EDD /* Coordinator */,
 				523F71D82CDB323600D564E7 /* Preview Content */,
 				523F72002CDB33E100D564E7 /* Services */,
 				523F71FF2CDB33D600D564E7 /* Networking */,
@@ -425,6 +432,16 @@
 				523F72412CDB9EE400D564E7 /* BundleProperties.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		52E109D92CE66B6E002D1EDD /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */,
+				52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */,
+				52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */,
+			);
+			path = Coordinator;
 			sourceTree = "<group>";
 		};
 		52F393BE2CE5DBBB00C9B23C /* Repository */ = {
@@ -721,6 +738,7 @@
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
+				52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
 				523F722D2CDB690000D564E7 /* UIColor+.swift in Sources */,
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
@@ -728,12 +746,14 @@
 				523F722B2CDB68D500D564E7 /* Colors.swift in Sources */,
 				523F72422CDB9EE400D564E7 /* BundleProperties.swift in Sources */,
 				523F72132CDB365C00D564E7 /* LoginView.swift in Sources */,
+				52E109DF2CE66ED7002D1EDD /* AppCoordinatorImpl.swift in Sources */,
 				523F72392CDB8DDB00D564E7 /* UTType+.swift in Sources */,
 				523F72262CDB4EFC00D564E7 /* ZUserProfile.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
+				52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72192CDB36DB00D564E7 /* SettingsView.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
