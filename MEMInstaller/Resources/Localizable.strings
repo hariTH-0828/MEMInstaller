@@ -7,7 +7,8 @@
 */
 
 
-"com.learn.meminstaller.loginview.welcome" = "Welcome to MEMInstaller";
+"com.learn.meminstaller.loginview.welcome" = "Welcome to";
+"com.learn.meminstaller.loginview.appName" = "MEMInstaller";
 "com.learn.meminstaller.loginview.description" = "Your all-in-one solution for easy, secure in-house app installation. Streamline access and manage internal applications effortlessly.";
 "com.learn.meminstaller.loginview.loginBtn" = "Sign in with Zoho";
 "com.learn.meminstaller.home.title" = "Home";

@@ -11,10 +11,21 @@ import SwiftUI
 struct MEMInstallerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
+    init() {
+        ZIAMManager.initiate()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .tint(StyleManager.colorStyle.tintColor)
         }
+    }
+    
+    private func getKeyWindow() -> UIWindow? {
+        return UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
     }
 }

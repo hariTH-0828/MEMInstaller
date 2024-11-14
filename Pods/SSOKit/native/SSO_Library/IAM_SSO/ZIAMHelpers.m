@@ -432,7 +432,7 @@
         userDetailsDictionary = (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:user_details_data];
         int deletedIndex;
         int i;
-        if([userDetailsDictionary count]>1){
+//        if([userDetailsDictionary count]>1){
             for(i=1;i<=[userDetailsDictionary count];i++){
                 NSString *checkZUID = [self getZUIDFromKeyChainForIndex:i];
                 if([checkZUID isEqualToString:ZUID]){
@@ -448,10 +448,10 @@
                     break;
                 }
             }
-        }else{
-            [userDetailsDictionary removeObjectForKey:ZUID];
-            [self removeUserDetailsDataFromKeychain];
-        }
+//        }else{
+//            [userDetailsDictionary removeObjectForKey:ZUID];
+//            [self removeUserDetailsDataFromKeychain];
+//        }
         //Delete the last index...
         [self removeZUIDFromKeyChainatIndex:(int)[userDetailsDictionary count]+1];
     }
@@ -469,6 +469,9 @@
         }
          */
     }
+    [[ZIAMUtil sharedUtil] clearWebSiteData:^{
+        
+    }];
 }
 
 -(void) isOneAuthInstalled:(boolBlock)isInstalled

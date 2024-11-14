@@ -10,21 +10,47 @@ import MEMToast
 
 struct LoginView: View {
     @StateObject private var appViewModel: AppViewModel = AppViewModel.shared
+    
+    init() {
+        print("Initiating Login view...")
+    }
 
     var body: some View {
         NavigationStack {
             GeometryReader(content: { geometry in
-                VStack(spacing: 0) {
+                welcomeTextView()
+                    .padding(.top, 50)
+                
+                VStack {
                     loginOnBoardImageView()
                     
-                    loginContentView(geometry)
-                    
+                    Text("com.learn.meminstaller.loginview.description")
+                        .padding(.horizontal)
+                        .font(.system(size: 15.0))
+                        .foregroundStyle(Color(uiColor: .systemGray))
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                ZStack {
                     loginButtonView(geometry)
                 }
-                .clipped()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             })
             .showToast(message: appViewModel.toastMessage, isShowing: $appViewModel.isPresentToast)
+        }
+    }
+    
+    @ViewBuilder
+    func welcomeTextView() -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Group {
+                Text("com.learn.meminstaller.loginview.welcome")
+                    .font(.system(size: 25, weight: .light, design: .default))
+                
+                Text("com.learn.meminstaller.loginview.appName")
+                    .font(.system(size: 25, weight: .bold, design: .default))
+            }
+            .padding(.horizontal, 30)
         }
     }
     
@@ -32,46 +58,24 @@ struct LoginView: View {
     private func loginOnBoardImageView() -> some View {
         Image(.loginOnboard)
             .resizable()
-            .frame(width: 300, height: 300)
+            .frame(width: 280, height: 280)
             .scaledToFit()
             .padding()
     }
     
     @ViewBuilder
-    private func loginContentView(_ geometry: GeometryProxy) -> some View {
-        Text("com.learn.meminstaller.loginview.welcome")
-            .font(.system(size: 25.0, weight: .bold))
-            .padding()
-        
-        Text("com.learn.meminstaller.loginview.description")
-            .padding(.horizontal)
-            .font(.system(size: 16.0))
-            .foregroundStyle(Color(uiColor: .systemGray))
-            .padding(.bottom, 60)
-    }
-    
-    @ViewBuilder
     private func loginButtonView(_ geometry: GeometryProxy) -> some View {
         Button(action: { appViewModel.IAMLogin() }, label: {
-            Label(
-                title: {
-                    Text("com.learn.meminstaller.loginview.loginBtn")
-                        .font(.system(size: 18, weight: .regular))
-                },
-                icon: {
-                    Image("zoho-logo")
-                        .resizable()
-                        .frame(width: 35, height: 20)
-                }
-            )
-            .frame(width: geometry.size.width / 1.5, height: 35)
-            .foregroundStyle(.white)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(StyleManager.colorStyle.tintColor)
-            )
-            .padding()
+            Text("com.learn.meminstaller.loginview.loginBtn")
+                .font(.system(size: 18, weight: .regular))
+                .frame(width: geometry.size.width / 1.5, height: 35)
+                .foregroundStyle(.white)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(StyleManager.colorStyle.tintColor)
+                )
+                .padding()
         })
     }
 }

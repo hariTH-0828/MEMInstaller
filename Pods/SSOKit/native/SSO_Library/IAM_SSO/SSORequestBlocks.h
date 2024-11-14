@@ -120,7 +120,7 @@ typedef void (^ZSSOKitSignInWithAppleAuthStateChangeHandler)(NSError *error);
  */
 typedef void (^ZSSOKitSignInWithAppleAuthStateChangeWithZUIDHandler)(NSString *zuid, NSError *error);
 
-typedef void (^ZSSOKitAddEmailIDHandler)(NSError *error);
+typedef void (^ZSSOKitAddEmailIDHandler)(NSString *accessToken,NSError *error);
 typedef void (^ZSSOKitErrorResponse)(NSError *error);
 #if !TARGET_OS_WATCH
 typedef void (^ZSSOKitContentViewHandler)(UIView *viewForWebContent, NSError *error);

@@ -228,7 +228,7 @@ struct presentLogoutView: View {
                 .defaultOutlineButtonStyle(foregroundColor: Color.primary)
                 
                 Button(role: .destructive) {
-//                    AppViewModel.shared.logout()
+                    AppViewModel.shared.logout()
                     showLogoutAlert.toggle()
                 } label: {
                     Text("Sign out")

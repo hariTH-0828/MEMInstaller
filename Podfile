@@ -5,10 +5,10 @@ source 'https://zrepository.zoho.com/zohocorp/user/Harisaravanan/Podspecs.git'
 target 'MEMInstaller' do
   use_frameworks!
 	
-#  pod 'ZCatalyst', '2.1.2'
   pod 'Zip'
   pod 'MEMToast'
-  pod 'SSOKit', '2.0.19'
+  pod 'SSOKit', '2.0.20'
+  pod 'Alamofire'
 
   target 'MEMInstallerTests' do
     inherit! :search_paths

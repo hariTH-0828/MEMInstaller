@@ -15,7 +15,7 @@
 #	define DLog(...)
 #endif
 
-#define kSSOKitVersion @"2.0.19"
+#define kSSOKitVersion @"2.0.20"
 
 #define kSSOSHARED_SECRET @"1234567890123456"
 

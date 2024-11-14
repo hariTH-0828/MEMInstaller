@@ -150,6 +150,11 @@ static const int k_SSOAccountChooserDismissedError = 908;
  * DC Chooser Select Your region cancelled
  */
 static const int k_SSODCChooserCancelledError = 909;
+/**
+ * DC locations meta not received in refresh token call response
+ */
+
+static const int k_SSODCLResponseError = 910;
 
 
 
@@ -163,6 +168,12 @@ static const int k_SSOScopeEnhancementFetchError = 1001;
  * Scope Enhancement:Response is nil.
  */
 static const int k_SSOScopeEnhancementFetchNil = 1002;
+
+/**
+ * Reauth needed for scope enhancement.
+ */
+
+static const int k_SSOScopeEnhancementReauthNeeded = 1003;
 
 /**
  * OAuth Scope Enhancement Server Error Occured during redirection

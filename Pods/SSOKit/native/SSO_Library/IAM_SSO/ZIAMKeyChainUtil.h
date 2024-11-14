@@ -35,6 +35,9 @@
 #define kSSORevokeFailedDueToNetworkError @"revoke_access_token_failed"
 #define kSSOCloseAccountTempToken_KEY @"close_account_temp_token"
 
+#define kSSOOneAuthApplock_KEY @"isPassCodeEnabled"
+#define kSSOOneAuthSetupCompleted @"mfa_setup_completed"
+#define kSSOOneAuthMFAWithBiometric @"mfa_with_biometric_configured"
 
 @interface ZIAMUtil(ZIAMKeyChainUtil)
 
@@ -140,4 +143,9 @@
                                     expiresIn:(NSString*)expiresInSeconds
                                       forZUID:(NSString*)ZUID;
 -(void)removeCloseAccountTempTokenFromKeychainForZUID:(NSString *)zuid;
+
+-(BOOL)getOneAuthApplockStatus;
+-(BOOL)getIsBiometricEnabledForUser:(NSString *)zuid;
+-(BOOL)getIsMFASetupCompletedForUser:(NSString *)zuid;
+
 @end

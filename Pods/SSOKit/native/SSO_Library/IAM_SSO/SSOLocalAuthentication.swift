@@ -19,13 +19,18 @@ public class SSOLocalAuthentication : NSObject {
     
     
     
-    @objc public class func showBiometricConfirmation(on viewController: Any, completion: @escaping (SSOLocalAuthenticationStatus)->()) {
+    @objc public class func showBiometricConfirmation(on viewController: Any, shouldAllowFallback: Bool = true, completion: @escaping (SSOLocalAuthenticationStatus)->()) {
             let context = LAContext()
             guard #available(iOS 9.0, *) else {
                 return;
             }
-            let policy : LAPolicy = .deviceOwnerAuthentication
-            
+            var policy : LAPolicy = .deviceOwnerAuthentication
+            if !shouldAllowFallback {
+                #if !os(watchOS)
+                context.localizedFallbackTitle = ""
+                policy = .deviceOwnerAuthenticationWithBiometrics
+                #endif
+            }
             var error: NSError?
             if context.canEvaluatePolicy(policy, error: &error) {
                 let reason = "Authenticate"
@@ -52,7 +57,7 @@ public class SSOLocalAuthentication : NSObject {
                     switch err.code {
                       
                     case .passcodeNotSet:
-                        completion(.allow)
+                        completion(.fallback)
                         
                     case .touchIDLockout, .touchIDNotAvailable, .touchIDNotEnrolled, .notInteractive, .userFallback:
                         completion(.fallback)

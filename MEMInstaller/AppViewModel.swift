@@ -7,9 +7,8 @@
 
 import SwiftUI
 
-@MainActor
-class AppViewModel: ObservableObject {
-    static var shared: AppViewModel = AppViewModel()
+final class AppViewModel: ObservableObject {
+    static let shared = AppViewModel()
     
     @Published private(set) var isUserLoggedIn: UserLoggedStatus = .logOut
     let userDataManager = UserDataManager()
@@ -22,6 +21,14 @@ class AppViewModel: ObservableObject {
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
     }
     
+    var getWindow: UIWindow? {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first {
+            return window
+        }
+        
+        return nil
+    }
+    
     func IAMLogin() {
         Task {
             // Safe: Delete existing user keychain
@@ -32,13 +39,16 @@ class AppViewModel: ObservableObject {
                 ZLogs.shared.info("IAM Login success")
                 
                 // Handle success login and save user profile into keychain
-                self.loginSuccessHandler(userLoggedInStatus)
+                Task {
+                    await loginSuccessHandler(userLoggedInStatus)
+                }
             }catch {
                 presentToast(message: error.localizedDescription)
             }
         }
     }
     
+    @MainActor
     private func loginSuccessHandler(_ status: UserLoggedStatus) {
         
         let isSaveSuccess = userDataManager.saveLoggedUserIntoKeychain()
@@ -47,6 +57,14 @@ class AppViewModel: ObservableObject {
             // Login success: Navigate to Login view to Home View
             withAnimation(.spring(duration: 1.5)) {
                 self.isUserLoggedIn = status
+            }
+        }
+    }
+    
+    func logout() {
+        if ZIAMManager.isUserLoggedIn == .logIn {
+            ZIAMManager.logout { logoutStatus in
+                try? self.logoutSuccessHandler(logoutStatus)
             }
         }
     }

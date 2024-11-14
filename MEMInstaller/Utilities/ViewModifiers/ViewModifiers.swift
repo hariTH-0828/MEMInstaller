@@ -96,3 +96,43 @@ struct ZLabel<Title: View, Icon: View>: View {
         }
     }
 }
+
+struct LoaderView<Content: View, Loader: View>: View {
+    @Binding var isLoading: Bool
+    let content: Content
+    var progressView: Loader
+    
+    init(isLoading: Binding<Bool>,
+         @ViewBuilder content: () -> Content,
+         @ViewBuilder loader: () -> Loader = { ProgressView() } )
+    {
+        self._isLoading = isLoading
+        self.content = content()
+        self.progressView = loader()
+    }
+    
+    var body: some View {
+        if isLoading {
+            ZStack(alignment: .center, content: {
+                progressView
+                    .progressViewStyle(.horizontalCircular)
+                    .background(.clear)
+                    .tint(StyleManager.colorStyle.tintColor)
+                    .scaleEffect(1)
+            })
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }else {
+            self.content
+        }
+    }
+}
+
+func showAlert(_ title: String = "", message: String, _ actionHandler: ((UIAlertAction) -> Void)? = nil) {
+    if let scenes = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+        if let topView = scenes.windows.first?.rootViewController {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: actionHandler))
+            topView.present(alert, animated: true)
+        }
+    }
+}

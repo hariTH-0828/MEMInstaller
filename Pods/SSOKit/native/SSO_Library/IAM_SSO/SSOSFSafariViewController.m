@@ -223,6 +223,12 @@
     });
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [[ZIAMUtil sharedUtil] clearWebSiteData:^{
+        
+    }];
+}
+
 -(void)dismissReturningError{
     dispatch_async(dispatch_get_main_queue(), ^{
         if(self->DoneButtonClicked){
@@ -281,8 +287,8 @@
                     [userInfo setValue:@"Add Secondary Email Dismissed" forKey:NSLocalizedDescriptionKey];
                     returnError = [NSError errorWithDomain:kSSOKitErrorDomain code:k_SSOAddSecondaryEmailDismissedError userInfo:userInfo];
                     
-                    [ZIAMUtil sharedUtil]->finalAddEmailIDBlock(returnError);
-                    [ZIAMUtil sharedUtil]->finalAddEmailIDBlock = nil;
+                    [ZIAMUtil sharedUtil]->finalAddEmailIDFailureBlock(returnError);
+                    [ZIAMUtil sharedUtil]->finalAddEmailIDFailureBlock = nil;
                     return;
                 }else if([ZIAMUtil sharedUtil]->CloseAccountURL){
                     //Return Failure callback for Close Account URL...
@@ -397,6 +403,11 @@
     //signin google
     if([ZIAMUtil sharedUtil]->showGoogleSignIn){
         defaultLoginQueries = [defaultLoginQueries stringByAppendingString:@"&signOps=2"];
+    }
+    
+    NSString * loginID = [ZIAMUtil sharedUtil]->loginID;
+    if(loginID && [loginID length] != 0) {
+        defaultLoginQueries = [defaultLoginQueries stringByAppendingFormat:@"&login_id=%@", [[ZIAMUtil sharedUtil] getEncodedStringForString:[ZIAMUtil sharedUtil]->loginID]];
     }
     // add dark mode
     if (@available(iOS 12.0, *)) {
@@ -618,6 +629,7 @@
             }];
             if (@available(iOS 13.0, *)) {
                 asWebAuthsession.presentationContextProvider = self;
+                asWebAuthsession.prefersEphemeralWebBrowserSession = true;
             }
             [asWebAuthsession start];
         }
@@ -669,7 +681,7 @@
             }else{
 #if !SSO_APP__EXTENSION_API_ONLY
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                 });
 #endif
             }
@@ -680,7 +692,7 @@
             // Fallback on earlier versions
 #if !SSO_APP__EXTENSION_API_ONLY
             dispatch_async(dispatch_get_main_queue(), ^{
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
             });
 #endif
         }
@@ -1201,16 +1213,28 @@
                                                 successBlock:^(NSDictionary *jsonDict, NSHTTPURLResponse *httpResponse) {
         //Request success
         //Header for DCL Handling
-        if ([httpResponse respondsToSelector:@selector(allHeaderFields)]) {
-            NSDictionary *dictionary = [httpResponse allHeaderFields];
-            if([dictionary objectForKey:@"X-Location-Meta"]){
-                NSString *base64EncodedString = [dictionary objectForKey:@"X-Location-Meta"];
-                self->Bas64DCL_Meta_Data =  [Base64Converter base64DecodeWithString:base64EncodedString];
-                [ZIAMUtil sharedUtil]->setBas64DCL_Meta_Data=self->Bas64DCL_Meta_Data;
-
-
-            }
+        if ([jsonDict valueForKey:@"dc_locations"]) {
+            self->Bas64DCL_Meta_Data = [NSJSONSerialization dataWithJSONObject:[jsonDict valueForKey:@"dc_locations"]
+                                                                       options:NSJSONWritingPrettyPrinted
+                                                                         error:nil];
+            [ZIAMUtil sharedUtil]->setBas64DCL_Meta_Data=self->Bas64DCL_Meta_Data;
+        } else {
+            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc]init];
+            [userInfo setValue:@"DC location info not received" forKey:NSLocalizedDescriptionKey];
+            NSError* error = [[NSError alloc] initWithDomain:kSSOKitErrorDomain code:k_SSODCLResponseError userInfo:userInfo];
+            [self dismissReturningError:error];
+            return;
         }
+//        if ([httpResponse respondsToSelector:@selector(allHeaderFields)]) {
+//            NSDictionary *dictionary = [httpResponse allHeaderFields];
+//            if([dictionary objectForKey:@"X-Location-Meta"]){
+//                NSString *base64EncodedString = [dictionary objectForKey:@"X-Location-Meta"];
+//                self->Bas64DCL_Meta_Data =  [Base64Converter base64DecodeWithString:base64EncodedString];
+//                [ZIAMUtil sharedUtil]->setBas64DCL_Meta_Data=self->Bas64DCL_Meta_Data;
+//
+//
+//            }
+//        }
 
 
         //Store the RefreshToken in keychain
@@ -1340,15 +1364,12 @@
 -(void)handleSecondaryEmailRedirection:(NSDictionary*)queryStringDictionary {
     NSString *status = [queryStringDictionary objectForKey:@"status"];
     if([status isEqualToString:@"success"]){
-        if([ZIAMUtil sharedUtil]->finalAddEmailIDBlock){
-            [ZIAMUtil sharedUtil]->finalAddEmailIDBlock(nil);
-            [ZIAMUtil sharedUtil]->finalAddEmailIDBlock = nil;
-            [self hideLoadingIndicator];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self dismissViewControllerAnimated:NO completion:nil];
-            });
-            return;
-        }
+        [[ZIAMUtil sharedUtil] getForceFetchOAuthTokenForZUID:[ZIAMUtil sharedUtil]->User_ZUID success:^(NSString *token) {
+            [self handleSecondaryEmailWithToken:token andError:nil];
+        } andFailure:^(NSError *error) {
+            [self handleSecondaryEmailWithToken:nil andError:error];
+        }];
+    
     }else{
         //AddSecondaryEmail Failed...
         DLog(@"AddSecondaryEmail Failed...");
@@ -1361,6 +1382,21 @@
         return;
     }
 }
+-(void)handleSecondaryEmailWithToken:(NSString *)token andError:(NSError *)error {
+    
+    if(token != nil) {
+        [ZIAMUtil sharedUtil]->finalAddEmailIDSuccessBlock(token);
+    } else {
+        [ZIAMUtil sharedUtil]->finalAddEmailIDFailureBlock(error);
+    }
+    [ZIAMUtil sharedUtil]->finalAddEmailIDSuccessBlock = nil;
+    [ZIAMUtil sharedUtil]->finalAddEmailIDFailureBlock = nil;
+    [self hideLoadingIndicator];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self dismissViewControllerAnimated:NO completion:nil];
+    });
+};
+
 -(void)handleReloginRedirection:(NSDictionary*)queryStringDictionary {
     NSString *status = [queryStringDictionary objectForKey:@"status"];
     [ZIAMUtil sharedUtil]->User_ZUID = nil;
@@ -1587,6 +1623,7 @@
     [ZIAMUtil sharedUtil]->reloginURL = nil;
     [ZIAMUtil sharedUtil]->webSessionURL = nil;
     [ZIAMUtil sharedUtil]->verifyEmailURL = nil;
+    [ZIAMUtil sharedUtil]->loginID = nil;
 
 }
 

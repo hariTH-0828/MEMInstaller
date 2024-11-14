@@ -22,7 +22,7 @@
 #import "SSORequestBlocks.h"
 #import "ZSSOProfileData.h"
 #import "ZIAMToken.h"
-
+#import "SSORequestBlocks+Internal.h"
 
 /**
  The SSOKit Framework  is primarily used for single sign on across all Zoho apps. This framework has been enhanced to facilitate easier integration with every zoho app. We handle Single Sign-On using OneAuth, Sign-In and Sign-Up using SFSafariViewController, Authentication, Storing OAuth Tokens, DCL handling, basic profile information and all other related work securely and efficiently. You can now afford undivided concentration on your App's business logic.
@@ -434,23 +434,15 @@ sourceApplication:(NSString *)sourceApplication
  */
 +(void) donotFetchProfilePhotoDuringSignin;
 
-
-/**
- Method used for Scope Enhancements. Call this method once if you are introducing new scopes in your app update.
- 
- @param enhanceHandler handler block.
- */
-+(void)enhanceScopes:(ZSSOKitScopeEnhancementHandler)enhanceHandler NS_EXTENSION_UNAVAILABLE_IOS("");
-
-
 /**
  For MULTI-ACCOUNT
  Method used for Scope Enhancements. Call this method once if you are introducing new scopes in your app update.
  
  @param zuid ZUID of respective user.
+ @param ignorePasswordPrompt Boolen value to decide whether to present relogin if needed.
  @param enhanceHandler handler block.
  */
-+(void)enhanceScopesForZUID:(NSString *)zuid handler:(ZSSOKitScopeEnhancementHandler)enhanceHandler NS_EXTENSION_UNAVAILABLE_IOS("");
++(void)enhanceScopesForZUID:(NSString *)zuid ignorePasswordPrompt:(BOOL)ignorePasswordVerification handler:(ZSSOKitScopeEnhancementHandler)enhanceHandler NS_EXTENSION_UNAVAILABLE_IOS("");
 
 /**
  Method used to migrate the existing AuthToken users to OAuth.
@@ -789,7 +781,10 @@ Method to send OTP to mobile number for adding as user ID
 + (void) getJWTForUser:(NSString*)ZUID portalID:(NSString*)portalID completion:(ZSSOKitAccessTokenHandler)completion;
 
 
-+ (void)addSecondaryEmailIDForZUID:(NSString *)zuid WithCallback:(ZSSOKitAddEmailIDHandler)failure;
++ (void)addSecondaryEmailIDForZUID:(NSString *)zuid WithCallback:(ZSSOKitAddEmailIDHandler)handler;
 
 + (void)addSecondaryEmailIDWithCallback:(ZSSOKitAddEmailIDHandler)failure;
+
+-(void)clearWebSiteData:(responseSuccessBlock)completion;
+
 @end

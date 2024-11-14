@@ -15,12 +15,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-          let sceneConfig: UISceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
-          sceneConfig.delegateClass = SceneDelegate.self
-          return sceneConfig
-    }
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         let sourceApp = options[.sourceApplication] as? String
         let annotation = options[.annotation] as Any
@@ -40,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let options = UIWindowSceneDestructionRequestOptions()
         options.windowDismissalAnimation = windowDismissalAnimation
         UIApplication.shared.requestSceneSessionDestruction(session, options: options) { (error) in
-            print("Error: \(error)")
+            ZLogs.shared.error(error.localizedDescription)
         }
     }
 }

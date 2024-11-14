@@ -47,6 +47,7 @@ static const long timecheckbuffer = 60000;
     NSString* IAMURLScheme;
     
     NSString* UrlParams;
+    NSString* loginID;
     BOOL showGoogleSignIn;
     NSString *SignUpUrl;
     NSString *CNSignUpURL;
@@ -90,7 +91,8 @@ static const long timecheckbuffer = 60000;
 
     ZSSOKitErrorResponse finalDeviceVerificationBlock;
 
-    ZSSOKitAddEmailIDHandler finalAddEmailIDBlock;
+    ZSSOKitAddEmailIDSuccessHandler finalAddEmailIDSuccessBlock;
+    ZSSOKitAddEmailIDFailureHandler finalAddEmailIDFailureBlock;
 
     NSString *User_ZUID;
     
@@ -191,10 +193,10 @@ andFailure:(requestFailureBlock)failure;
 
 - (NSArray<ZSSOUser*> *)getUsersForApp;
 -(ZSSOUser *)getZSSOUserHavingZUID:(NSString *)zuid;
--(void)addSecondaryEmailIDForZUID:(NSString *)zuid WithCallback:(ZSSOKitAddEmailIDHandler)failure;
--(void)enhanceScopeWithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
+-(void)addSecondaryEmailIDForZUID:(NSString *)zuid WithSuccess:(ZSSOKitAddEmailIDSuccessHandler)success andFailure:(ZSSOKitAddEmailIDFailureHandler)failure;
+-(void)enhanceScopeWithShouldPresentRelogin:(BOOL)presentRelogin WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
                     andFailure:(ZSSOKitScopeEnhancementFailureHandler)failure;
--(void)enhanceScopeForZuid:(NSString *)zuid WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
+-(void)enhanceScopeForZuid:(NSString *)zuid ignorePasswordPrompt:(BOOL)ignorePasswordVerification WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
                 andFailure:(ZSSOKitScopeEnhancementFailureHandler)failure;
 -(void)getOAuth2TokenUsingAuthToken:(NSString *)authtoken forApp:(NSString *)appName havingAccountsURL:(NSString *)accountsBaseURL havingSuccess:(requestSuccessBlock)success
                          andFailure:(requestFailureBlock)failure;
@@ -303,5 +305,6 @@ andFailure:(requestFailureBlock)failure;
 
 - (void)getJWTForUser:(NSString *)zuid portalID:(NSString*)portalID success:(requestSuccessBlock)success failure:(requestFailureBlock)failure;
 -(NSString*) getEncryptedMDMQueryParam;
+-(void)clearWebSiteData:(responseSuccessBlock)completion;
 @end
 

@@ -552,12 +552,24 @@
                 return;;
             }
             if (isSSO) {
+                BOOL isBiometricEnabled = [[ZIAMUtil sharedUtil] getIsBiometricEnabledForUser:selectedZUID];
                 
-                [SSOLocalAuthentication showBiometricConfirmationOn:self completion:^(SSOLocalAuthenticationStatus error) {
+                if (!isBiometricEnabled) {
+                    if (![self canAllowSSOForUser:selectedZUID]) {
+                        NSString * email = [userdetailsDict objectForKey:@"email"];
+                        [ZIAMUtil sharedUtil]->loginID = email;
+                        [self showLoginScreen];
+                        return;
+                    }
+                }
+                
+                [SSOLocalAuthentication showBiometricConfirmationOn:self shouldAllowFallback: !isBiometricEnabled completion:^(SSOLocalAuthenticationStatus error) {
                     if (error == SSOLocalAuthenticationStatusAllow) {
                         [self showLoading];
+                        [self shouldBlockDismissingSheet:YES];
                         [[ZIAMUtil sharedUtil]getSSOForceFetchOAuthTokenForSSOZUID:selectedZUID WithSuccess:^(NSString *token) {
                             [self hideLoading];
+                            [self shouldBlockDismissingSheet:NO];
                             [[ZIAMUtil sharedUtil] setCurrentUserZUIDInKeychain:selectedZUID];
                             if(self->_success){
                                 [self dismissWithSuccessHavingAccessToken:token];
@@ -566,6 +578,7 @@
                             }
                         } andFailure:^(NSError *error) {
                             [self hideLoading];
+                            [self shouldBlockDismissingSheet:NO];
                             if (error.code == k_SSOOneAuthAccountBlockedState) {
                                 //OneAuth password changed
                                 [[ZIAMUtil sharedUtil] verifySSOPasswordForZUID:selectedZUID success:^(NSString *token) {
@@ -586,6 +599,8 @@
                             }
                         }];
                     } else if (error == SSOLocalAuthenticationStatusFallback){
+                        NSString * email = [userdetailsDict objectForKey:@"email"];
+                        [ZIAMUtil sharedUtil]->loginID = email;
                         [self showLoginScreen];
                     }
                     
@@ -593,6 +608,7 @@
                 
             } else {
                 [self showLoading];
+                [self shouldBlockDismissingSheet:YES];
                 [[ZIAMUtil sharedUtil]getForceFetchOAuthTokenForZUID:selectedZUID success:^(NSString *token) {
                     [self hideLoading];
                     [[ZIAMUtil sharedUtil] setCurrentUserZUIDInKeychain:selectedZUID];
@@ -603,7 +619,7 @@
                     }
                 } andFailure:^(NSError *error) {
                     [self hideLoading];
-                    [self hideLoading];
+                    [self shouldBlockDismissingSheet:NO];
                     if ([[error localizedDescription] isEqualToString:@"invalid_mobile_code"]) {
                         [self showSessionTerminatedAlert];
                     } else {
@@ -619,6 +635,22 @@
     }
     
 
+}
+
+-(BOOL)canAllowSSOForUser:(NSString *)zuid {
+    BOOL isApplockEnabled = [[ZIAMUtil sharedUtil] getOneAuthApplockStatus];
+//    BOOL isMFASetupCompleted = [[ZIAMUtil sharedUtil] getIsMFASetupCompletedForUser:zuid];
+    
+//    return (isMFASetupCompleted && isApplockEnabled);
+    return isApplockEnabled;
+}
+
+-(void)shouldBlockDismissingSheet:(BOOL)shouldBlock {
+    if (@available(iOS 13.0, *)) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.modalInPresentation = shouldBlock;
+        });
+    }
 }
 
 -(void) showLoginScreen {
@@ -672,14 +704,16 @@
                         [ZIAMUtil sharedUtil]->setFailureBlock = self->_failure;
                         [ZIAMUtil sharedUtil]->setSuccessBlock = self->_success;
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?purpose=signout&scheme=%@&appname=%@",[ZIAMUtil sharedUtil]->IAMURLScheme,[ZIAMUtil sharedUtil]->UrlScheme,[ZIAMUtil sharedUtil]->AppName]]];
+                            NSString * urlString = [NSString stringWithFormat:@"%@?purpose=signout&scheme=%@&appname=%@",[ZIAMUtil sharedUtil]->IAMURLScheme,[ZIAMUtil sharedUtil]->UrlScheme,[ZIAMUtil sharedUtil]->AppName];
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                         });
                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                             [self dismissViewControllerAnimated:NO completion:nil];
                         });
                     }else{
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/zoho-oneauth/id1142928979?mt=8"]];
+                            NSString * urlString = @"https://itunes.apple.com/us/app/zoho-oneauth/id1142928979?mt=8";
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                         });
                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                             [self dismissViewControllerAnimated:NO completion:nil];
@@ -692,7 +726,8 @@
                         [ZIAMUtil sharedUtil]->setFailureBlock = self->_failure;
                         [ZIAMUtil sharedUtil]->setSuccessBlock = self->_success;
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?purpose=signout&scheme=%@&appname=%@",[ZIAMUtil sharedUtil]->IAMURLScheme,[ZIAMUtil sharedUtil]->UrlScheme,[ZIAMUtil sharedUtil]->AppName]]];
+                            NSString * urlString = [NSString stringWithFormat:@"%@?purpose=signout&scheme=%@&appname=%@",[ZIAMUtil sharedUtil]->IAMURLScheme,[ZIAMUtil sharedUtil]->UrlScheme,[ZIAMUtil sharedUtil]->AppName];
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                         });
                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                             [self dismissViewControllerAnimated:NO completion:nil];
@@ -700,7 +735,7 @@
                     }else{
                         dispatch_async(dispatch_get_main_queue(), ^{
                             //To Do: Add MyZoho AppStore URL
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@""]];
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@""] options:@{} completionHandler:NULL];
                         });
                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                             [self dismissViewControllerAnimated:NO completion:nil];

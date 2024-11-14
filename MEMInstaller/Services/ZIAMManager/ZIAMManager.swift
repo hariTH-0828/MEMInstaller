@@ -42,7 +42,7 @@ final class ZIAMManager {
         ]
     }
     
-    public class func initiate(window: UIWindow) {
+    public class func initiate() {
         let oAuthClientId: String = "1002.5B3D2AWQPLA6FABTW0R4T9JHJAR1HF"
         let oAuthURLScheme: String = "zadminzorroware://"
         let oAuthLoginMode: SSOBuildType = {
@@ -61,7 +61,7 @@ final class ZIAMManager {
             userDefaults.synchronize()
         }
         
-        ZSSOKit.initWithClientID(oAuthClientId, scope: oAuthScopes(), urlScheme: oAuthURLScheme, mainWindow: window, buildType: oAuthLoginMode)
+        ZSSOKit.initWithClientID(oAuthClientId, scope: oAuthScopes(), urlScheme: oAuthURLScheme, buildType: oAuthLoginMode)
     }
     
     class func getCurrentLoggedInUser() -> ZSSOUser? {

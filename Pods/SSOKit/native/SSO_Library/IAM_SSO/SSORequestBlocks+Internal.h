@@ -33,7 +33,9 @@ typedef void (^requestLogoutFailureBlock)(NSError *error);
 typedef void (^ZSSOKitManageAccountsSuccessHandler)(NSString *accessToken,BOOL changed,ZSSOUser *zUser);
 typedef void (^ZSSOKitManageAccountsFailureHandler)(NSError *error);
 typedef void (^ZSSOKitScopeEnhancementSuccessHandler)(NSString *token);
+typedef void (^ZSSOKitAddEmailIDSuccessHandler)(NSString *token);
 typedef void (^ZSSOKitScopeEnhancementFailureHandler)(NSError *error);
+typedef void (^ZSSOKitAddEmailIDFailureHandler)(NSError *error);
 
 typedef void (^responseSuccessBlock)(void);
 typedef void (^requestTempTokenBlock)(NSString *token,long long expiresMillis, long long lastReAuthTime);

@@ -9,19 +9,22 @@ import SwiftUI
 import MEMToast
 
 struct HomeView: View {
-    @StateObject var viewModel: HomeViewModel = HomeViewModel()
-    @State var isPresentFiles: Bool = false
-    @State var isPresentSetting: Bool = false
+    @StateObject var viewModel: HomeViewModel
+    
+    init() {
+        _viewModel = StateObject(wrappedValue: HomeViewModel(StratusRepositoryImpl()))
+        print("Initiating Home view...")
+    }
     
     var body: some View {
         NavigationStack {
             ZStack {
-                EmptyStateView(isPresentFiles: $isPresentFiles)
+                EmptyStateView(isPresentFiles: $viewModel.isPresentFile)
             }
             .navigationTitle("com.learn.meminstaller.home.title")
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
             .toolbar { settingToolBarItem() }
-            .fileImporter(isPresented: $isPresentFiles, allowedContentTypes: [.ipa]) { result in
+            .fileImporter(isPresented: $viewModel.isPresentFile, allowedContentTypes: [.ipa]) { result in
                 switch result {
                 case .success(let location):
                     viewModel.extractIpaFileContents(from: location)
@@ -34,15 +37,18 @@ struct HomeView: View {
                 AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
                     .presentationDragIndicator(.visible)
             })
-            .sheet(isPresented: $isPresentSetting, content: {
+            .sheet(isPresented: $viewModel.isPresentSetting, content: {
                 SettingView(userprofile: viewModel.userprofile!)
             })
+            .task {
+                await viewModel.fetchBucket()
+            }
         }
     }
     
     private func settingToolBarItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button(action: { isPresentSetting.toggle() }, label: {
+            Button(action: { viewModel.isPresentSetting.toggle() }, label: {
                 let userName = viewModel.userprofile?.displayName ?? "Unknown"
                 userImageView(imageWith(name: userName)!)
             })

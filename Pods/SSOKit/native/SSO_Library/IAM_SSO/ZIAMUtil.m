@@ -1750,8 +1750,10 @@ andFailure:(requestLogoutFailureBlock)failure{
 }
 // Add Secondary Email - WIP
 #if !TARGET_OS_WATCH && !SSO_APP__EXTENSION_API_ONLY
--(void)addSecondaryEmailIDForZUID:(NSString * )zuid WithCallback:(ZSSOKitAddEmailIDHandler)failure{
-    finalAddEmailIDBlock = failure;
+-(void)addSecondaryEmailIDForZUID:(NSString *)zuid WithSuccess:(ZSSOKitAddEmailIDSuccessHandler)success andFailure:(ZSSOKitAddEmailIDFailureHandler)failure {
+    finalAddEmailIDSuccessBlock = success;
+    finalAddEmailIDFailureBlock = failure;
+    User_ZUID = zuid;
     [self getTokenForZUID:zuid WithSuccess:^(NSString *token) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self addLoadingViewInView:[self topViewController].view];
@@ -1783,7 +1785,7 @@ andFailure:(requestLogoutFailureBlock)failure{
                                                             DLog(@"Success Response ");
                                                             self->AddSecondaryEmailURL = [NSString stringWithFormat:@"%@%@?temp_token=%@&action=secondary_email",[self getAccountsURLFromKeychainForZUID:zuid],kSSOAddSecondaryEmail_URL,[jsonDict objectForKey:@"message"]];
                                                              dispatch_async(dispatch_get_main_queue(), ^{
-                                                                 [self presentSSOSFSafariViewControllerWithSuccess:nil andFailure:self->finalAddEmailIDBlock];
+                                                                 [self presentSSOSFSafariViewControllerWithSuccess:self->finalAddEmailIDSuccessBlock andFailure:self->finalAddEmailIDFailureBlock];
                                                                  
                                                              });
                                                         }else{
@@ -1792,12 +1794,12 @@ andFailure:(requestLogoutFailureBlock)failure{
                                                             NSMutableDictionary *userInfo = [[NSMutableDictionary alloc]init];
                                                             [userInfo setValue:@"Add secondary email Server Error Occured" forKey:NSLocalizedDescriptionKey];
                                                             NSError *returnError = [NSError errorWithDomain:kSSOKitErrorDomain code:k_SSONativeSignInServerError userInfo:userInfo];
-                                                            self->finalAddEmailIDBlock(returnError);
+                                                            self->finalAddEmailIDFailureBlock(returnError);
                                                         }
                                                     } failureBlock:^(SSOInternalError errorType, NSError* error) {
                                                         [self hideLoadingIndicator];
                                                         DLog(@"Failure Response");
-                                                        [self handleSecondaryEmailError:errorType error:error failureBlock:self->finalAddEmailIDBlock];
+                                                        [self handleSecondaryEmailError:errorType error:error failureBlock:self->finalAddEmailIDFailureBlock];
                                                     }];
     } andFailure:^(NSError *error) {
         failure(error);
@@ -2014,11 +2016,7 @@ andFailure:(requestLogoutFailureBlock)failure{
 }
 
 //Scope Enhancement
--(void)enhanceScopeWithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
-                    andFailure:(ZSSOKitScopeEnhancementFailureHandler)failure{
-    [self enhanceScopeForZuid:[self getCurrentUserZUIDFromKeychain] WithSuccess:success andFailure:failure];
-}
--(void)enhanceScopeForZuid:(NSString *)zuid WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
+-(void)enhanceScopeForZuid:(NSString *)zuid ignorePasswordPrompt:(BOOL)ignorePasswordVerification WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
                 andFailure:(ZSSOKitScopeEnhancementFailureHandler)failure{
 
     finalScopeEnhancementSuccessBlock = success;
@@ -2065,19 +2063,19 @@ andFailure:(requestLogoutFailureBlock)failure{
                                 [paramsAndHeaders setValue:@"prd" forKey:@"appid"];
                             }
 
-                            [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid WithSuccess:success andFailure:failure];
+                            [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid ignorePasswordPrompt:ignorePasswordVerification WithSuccess:success andFailure:failure];
                         }else{
                             //DCToken Error Fallback
-                            [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid WithSuccess:success andFailure:failure];
+                            [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid ignorePasswordPrompt:ignorePasswordVerification WithSuccess:success andFailure:failure];
                         }
                     }];
                 }else{
                     //DCToken Device not Supported fallback
-                    [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid WithSuccess:success andFailure:failure];
+                    [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid ignorePasswordPrompt:ignorePasswordVerification  WithSuccess:success andFailure:failure];
                 }
             }else{
                 // iOS 11 below fallback
-                [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid WithSuccess:success andFailure:failure];
+                [self makeScopeEnhancementPostToServerHavingParams:paramsAndHeaders forZuid:zuid ignorePasswordPrompt:ignorePasswordVerification WithSuccess:success andFailure:failure];
             }
             #endif
         }
@@ -2086,7 +2084,7 @@ andFailure:(requestLogoutFailureBlock)failure{
     }];
 }
 
--(void)makeScopeEnhancementPostToServerHavingParams:(NSMutableDictionary *)paramsAndHeaders forZuid:(NSString *)zuid WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
+-(void)makeScopeEnhancementPostToServerHavingParams:(NSMutableDictionary *)paramsAndHeaders forZuid:(NSString *)zuid ignorePasswordPrompt:(BOOL)ignorePasswordVerification WithSuccess:(ZSSOKitScopeEnhancementSuccessHandler)success
                                          andFailure:(ZSSOKitScopeEnhancementFailureHandler)failure{
     //URL
     NSString *urlString = [NSString stringWithFormat:@"%@%@",[self getAccountsURLFromKeychainForZUID:zuid],kSSOScopeEnhancement_URL];
@@ -2098,17 +2096,26 @@ andFailure:(requestLogoutFailureBlock)failure{
         //Request success
         if([[jsonDict objectForKey:@"status"] isEqualToString:@"success"]){
             DLog(@"Success Response ");
-            NSString *scopeEnhancementAccessToken = [jsonDict objectForKey:@"scope_token"];
             
-            NSString* enhancementPageURL = [NSString stringWithFormat:@"%@%@?client_id=%@&redirect_uri=%@&state=Test&response_type=code&access_type=offline&scope_token=%@",[self getAccountsURLFromKeychainForZUID:zuid],kSSOAddScope_URL,self->ClientID,self->UrlScheme,scopeEnhancementAccessToken];
-            
-            // exclude scopes for default scoped client
-            if(![ZIAMUtil sharedUtil].donotSendScopesParam){
-                enhancementPageURL = [enhancementPageURL stringByAppendingFormat:@"&scope=%@",self->Scopes];
+            if (!ignorePasswordVerification) {
+                NSString *scopeEnhancementAccessToken = [jsonDict objectForKey:@"scope_token"];
+                
+                NSString* enhancementPageURL = [NSString stringWithFormat:@"%@%@?client_id=%@&redirect_uri=%@&state=Test&response_type=code&access_type=offline&scope_token=%@",[self getAccountsURLFromKeychainForZUID:zuid],kSSOAddScope_URL,self->ClientID,self->UrlScheme,scopeEnhancementAccessToken];
+                
+                // exclude scopes for default scoped client
+                if(![ZIAMUtil sharedUtil].donotSendScopesParam){
+                    enhancementPageURL = [enhancementPageURL stringByAppendingFormat:@"&scope=%@",self->Scopes];
+                }
+                self->ScopeEnhancementUrl = enhancementPageURL;
+                //present SFSafari to show scope enhancement
+                [self presentSSOSFSafariViewControllerWithSuccess:success andFailure:failure];
+            } else {
+                NSMutableDictionary *userInfo = [[NSMutableDictionary alloc]init];
+                [userInfo setValue:@"Re-authenication needed" forKey:NSLocalizedDescriptionKey];
+                NSError *returnError = [NSError errorWithDomain:kSSOKitErrorDomain code:k_SSOScopeEnhancementReauthNeeded userInfo:userInfo];
+                failure(returnError);
+                return;
             }
-            self->ScopeEnhancementUrl = enhancementPageURL;
-            //present SFSafari to show scope enhancement
-            [self presentSSOSFSafariViewControllerWithSuccess:success andFailure:failure];
         }else{
             //failure handling...
             if([[jsonDict objectForKey:@"reason"] isEqualToString:@"scope_enhanced"]){
@@ -2541,7 +2548,7 @@ andFailure:(requestLogoutFailureBlock)failure{
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSString *oneauthscheme = self->IAMURLScheme;
                     NSString* urlString = [NSString stringWithFormat:@"%@?scheme=%@&appname=%@",oneauthscheme,self->UrlScheme,self->AppName];
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                 });
 #endif
 #endif
@@ -2569,7 +2576,7 @@ andFailure:(requestLogoutFailureBlock)failure{
 #if !TARGET_OS_WATCH
                         dispatch_async(dispatch_get_main_queue(), ^{
                             NSString* urlString = [NSString stringWithFormat:@"%@?scheme=%@&appname=%@",myzohoscheme,self->UrlScheme,self->AppName];
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString] options:@{} completionHandler:NULL];
                         });
 #endif
 #endif
@@ -3220,7 +3227,13 @@ ignorePasswordVerification:(BOOL)ignorePasswordVerification
     return nil;
 }
 
-
+-(void)clearWebSiteData:(responseSuccessBlock)completion {
+    if (@available(iOS 16.0, *)) {
+#if !SSO_APP__EXTENSION_API_ONLY && !TARGET_OS_UIKITFORMAC
+        [[SFSafariViewControllerDataStore defaultDataStore] clearWebsiteDataWithCompletionHandler:completion];
+#endif
+    }
+}
 
 @end
 

@@ -160,7 +160,3 @@ struct AttachedFileDetailView: View {
         }
     }
 }
-
-#Preview {
-    AttachedFileDetailView(viewModel: HomeViewModel(), bundleProperty: BundleProperties(bundleName: "Default App", bundleVersionShort: "1.0", bundleVersion: "1111", bundleIdentifier: "com.default.bundlename.ios"))
-}

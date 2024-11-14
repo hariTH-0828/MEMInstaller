@@ -15,6 +15,9 @@
 
 //ClearAll Data From Keychain
 -(void)appFirstLaunchClearDataFromKeychain{
+    [[ZIAMUtil sharedUtil] clearWebSiteData:^{
+        
+    }];
     NSArray *items = [SSOKeyChainWrapper itemsForService:kServiceKeychainItem accessGroup:self.ExtensionAppGroup];
     for (NSDictionary *item in items) {
         NSString *key = [item valueForKey:(NSString *)kSecAttrAccount];
@@ -452,4 +455,17 @@
     [SSOKeyChainWrapper removeItemForKey:tempTokenKey];
 }
 
+-(BOOL)getOneAuthApplockStatus {
+    return [SSOKeyChainWrapper boolForKey:kSSOOneAuthApplock_KEY service:Service accessGroup:AccessGroup];
+}
+
+-(BOOL)getIsBiometricEnabledForUser:(NSString *)zuid {
+    NSString *key = [NSString stringWithFormat:@"%@_%@", kSSOOneAuthMFAWithBiometric,zuid];
+    return [SSOKeyChainWrapper boolForKey:key service:Service accessGroup:AccessGroup];
+}
+
+-(BOOL)getIsMFASetupCompletedForUser:(NSString *)zuid {
+    NSString *key = [NSString stringWithFormat:@"%@_%@", kSSOOneAuthSetupCompleted,zuid];
+    return [SSOKeyChainWrapper boolForKey:key service:Service accessGroup:AccessGroup];
+}
 @end

@@ -288,17 +288,9 @@ sourceApplication:(NSString *)sourceApplication
 +(NSDictionary *)getDCLInfoForZuid:(NSString *)zuid{
     return [[ZIAMUtil sharedUtil] ziamgetDCLInfoForZuid:zuid];
 }
- 
-+(void)enhanceScopes:(ZSSOKitScopeEnhancementHandler)enhanceHandler{
-    [[ZIAMUtil sharedUtil] enhanceScopeWithSuccess:^(NSString *token) {
-        enhanceHandler(token,nil);
-    } andFailure:^(NSError *error) {
-        enhanceHandler(nil,error);
-    }];
-}
 
-+(void)enhanceScopesForZUID:(NSString *)zuid handler:(ZSSOKitScopeEnhancementHandler)enhanceHandler{
-    [[ZIAMUtil sharedUtil] enhanceScopeForZuid:zuid WithSuccess:^(NSString *token) {
++(void)enhanceScopesForZUID:(NSString *)zuid ignorePasswordPrompt:(BOOL)ignorePasswordVerification handler:(ZSSOKitScopeEnhancementHandler)enhanceHandler{
+    [[ZIAMUtil sharedUtil] enhanceScopeForZuid:zuid ignorePasswordPrompt: ignorePasswordVerification WithSuccess:^(NSString *token) {
         enhanceHandler(token,nil);
     } andFailure:^(NSError *error) {
         enhanceHandler(nil,error);
@@ -570,11 +562,23 @@ WithOTPCode:(NSString *)OTP
     }];
 }
 
-+ (void)addSecondaryEmailIDForZUID:(NSString *)zuid WithCallback:(ZSSOKitAddEmailIDHandler)failure {
-    [[ZIAMUtil sharedUtil] addSecondaryEmailIDForZUID:zuid WithCallback:failure];
++ (void)addSecondaryEmailIDForZUID:(NSString *)zuid WithCallback:(ZSSOKitAddEmailIDHandler)handler {
+    [[ZIAMUtil sharedUtil] addSecondaryEmailIDForZUID:zuid WithSuccess:^(NSString *token) {
+        handler(token, nil);
+    } andFailure:^(NSError *error) {
+        handler(nil, error);
+    }];
 }
 
-+ (void)addSecondaryEmailIDWithCallback:(ZSSOKitAddEmailIDHandler)failure {
-    [[ZIAMUtil sharedUtil] addSecondaryEmailIDForZUID:[[ZIAMUtil sharedUtil] getCurrentUserZUIDFromKeychain] WithCallback:failure];
++ (void)addSecondaryEmailIDWithCallback:(ZSSOKitAddEmailIDHandler)handler {
+    [[ZIAMUtil sharedUtil] addSecondaryEmailIDForZUID:[[ZIAMUtil sharedUtil] getCurrentUserZUIDFromKeychain] WithSuccess:^(NSString *token) {
+        handler(token, nil);
+    } andFailure:^(NSError *error) {
+        handler(nil, error);
+    }];
+}
+
+-(void)clearWebSiteData:(responseSuccessBlock)completion {
+    [[ZIAMUtil sharedUtil] clearWebSiteData:completion];
 }
 @end

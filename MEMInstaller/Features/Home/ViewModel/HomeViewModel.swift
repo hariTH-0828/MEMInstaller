@@ -15,7 +15,13 @@ class HomeViewModel: ObservableObject {
     @Published var bundleProperties: BundleProperties?
     @Published var isFileLoaded: Bool = false
     
+    @Published var isLoading: Bool = true
+    @Published var isPresentFile: Bool = false
+    @Published var isPresentSetting: Bool = false
+    @Published private(set) var buckets: [BucketModel] = []
+    
     let userDataManager = UserDataManager()
+    let repository: StratusRepository
     
     private var sourceURL: URL?
     var plistDictionary: [String: Any] = [:] {
@@ -38,13 +44,27 @@ class HomeViewModel: ObservableObject {
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
-    init() {
+    init(_ repository: StratusRepository) {
+        self.repository = repository
         retriveLoggedUserFromKeychain()
     }
     
     // MARK: - User Profile
     private func retriveLoggedUserFromKeychain() {
         self.userprofile = userDataManager.retriveLoggedUserFromKeychain()
+    }
+    
+    // MARK: Fetch bucket information
+    func fetchBucket() async {
+        do {
+            self.buckets = try await repository.getAllBuckets()
+            isLoading = false
+            print(buckets)
+        }catch {
+            ZLogs.shared.error("Error in FetchBucket() - \(error.localizedDescription)")
+            presentToast(message: error.localizedDescription)
+            isLoading = false
+        }
     }
     
     // MARK: - Bundle Info
