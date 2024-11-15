@@ -9,12 +9,19 @@ import Alamofire
 
 final class StratusRepositoryImpl: StratusRepository {
     
-    func getAllBuckets() async throws -> [BucketModel] {
+    func getAllObjects(_ params: Parameters?) async throws -> BucketObjectModel {
         do {
-            let networkRequest = NetworkRequest(endpoint: .bucket)
-            return try await GET<DataModel<[BucketModel]>>(request: networkRequest).execute().data
+            let networkRequest = NetworkRequest(endpoint: .objects, parameters: params)
+            return try await GET<DataModel<BucketObjectModel>>(request: networkRequest).execute().data
         }catch {
+            ZLogs.shared.error(error.localizedDescription)
             throw error
+        }
+    }
+    
+    func uploadObjects() async throws {
+        do {
+            
         }
     }
 }

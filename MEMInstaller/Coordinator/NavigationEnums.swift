@@ -16,8 +16,24 @@ enum Screen: Identifiable, Hashable {
 
 enum Sheet: Identifiable, Hashable {
     case settings(viewModel: HomeViewModel)
+    case attachedDetail(viewModel: HomeViewModel, property: BundleProperties)
     
     var id: Self { self }
+}
+
+extension Screen {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .home:
+            hasher.combine(self)
+        case .login:
+            hasher.combine(self)
+        }
+    }
+    
+    static func == (lhs: Screen, rhs: Screen) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
 }
 
 extension Sheet {
@@ -25,16 +41,13 @@ extension Sheet {
     func hash(into hasher: inout Hasher) {
         switch self {
         case .settings(let viewModel):
-            hasher.combine("Settings")
+            hasher.combine(ObjectIdentifier(viewModel))
+        case .attachedDetail(let viewModel, let property):
             hasher.combine(ObjectIdentifier(viewModel))
         }
     }
     
     static func == (lhs: Sheet, rhs: Sheet) -> Bool {
-        switch (lhs, rhs) {
-        case(.settings, .settings):
-            return true
-        }
+        return lhs.hashValue == rhs.hashValue
     }
-    
 }

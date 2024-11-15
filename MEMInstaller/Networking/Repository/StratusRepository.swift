@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import Alamofire
 
 protocol StratusRepository {
-    func getAllBuckets() async throws -> [BucketModel]
+    func getAllObjects(_ params: Parameters?) async throws -> BucketObjectModel
+    func uploadObjects() async throws
 }

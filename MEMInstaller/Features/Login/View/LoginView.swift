@@ -10,10 +10,6 @@ import MEMToast
 
 struct LoginView: View {
     @StateObject private var appViewModel: AppViewModel = AppViewModel.shared
-    
-    init() {
-        print("Initiating Login view...")
-    }
 
     var body: some View {
         NavigationStack {

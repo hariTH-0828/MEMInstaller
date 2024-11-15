@@ -19,3 +19,10 @@ protocol CoordinatorProtocol: ObservableObject {
     // Presentation
     func presentSheet(_ sheet: Sheet)
 }
+
+protocol FileImporterProtocol: ObservableObject {
+    var shouldShowFileImporter: Bool { get set }
+    var fileImportCompletion: ((Result<URL, Error>) -> Void)? { get set }
+
+    func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void)
+}

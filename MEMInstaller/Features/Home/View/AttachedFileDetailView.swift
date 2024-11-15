@@ -28,7 +28,7 @@ struct AttachedFileDetailView: View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    appIconView(viewModel.appIcon)
+                    appIconView(viewModel.packageHandler.appIcon)
                     bundleNameWithIdentifierView()
                 }
                 .padding(.horizontal)
@@ -55,14 +55,14 @@ struct AttachedFileDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Export", systemImage: "square.and.arrow.down") {
-                        viewModel.generatePrivacyList {
+                        viewModel.packageHandler.generatePrivacyList {
                             isPresentExport.toggle()
                         }
                     }
                 }
             }
             .sheet(isPresented: $isPresentExport, content: {
-                ActivityViewRepresentable(activityItems: viewModel.shareItem) { completion, error in
+                ActivityViewRepresentable(activityItems: viewModel.packageHandler.shareItem) { completion, error in
                     if let error = error {
                         viewModel.presentToast(message: error.localizedDescription)
                     }else if completion {
@@ -129,7 +129,7 @@ struct AttachedFileDetailView: View {
     @ViewBuilder
     private func installBtnView() -> some View {
         Button(action: {
-            viewModel.executeInstall("https://packages-development.zohostratus.com/plist/ZohoFaciMap.plist")
+            viewModel.packageHandler.executeInstall("https://packages-development.zohostratus.com/plist/ZohoFaciMap.plist")
         }, label: {
             Text("Install")
                 .font(.system(size: 18, weight: .semibold))

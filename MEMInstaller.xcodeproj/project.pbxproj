@@ -45,6 +45,14 @@
 		52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */; };
 		52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */; };
 		52E109DF2CE66ED7002D1EDD /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */; };
+		52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E02CE67994002D1EDD /* EmptyBucketView.swift */; };
+		52E109E32CE679EE002D1EDD /* BucketListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E22CE679EE002D1EDD /* BucketListView.swift */; };
+		52E109E52CE67A2B002D1EDD /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52E109E42CE67A2B002D1EDD /* Launch Screen.storyboard */; };
+		52E109E72CE70671002D1EDD /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E62CE70671002D1EDD /* View+.swift */; };
+		52E109E92CE70725002D1EDD /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E82CE70725002D1EDD /* Color+.swift */; };
+		52E109EB2CE70A7F002D1EDD /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */; };
+		52E109ED2CE75C18002D1EDD /* BucketObjectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109EC2CE75C18002D1EDD /* BucketObjectModel.swift */; };
+		52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */; };
 		52F393A62CE47ABD00C9B23C /* UserManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */; };
 		52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393A72CE47AFF00C9B23C /* UserDataManager.swift */; };
 		52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393B22CE5202D00C9B23C /* ConnectionStatus.swift */; };
@@ -124,6 +132,14 @@
 		52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
 		52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
 		52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
+		52E109E02CE67994002D1EDD /* EmptyBucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBucketView.swift; sourceTree = "<group>"; };
+		52E109E22CE679EE002D1EDD /* BucketListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketListView.swift; sourceTree = "<group>"; };
+		52E109E42CE67A2B002D1EDD /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		52E109E62CE70671002D1EDD /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
+		52E109E82CE70725002D1EDD /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
+		52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
+		52E109EC2CE75C18002D1EDD /* BucketObjectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketObjectModel.swift; sourceTree = "<group>"; };
+		52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageExtractionHandler.swift; sourceTree = "<group>"; };
 		52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManagerProtocol.swift; sourceTree = "<group>"; };
 		52F393A72CE47AFF00C9B23C /* UserDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataManager.swift; sourceTree = "<group>"; };
 		52F393B22CE5202D00C9B23C /* ConnectionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus.swift; sourceTree = "<group>"; };
@@ -224,11 +240,13 @@
 				523F71FD2CDB33C200D564E7 /* Resources */,
 				523F71FC2CDB33BA00D564E7 /* Features */,
 				523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */,
+				523F71D42CDB323100D564E7 /* ContentView.swift */,
 				523F72072CDB355900D564E7 /* AppDelegate.swift */,
 				523F72142CDB368500D564E7 /* AppViewModel.swift */,
 				52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */,
 				52F393A72CE47AFF00C9B23C /* UserDataManager.swift */,
 				523F72042CDB352A00D564E7 /* Info.plist */,
+				52E109E42CE67A2B002D1EDD /* Launch Screen.storyboard */,
 			);
 			path = MEMInstaller;
 			sourceTree = "<group>";
@@ -326,6 +344,9 @@
 				523F722C2CDB690000D564E7 /* UIColor+.swift */,
 				523F72382CDB8DDB00D564E7 /* UTType+.swift */,
 				523F72482CDBAD9D00D564E7 /* UIImage+.swift */,
+				52E109E62CE70671002D1EDD /* View+.swift */,
+				52E109E82CE70725002D1EDD /* Color+.swift */,
+				52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -352,9 +373,10 @@
 		523F72052CDB354400D564E7 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				523F71D42CDB323100D564E7 /* ContentView.swift */,
 				523F721A2CDB37D000D564E7 /* HomeView.swift */,
 				523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */,
+				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
+				52E109E22CE679EE002D1EDD /* BucketListView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -422,6 +444,7 @@
 			isa = PBXGroup;
 			children = (
 				523F72342CDB794700D564E7 /* HomeViewModel.swift */,
+				52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -458,6 +481,7 @@
 			children = (
 				52F393C22CE5DC6C00C9B23C /* BucketModel.swift */,
 				52F393C42CE5DCAD00C9B23C /* DataModel.swift */,
+				52E109EC2CE75C18002D1EDD /* BucketObjectModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -604,6 +628,7 @@
 			files = (
 				523F72112CDB364B00D564E7 /* Localizable.strings in Resources */,
 				523F71DA2CDB323600D564E7 /* Preview Assets.xcassets in Resources */,
+				52E109E52CE67A2B002D1EDD /* Launch Screen.storyboard in Resources */,
 				523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -736,6 +761,7 @@
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
+				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
 				52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */,
@@ -753,6 +779,7 @@
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
+				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
 				52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72192CDB36DB00D564E7 /* SettingsView.swift in Sources */,
@@ -760,9 +787,13 @@
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
 				52F393B92CE5D15F00C9B23C /* NetworkRequestProtocol.swift in Sources */,
+				52E109E72CE70671002D1EDD /* View+.swift in Sources */,
 				52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */,
 				52F393BD2CE5D9EE00C9B23C /* TokenProviderProtocol.swift in Sources */,
+				52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */,
 				523F72082CDB355900D564E7 /* AppDelegate.swift in Sources */,
+				52E109E32CE679EE002D1EDD /* BucketListView.swift in Sources */,
+				52E109ED2CE75C18002D1EDD /* BucketObjectModel.swift in Sources */,
 				523F71D52CDB323100D564E7 /* ContentView.swift in Sources */,
 				523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */,
 				52F393B52CE520A800C9B23C /* ZAPIStrings.swift in Sources */,
@@ -770,6 +801,7 @@
 				523F72232CDB4AB800D564E7 /* KeyChainKeys.swift in Sources */,
 				523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */,
 				52F393C02CE5DBF000C9B23C /* StratusRepository.swift in Sources */,
+				52E109EB2CE70A7F002D1EDD /* UIViewController+.swift in Sources */,
 				520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */,
 				523F723F2CDB915E00D564E7 /* ZError.swift in Sources */,
 				523F72372CDB7A9B00D564E7 /* LetterAvatar.swift in Sources */,
@@ -949,6 +981,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -986,6 +1019,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

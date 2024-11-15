@@ -13,5 +13,6 @@ struct ZAPIStrings {
     
     enum Endpoint: String {
         case bucket = "/bucket"
+        case objects = "/bucket/objects"
     }
 }

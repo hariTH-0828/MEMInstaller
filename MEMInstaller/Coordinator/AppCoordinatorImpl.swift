@@ -7,9 +7,12 @@
 
 import SwiftUI
 
-class AppCoordinatorImpl: CoordinatorProtocol {
+class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
     @Published var path: NavigationPath = NavigationPath()
     @Published var sheet: Sheet?
+    @Published var shouldShowFileImporter: Bool = false
+    
+    var fileImportCompletion: ((Result<URL, Error>) -> Void)?
     
     func push(_ screen: Screen) {
         path.append(screen)
@@ -25,6 +28,11 @@ class AppCoordinatorImpl: CoordinatorProtocol {
     
     func presentSheet(_ sheet: Sheet) {
         self.sheet = sheet
+    }
+    
+    func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void) {
+        self.fileImportCompletion = completion
+        self.shouldShowFileImporter = true
     }
     
     // MARK: Presentation Style Providers
@@ -43,6 +51,8 @@ class AppCoordinatorImpl: CoordinatorProtocol {
         switch sheet {
         case .settings(viewModel: let viewModel):
             SettingView(viewModel: viewModel)
+        case .attachedDetail(viewModel: let viewModel, property: let property):
+            AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
         }
     }
 }

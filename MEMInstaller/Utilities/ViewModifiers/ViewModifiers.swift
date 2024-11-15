@@ -97,6 +97,7 @@ struct ZLabel<Title: View, Icon: View>: View {
     }
 }
 
+// MARK: - LoaderView
 struct LoaderView<Content: View, Loader: View>: View {
     @Binding var isLoading: Bool
     let content: Content
@@ -127,6 +128,7 @@ struct LoaderView<Content: View, Loader: View>: View {
     }
 }
 
+// MARK: - ShowAlert
 func showAlert(_ title: String = "", message: String, _ actionHandler: ((UIAlertAction) -> Void)? = nil) {
     if let scenes = UIApplication.shared.connectedScenes.first as? UIWindowScene {
         if let topView = scenes.windows.first?.rootViewController {
@@ -134,5 +136,38 @@ func showAlert(_ title: String = "", message: String, _ actionHandler: ((UIAlert
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: actionHandler))
             topView.present(alert, animated: true)
         }
+    }
+}
+
+// MARK: - LabelWithFieldItem
+struct LabelWithFieldItem<Content>: View where Content: View {
+    let label: String
+    let isMandatory: Bool
+    let content: Content
+    
+    init(label: String, isMandatory: Bool = false, content: () -> Content) {
+        self.label = label
+        self.isMandatory = isMandatory
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 2) {
+                Text(label)
+                    .foregroundStyle(.placeholder)
+                
+                if isMandatory {
+                    Text(" *")
+                        .foregroundStyle(.red)
+                        .baselineOffset(-2)
+                }
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            content
+        }
+        .padding(.vertical, 3)
     }
 }

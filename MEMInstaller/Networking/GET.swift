@@ -34,6 +34,7 @@ class GET<T: Codable> {
             print("*** Headers ***\n\(request.headers)")
             
             let afRequest = await AF.request(url, method: .get,
+                                             parameters: request.parameters,
                                              encoding: URLEncoding.default,
                                              headers: request.headers).serializingDecodable(T.self, automaticallyCancelling: true).response
 
