@@ -18,28 +18,27 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            LoaderView(isLoading: $viewModel.isLoading) {
-                ZStack {
-                    if let bucket = viewModel.bucket, !bucket.contents.isEmpty {
-                        List(bucket.contents, id: \.self) { bucket in
-                            // Handle data available
-                        }
-                    }else {
-                        EmptyBucketView(viewModel: viewModel)
+            LoaderView(isLoading: $viewModel.isLoading, content: {
+                if let allObject = viewModel.allObject, !allObject.isEmpty {
+                    List(Array(allObject.keys).sorted(), id: \.self) { object in
+                        NavigationLink(object) {}
                     }
+                }else {
+                    EmptyBucketView(viewModel: viewModel)
                 }
-                .onChange(of: viewModel.packageHandler.bundleProperties, { _, newValue in
-                    guard let newValue else { return }
-                    appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, property: newValue))
-                })
-            }
+            })
             .navigationTitle("com.learn.meminstaller.home.title")
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
             .toolbar { settingToolBarItem() }
+            .onChange(of: viewModel.packageHandler.bundleProperties, { _, newValue in
+                guard let newValue else { return }
+                appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, property: newValue))
+            })
             .task {
-                await viewModel.fetchBucket()
+                await viewModel.fetchFoldersFromBucket()
             }
         }
+            
     }
     
     private func settingToolBarItem() -> some ToolbarContent {
@@ -61,7 +60,6 @@ struct HomeView: View {
             .clipShape(Circle())
     }
 }
-
 
 struct HomeViewPreviewProvider: PreviewProvider {
     

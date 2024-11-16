@@ -8,7 +8,13 @@
 import Foundation
 import Alamofire
 
+@frozen
+enum ViewState {
+    case loading
+    case response(_ T: Codable)
+}
+
 protocol StratusRepository {
-    func getAllObjects(_ params: Parameters?) async throws -> BucketObjectModel
+    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel
     func uploadObjects() async throws
 }

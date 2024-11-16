@@ -9,9 +9,10 @@ import Alamofire
 
 final class StratusRepositoryImpl: StratusRepository {
     
-    func getAllObjects(_ params: Parameters?) async throws -> BucketObjectModel {
+    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel {
+        let networkRequest = NetworkRequest(endpoint: .objects, parameters: params)
+        
         do {
-            let networkRequest = NetworkRequest(endpoint: .objects, parameters: params)
             return try await GET<DataModel<BucketObjectModel>>(request: networkRequest).execute().data
         }catch {
             ZLogs.shared.error(error.localizedDescription)
@@ -20,8 +21,6 @@ final class StratusRepositoryImpl: StratusRepository {
     }
     
     func uploadObjects() async throws {
-        do {
-            
-        }
+        // Implement upload functionality
     }
 }

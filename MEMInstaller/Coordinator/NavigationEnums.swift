@@ -42,7 +42,7 @@ extension Sheet {
         switch self {
         case .settings(let viewModel):
             hasher.combine(ObjectIdentifier(viewModel))
-        case .attachedDetail(let viewModel, let property):
+        case .attachedDetail(let viewModel, _):
             hasher.combine(ObjectIdentifier(viewModel))
         }
     }

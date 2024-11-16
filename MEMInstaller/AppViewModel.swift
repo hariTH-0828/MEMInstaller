@@ -18,6 +18,9 @@ final class AppViewModel: ObservableObject {
     @Published var isPresentToast: Bool = false
     
     private init() {
+        /// Initiate IAM
+        ZIAMManager.initiate(with: getWindow)
+        
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
     }
     

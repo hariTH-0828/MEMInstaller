@@ -7,6 +7,16 @@
 
 import Foundation
 
+enum ContentKeyType: String {
+    case folder = "folder"
+    case file = "file"
+}
+
+enum ContentType: String {
+    case document = "application/octet-stream"
+    case png = "image/png"
+}
+
 struct BucketObjectModel: Codable, Hashable {
     let prefix: String?
     let keyCount: Int
@@ -32,20 +42,27 @@ struct ContentModel: Codable, Hashable {
     let keyType: String
     let key: String
     let size: Decimal
+    let contentType: String?
     let url: String
+    let actualKeyType: ContentKeyType
+    let actualContentType: ContentType
     
     enum CodingKeys: String, CodingKey {
         case keyType = "key_type"
         case key = "key"
         case size = "size"
+        case contentType = "content_type"
         case url = "object_url"
     }
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.keyType = try container.decode(String.self, forKey: .keyType)
+        self.actualKeyType = ContentKeyType(rawValue: keyType)!
         self.key = try container.decode(String.self, forKey: .key)
         self.size = try container.decode(Decimal.self, forKey: .size)
+        self.contentType = try container.decodeIfPresent(String.self, forKey: .contentType)
+        self.actualContentType = ContentType(rawValue: contentType ?? "application/octet-stream")!
         self.url = try container.decode(String.self, forKey: .url)
     }
 }

@@ -13,7 +13,7 @@ import Alamofire
 class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userprofile: ZUserProfile?
-    @Published private(set) var bucket: BucketObjectModel?
+    @Published private(set) var allObject: [String: [ContentModel]]?
     @Published var isLoading: Bool = true
     
     let userDataManager = UserDataManager()
@@ -36,23 +36,48 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: Fetch bucket information
-    func fetchBucket() async {
-        guard let email = userprofile?.email else { return }
-        
-        do {
-            let params: Parameters = ["bucket_name": "packages", "prefix": "\(email)/ipa/"]
-            self.bucket = try await repository.getAllObjects(params)
-            isLoading = false
-            print(bucket!)
-        }catch {
-            ZLogs.shared.error("Error in FetchBucket() - \(error.localizedDescription)")
-            presentToast(message: error.localizedDescription)
-            isLoading = false
+    func fetchFoldersFromBucket() async {
+        if let email = userprofile?.email {
+            let params: Parameters = ["bucket_name": "packages", "prefix": "\(email)/"]
+            
+            do {
+                let bucketObject = try await repository.getFoldersFromBucket(params)
+                
+                // Iterate and save all file objects from the folder
+                if !bucketObject.contents.isEmpty {
+                    await getFilesFromTheFolder(bucketObject)
+                }else {
+                    withAnimation { isLoading = false }
+                }
+            }catch {
+                withAnimation { isLoading = false }
+                presentToast(message: error.localizedDescription)
+            }
         }
     }
     
-    func a() {
+    private func getFilesFromTheFolder(_ rootObject: BucketObjectModel) async {
+        for content in rootObject.contents {
+            // Check whether key type is folder
+            if content.actualKeyType == .folder {
+                // Get folder name
+                let folderName = URL(string: content.url)!.lastPathComponent
+                print("Folder name: \(folderName)")
+                
+                let params: Parameters = ["bucket_name": "packages", "prefix": "\(content.key)/"]
+                
+                do {
+                    let fileObjects = try await repository.getFoldersFromBucket(params).contents
+                    self.allObject?[folderName] = fileObjects
+                }catch {
+                    withAnimation { isLoading = false }
+                    ZLogs.shared.info(error.localizedDescription)
+                    presentToast(message: error.localizedDescription)
+                }
+            }
+        }
         
+        withAnimation { isLoading = false }
     }
     
     func presentToast(message: String?) {

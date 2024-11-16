@@ -11,10 +11,6 @@ import SwiftUI
 struct MEMInstallerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
-    init() {
-        ZIAMManager.initiate()
-    }
-    
     var body: some Scene {
         WindowGroup {
             ContentView()
