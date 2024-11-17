@@ -53,6 +53,9 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
             SettingView(viewModel: viewModel)
         case .attachedDetail(viewModel: let viewModel, property: let property):
             AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
+        case .appDetail(content: let contents):
+            DetailView(content: contents)
+                .presentationDetents([.medium, .large])
         }
     }
 }

@@ -13,7 +13,7 @@ import Alamofire
 class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userprofile: ZUserProfile?
-    @Published private(set) var allObject: [String: [ContentModel]]?
+    @Published private(set) var allObject: [String: [ContentModel]] = [String: [ContentModel]]()
     @Published var isLoading: Bool = true
     
     let userDataManager = UserDataManager()
@@ -62,13 +62,11 @@ class HomeViewModel: ObservableObject {
             if content.actualKeyType == .folder {
                 // Get folder name
                 let folderName = URL(string: content.url)!.lastPathComponent
-                print("Folder name: \(folderName)")
-                
                 let params: Parameters = ["bucket_name": "packages", "prefix": "\(content.key)/"]
                 
                 do {
                     let fileObjects = try await repository.getFoldersFromBucket(params).contents
-                    self.allObject?[folderName] = fileObjects
+                    self.allObject[folderName] = fileObjects
                 }catch {
                     withAnimation { isLoading = false }
                     ZLogs.shared.info(error.localizedDescription)

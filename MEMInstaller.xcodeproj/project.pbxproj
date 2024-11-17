@@ -41,6 +41,8 @@
 		523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */; };
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
+		52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */; };
+		52D0B5452CEA758300214F41 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5442CEA758300214F41 /* DetailView.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
 		52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */; };
 		52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */; };
@@ -128,6 +130,8 @@
 		523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailView.swift; sourceTree = "<group>"; };
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		52D0B5442CEA758300214F41 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
 		52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
@@ -242,6 +246,7 @@
 				523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */,
 				523F71D42CDB323100D564E7 /* ContentView.swift */,
 				523F72072CDB355900D564E7 /* AppDelegate.swift */,
+				52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */,
 				523F72142CDB368500D564E7 /* AppViewModel.swift */,
 				52F393A52CE47ABD00C9B23C /* UserManagerProtocol.swift */,
 				52F393A72CE47AFF00C9B23C /* UserDataManager.swift */,
@@ -279,6 +284,7 @@
 		523F71FC2CDB33BA00D564E7 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				52D0B5422CEA756200214F41 /* Detaiil */,
 				523F72162CDB36CA00D564E7 /* Settings */,
 				523F72032CDB34C100D564E7 /* Login */,
 				523F72022CDB34BD00D564E7 /* Home */,
@@ -455,6 +461,22 @@
 				523F72412CDB9EE400D564E7 /* BundleProperties.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		52D0B5422CEA756200214F41 /* Detaiil */ = {
+			isa = PBXGroup;
+			children = (
+				52D0B5432CEA756A00214F41 /* View */,
+			);
+			path = Detaiil;
+			sourceTree = "<group>";
+		};
+		52D0B5432CEA756A00214F41 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				52D0B5442CEA758300214F41 /* DetailView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		52E109D92CE66B6E002D1EDD /* Coordinator */ = {
@@ -776,6 +798,7 @@
 				523F72392CDB8DDB00D564E7 /* UTType+.swift in Sources */,
 				523F72262CDB4EFC00D564E7 /* ZUserProfile.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
+				52D0B5452CEA758300214F41 /* DetailView.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
@@ -785,6 +808,7 @@
 				523F72192CDB36DB00D564E7 /* SettingsView.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
+				52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
 				52F393B92CE5D15F00C9B23C /* NetworkRequestProtocol.swift in Sources */,
 				52E109E72CE70671002D1EDD /* View+.swift in Sources */,

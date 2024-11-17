@@ -43,6 +43,7 @@ struct ContentModel: Codable, Hashable {
     let key: String
     let size: Decimal
     let contentType: String?
+    let lastModified: String
     let url: String
     let actualKeyType: ContentKeyType
     let actualContentType: ContentType
@@ -52,6 +53,7 @@ struct ContentModel: Codable, Hashable {
         case key = "key"
         case size = "size"
         case contentType = "content_type"
+        case lastModified = "last_modified"
         case url = "object_url"
     }
     
@@ -63,6 +65,7 @@ struct ContentModel: Codable, Hashable {
         self.size = try container.decode(Decimal.self, forKey: .size)
         self.contentType = try container.decodeIfPresent(String.self, forKey: .contentType)
         self.actualContentType = ContentType(rawValue: contentType ?? "application/octet-stream")!
+        self.lastModified = try container.decode(String.self, forKey: .lastModified)
         self.url = try container.decode(String.self, forKey: .url)
     }
 }

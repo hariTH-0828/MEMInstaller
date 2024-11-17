@@ -9,7 +9,7 @@ import SwiftUI
 import MEMToast
 
 struct ContentView: View {
-    @StateObject private var appViewModel: AppViewModel = AppViewModel.shared
+    @EnvironmentObject var appViewModel: AppViewModel
     @StateObject var appCoordinator: AppCoordinatorImpl = AppCoordinatorImpl()
     
     var body: some View {

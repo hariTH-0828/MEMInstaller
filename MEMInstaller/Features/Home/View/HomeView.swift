@@ -19,17 +19,53 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             LoaderView(isLoading: $viewModel.isLoading, content: {
-                if let allObject = viewModel.allObject, !allObject.isEmpty {
-                    List(Array(allObject.keys).sorted(), id: \.self) { object in
-                        NavigationLink(object) {}
+                if !viewModel.allObject.isEmpty {
+                    List(Array(viewModel.allObject.keys).sorted(), id: \.self) { folderName in
+                        // Get content object and load image
+                        if let contents = viewModel.allObject[folderName] {
+                            
+                            let iconURL = contents.filter({ $0.actualContentType == .png && $0.key.contains("AppIcon60x60@")}).first?.url
+                            
+                            Button(action: {
+                                appCoordinator.presentSheet(.appDetail(content: contents))
+                            }, label: {
+                                Label(
+                                    title: {
+                                        Text(folderName)
+                                            .foregroundStyle(.primary)
+                                            .font(.system(.subheadline))
+                                    },
+                                    icon: {
+                                        appIconView(iconURL, folderName: folderName)
+                                    }
+                                )
+                            })
+                        }
+                    }
+                    .refreshable {
+                        await viewModel.fetchFoldersFromBucket()
                     }
                 }else {
                     EmptyBucketView(viewModel: viewModel)
                 }
             })
             .navigationTitle("com.learn.meminstaller.home.title")
+            .navigationBarTitleDisplayMode(.inline)
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
-            .toolbar { settingToolBarItem() }
+            .toolbar {
+                settingToolBarItem()
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        // Handle side menu
+                    }, label: {
+                        Image("menu")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                    })
+                }
+            }
             .onChange(of: viewModel.packageHandler.bundleProperties, { _, newValue in
                 guard let newValue else { return }
                 appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, property: newValue))
@@ -46,8 +82,12 @@ struct HomeView: View {
             Button(action: {
                 appCoordinator.presentSheet(.settings(viewModel: viewModel))
             }, label: {
-                let userName = viewModel.userprofile?.displayName ?? "Unknown"
-                userImageView(imageWith(name: userName)!)
+                if let profileImageData = viewModel.userprofile?.profileImageData, let uiImage = UIImage(data: profileImageData) {
+                    userImageView(uiImage)
+                }else {
+                    let displayName = viewModel.userprofile?.displayName
+                    userImageView(imageWith(name: displayName)!)
+                }
             })
         }
     }
@@ -56,8 +96,24 @@ struct HomeView: View {
     private func userImageView(_ uiImage: UIImage) -> some View {
         Image(uiImage: uiImage)
             .resizable()
-            .frame(width: 35, height: 35)
-            .clipShape(Circle())
+            .defaultProfileImageStyle()
+    }
+    
+    @ViewBuilder
+    private func appIconView(_ iconURL: String?, folderName: String) -> some View {
+        if let iconURL {
+            AsyncImage(url: URL(string: iconURL)!) { image in
+                image
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } placeholder: {
+                ProgressView()
+                    .progressViewStyle(.circular)
+            }
+        }else {
+            Image(uiImage: imageWith(name: folderName)!)
+        }
     }
 }
 

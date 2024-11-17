@@ -17,6 +17,7 @@ enum Screen: Identifiable, Hashable {
 enum Sheet: Identifiable, Hashable {
     case settings(viewModel: HomeViewModel)
     case attachedDetail(viewModel: HomeViewModel, property: BundleProperties)
+    case appDetail(content: [ContentModel])
     
     var id: Self { self }
 }
@@ -44,6 +45,8 @@ extension Sheet {
             hasher.combine(ObjectIdentifier(viewModel))
         case .attachedDetail(let viewModel, _):
             hasher.combine(ObjectIdentifier(viewModel))
+        case .appDetail(let contents):
+            hasher.combine(contents)
         }
     }
     

@@ -12,14 +12,14 @@ struct DefaultProfileImageView: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .frame(width: 45, height: 45)
-            .aspectRatio(contentMode: .fit)
+            .frame(width: 40, height: 40)
+            .scaledToFit()
             .clipShape(.circle)
             .overlay {
                 Circle()
                     .fill(.clear)
                     .strokeBorder(.gray)
-                    .frame(width: 45, height: 45)
+                    .frame(width: 41, height: 41)
             }
     }
 }

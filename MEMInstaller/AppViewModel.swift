@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SSOKit
 
 final class AppViewModel: ObservableObject {
     static let shared = AppViewModel()
@@ -17,10 +18,12 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
-    private init() {
+    private init() {}
+    
+    @MainActor
+    func initiate(window: UIWindow) {
         /// Initiate IAM
-        ZIAMManager.initiate(with: getWindow)
-        
+        ZIAMManager.initiate(with: window)
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
     }
     
@@ -32,6 +35,7 @@ final class AppViewModel: ObservableObject {
         return nil
     }
     
+    @MainActor
     func IAMLogin() {
         Task {
             // Safe: Delete existing user keychain
@@ -42,9 +46,7 @@ final class AppViewModel: ObservableObject {
                 ZLogs.shared.info("IAM Login success")
                 
                 // Handle success login and save user profile into keychain
-                Task {
-                    await loginSuccessHandler(userLoggedInStatus)
-                }
+                loginSuccessHandler(userLoggedInStatus)
             }catch {
                 presentToast(message: error.localizedDescription)
             }
@@ -87,6 +89,16 @@ final class AppViewModel: ObservableObject {
         }
     }
     
+    @discardableResult
+    func applicationOpenUrlHandling(url: URL,sourceApp: String?)  -> Bool {
+        let ssoHandle = ZSSOKit.handle(url, sourceApplication: sourceApp, annotation: nil)
+         if ssoHandle == true {
+             return true
+         }
+         return true
+    }
+    
+    @MainActor
     private func presentToast(message: String) {
         self.toastMessage = message
         self.isPresentToast = true
