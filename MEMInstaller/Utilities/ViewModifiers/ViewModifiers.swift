@@ -128,6 +128,43 @@ struct LoaderView<Content: View, Loader: View>: View {
     }
 }
 
+// MARK: - Shimmer Effect
+struct ShimmerEffect: ViewModifier {
+    @Binding var enable: Bool
+    @State var isAnimating: Bool = false
+    
+    func body(content: Content) -> some View {
+        content
+            .mask {
+                GeometryReader { geometry in
+                    if enable {
+                        shimmerLayer(in: geometry.size)
+                            .onAppear {
+                                withAnimation(Animation.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                                    self.isAnimating = true
+                                }
+                            }
+                    }
+                }
+            }
+    }
+    
+    @ViewBuilder
+    private func shimmerLayer(in size: CGSize) -> some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.white.opacity(0.8), Color(uiColor: .systemGray5)]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .offset(x: isAnimating ? size.width : -size.width)
+            .opacity(0.5)
+            .clipped()
+    }
+}
+
 // MARK: - ShowAlert
 func showAlert(_ title: String = "", message: String, _ actionHandler: ((UIAlertAction) -> Void)? = nil) {
     if let scenes = UIApplication.shared.connectedScenes.first as? UIWindowScene {

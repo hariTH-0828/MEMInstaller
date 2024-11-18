@@ -51,11 +51,13 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
         switch sheet {
         case .settings(viewModel: let viewModel):
             SettingView(viewModel: viewModel)
-        case .attachedDetail(viewModel: let viewModel, property: let property):
-            AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
-        case .appDetail(content: let contents):
-            DetailView(content: contents)
-                .presentationDetents([.medium, .large])
+        case .attachedDetail(viewModel: let viewModel):
+            AttachedFileDetailView(viewModel: viewModel)
+        case .logout:
+            presentLogoutView()
+                .presentationCompactAdaptation(.none)
+                .padding(.all, 15)
+                .interactiveDismissDisabled()
         }
     }
 }

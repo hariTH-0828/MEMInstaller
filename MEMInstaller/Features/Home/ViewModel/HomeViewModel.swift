@@ -14,7 +14,9 @@ class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userprofile: ZUserProfile?
     @Published private(set) var allObject: [String: [ContentModel]] = [String: [ContentModel]]()
+    
     @Published var isLoading: Bool = true
+    @Published var isDownloadStateEnable: Bool = false
     
     let userDataManager = UserDataManager()
     var packageHandler = PackageExtractionHandler()
@@ -56,6 +58,42 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    func downloadInfoFile(url: String) {
+        // Enable loading state
+        isDownloadStateEnable = true
+        
+        Download(url: url).downloadFile {[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let fileData):
+                try? self.packageHandler.parseInfoPlist(fileData)
+                self.isDownloadStateEnable = false
+            case .failure(let error):
+                isDownloadStateEnable = false
+                self.presentToast(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    func downloadAppIconFile(url: String) {
+        // Enable loading state
+        isDownloadStateEnable = true
+        
+        Download(url: url).downloadFile {[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let iconData):
+                self.packageHandler.appIcon = iconData
+                isDownloadStateEnable = false
+            case .failure(let error):
+                isDownloadStateEnable = false
+                self.presentToast(message: error.localizedDescription)
+            }
+        }
+    }
+    
     private func getFilesFromTheFolder(_ rootObject: BucketObjectModel) async {
         for content in rootObject.contents {
             // Check whether key type is folder
@@ -83,11 +121,3 @@ class HomeViewModel: ObservableObject {
         isPresentToast = true
     }
 }
-
-
-
-/*
- 
- BucketModel(bucketName: "packages", projectDetails: ProjectDetail(projectName: "ZInstaller", projectId: 21317000000012001), createdBy: CreatedBy(firstName: "Hariharan", lastName: "R S", emailId: "hariharan.rs@zohocorp.com", userType: "Admin"), createdTime: "Nov 04, 2024 04:10 PM", bucketURL: "https://packages-development.zohostratus.com")
- 
- */

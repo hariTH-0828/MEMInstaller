@@ -20,7 +20,6 @@
 		523F72112CDB364B00D564E7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 523F72102CDB364B00D564E7 /* Localizable.strings */; };
 		523F72132CDB365C00D564E7 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72122CDB365C00D564E7 /* LoginView.swift */; };
 		523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72142CDB368500D564E7 /* AppViewModel.swift */; };
-		523F72192CDB36DB00D564E7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72182CDB36DB00D564E7 /* SettingsView.swift */; };
 		523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F721A2CDB37D000D564E7 /* HomeView.swift */; };
 		523F721D2CDB3C7C00D564E7 /* ZLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F721C2CDB3C7C00D564E7 /* ZLogs.swift */; };
 		523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F721F2CDB4A6D00D564E7 /* KeychainServices.swift */; };
@@ -42,7 +41,10 @@
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
 		52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */; };
-		52D0B5452CEA758300214F41 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5442CEA758300214F41 /* DetailView.swift */; };
+		52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B54F2CEB341700214F41 /* SideMenuView.swift */; };
+		52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5512CEB343300214F41 /* SideMenu.swift */; };
+		52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5532CEB3D6C00214F41 /* String+.swift */; };
+		52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DOWNLOAD.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
 		52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */; };
 		52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */; };
@@ -109,7 +111,6 @@
 		523F72102CDB364B00D564E7 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		523F72122CDB365C00D564E7 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		523F72142CDB368500D564E7 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
-		523F72182CDB36DB00D564E7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		523F721A2CDB37D000D564E7 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		523F721C2CDB3C7C00D564E7 /* ZLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLogs.swift; sourceTree = "<group>"; };
 		523F721F2CDB4A6D00D564E7 /* KeychainServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServices.swift; sourceTree = "<group>"; };
@@ -131,7 +132,10 @@
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		52D0B5442CEA758300214F41 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		52D0B54F2CEB341700214F41 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		52D0B5512CEB343300214F41 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
+		52D0B5532CEB3D6C00214F41 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
+		52D0B5572CEB730400214F41 /* DOWNLOAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOWNLOAD.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
 		52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
@@ -284,8 +288,7 @@
 		523F71FC2CDB33BA00D564E7 /* Features */ = {
 			isa = PBXGroup;
 			children = (
-				52D0B5422CEA756200214F41 /* Detaiil */,
-				523F72162CDB36CA00D564E7 /* Settings */,
+				52D0B54D2CEB33F700214F41 /* SideMenu */,
 				523F72032CDB34C100D564E7 /* Login */,
 				523F72022CDB34BD00D564E7 /* Home */,
 			);
@@ -328,6 +331,7 @@
 				52F393B42CE520A800C9B23C /* ZAPIStrings.swift */,
 				52F393B62CE5D0AA00C9B23C /* GET.swift */,
 				52F393BA2CE5D9D000C9B23C /* PATCH.swift */,
+				52D0B5572CEB730400214F41 /* DOWNLOAD.swift */,
 				52F393B82CE5D15F00C9B23C /* NetworkRequestProtocol.swift */,
 				52F393BC2CE5D9EE00C9B23C /* TokenProviderProtocol.swift */,
 			);
@@ -353,6 +357,7 @@
 				52E109E62CE70671002D1EDD /* View+.swift */,
 				52E109E82CE70725002D1EDD /* Color+.swift */,
 				52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */,
+				52D0B5532CEB3D6C00214F41 /* String+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -391,22 +396,6 @@
 			isa = PBXGroup;
 			children = (
 				523F72122CDB365C00D564E7 /* LoginView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		523F72162CDB36CA00D564E7 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				523F72172CDB36D100D564E7 /* View */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
-		523F72172CDB36D100D564E7 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				523F72182CDB36DB00D564E7 /* SettingsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -463,18 +452,19 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		52D0B5422CEA756200214F41 /* Detaiil */ = {
+		52D0B54D2CEB33F700214F41 /* SideMenu */ = {
 			isa = PBXGroup;
 			children = (
-				52D0B5432CEA756A00214F41 /* View */,
+				52D0B54E2CEB340B00214F41 /* View */,
 			);
-			path = Detaiil;
+			path = SideMenu;
 			sourceTree = "<group>";
 		};
-		52D0B5432CEA756A00214F41 /* View */ = {
+		52D0B54E2CEB340B00214F41 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				52D0B5442CEA758300214F41 /* DetailView.swift */,
+				52D0B54F2CEB341700214F41 /* SideMenuView.swift */,
+				52D0B5512CEB343300214F41 /* SideMenu.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -782,6 +772,7 @@
 				523F72352CDB794700D564E7 /* HomeViewModel.swift in Sources */,
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
+				52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
@@ -798,14 +789,13 @@
 				523F72392CDB8DDB00D564E7 /* UTType+.swift in Sources */,
 				523F72262CDB4EFC00D564E7 /* ZUserProfile.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
-				52D0B5452CEA758300214F41 /* DetailView.swift in Sources */,
+				52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
 				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
 				52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
-				523F72192CDB36DB00D564E7 /* SettingsView.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
 				52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */,
@@ -816,10 +806,12 @@
 				52F393BD2CE5D9EE00C9B23C /* TokenProviderProtocol.swift in Sources */,
 				52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */,
 				523F72082CDB355900D564E7 /* AppDelegate.swift in Sources */,
+				52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */,
 				52E109E32CE679EE002D1EDD /* BucketListView.swift in Sources */,
 				52E109ED2CE75C18002D1EDD /* BucketObjectModel.swift in Sources */,
 				523F71D52CDB323100D564E7 /* ContentView.swift in Sources */,
 				523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */,
+				52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */,
 				52F393B52CE520A800C9B23C /* ZAPIStrings.swift in Sources */,
 				52F393B72CE5D0AA00C9B23C /* GET.swift in Sources */,
 				523F72232CDB4AB800D564E7 /* KeyChainKeys.swift in Sources */,

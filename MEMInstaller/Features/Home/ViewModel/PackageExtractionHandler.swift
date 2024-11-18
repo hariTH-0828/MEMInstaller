@@ -13,7 +13,8 @@ class PackageExtractionHandler {
     // Property Handler
     private let plistHandler = PropertyListHandler()
     private var sourceURL: URL? = nil
-    private(set) var appIcon: Data?
+    
+    var appIcon: Data?
     var bundleProperties: BundleProperties?
     
     var plistDictionary: [String: Any] = [:] {
@@ -127,7 +128,7 @@ class PackageExtractionHandler {
         }
     }
     
-    private func parseInfoPlist(_ infoPlistData: Data) throws {
+    func parseInfoPlist(_ infoPlistData: Data) throws {
         if let plist = try PropertyListSerialization.propertyList(from: infoPlistData, format: nil) as? [String: Any] {
             self.plistDictionary = plist
         }else {

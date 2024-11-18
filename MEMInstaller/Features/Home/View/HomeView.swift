@@ -12,91 +12,119 @@ struct HomeView: View {
     @EnvironmentObject var appCoordinator: AppCoordinatorImpl
     @StateObject var viewModel: HomeViewModel
     
+    @State var isSideMenuVisible: Bool = false
+    
     init() {
         _viewModel = StateObject(wrappedValue: HomeViewModel(StratusRepositoryImpl()))
     }
     
     var body: some View {
-        NavigationStack {
-            LoaderView(isLoading: $viewModel.isLoading, content: {
-                if !viewModel.allObject.isEmpty {
-                    List(Array(viewModel.allObject.keys).sorted(), id: \.self) { folderName in
-                        // Get content object and load image
-                        if let contents = viewModel.allObject[folderName] {
-                            
-                            let iconURL = contents.filter({ $0.actualContentType == .png && $0.key.contains("AppIcon60x60@")}).first?.url
-                            
-                            Button(action: {
-                                appCoordinator.presentSheet(.appDetail(content: contents))
-                            }, label: {
-                                Label(
-                                    title: {
-                                        Text(folderName)
-                                            .foregroundStyle(.primary)
-                                            .font(.system(.subheadline))
-                                    },
-                                    icon: {
-                                        appIconView(iconURL, folderName: folderName)
-                                    }
-                                )
-                            })
-                        }
+        ZStack {
+            NavigationStack {
+                LoaderView(isLoading: $viewModel.isLoading, content: {
+                    if !viewModel.allObject.isEmpty {
+                        ListAvailableApplications(viewModel: viewModel)
+                    }else {
+                        EmptyBucketView(viewModel: viewModel)
                     }
-                    .refreshable {
-                        await viewModel.fetchFoldersFromBucket()
-                    }
-                }else {
-                    EmptyBucketView(viewModel: viewModel)
+                })
+                .navigationTitle(isSideMenuVisible ? "" : "com.learn.meminstaller.home.title")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    hambergerButton()
+                    uploadButtonView()
                 }
+                .task {
+                    await viewModel.fetchFoldersFromBucket()
+                }
+            }
+            
+            SideMenu(isSideMenuVisible: $isSideMenuVisible) {
+                SideMenuView(viewModel: viewModel, isPresentSideMenu: $isSideMenuVisible)
+            }
+        }
+        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
+    }
+    
+    private func hambergerButton() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(action: {
+                isSideMenuVisible.toggle()
+            }, label: {
+                Image("ico_menu")
+                    .resizable()
+                    .renderingMode(.template)
+                    .scaledToFit()
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                    .frame(width: 25, height: 25)
             })
-            .navigationTitle("com.learn.meminstaller.home.title")
-            .navigationBarTitleDisplayMode(.inline)
-            .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
-            .toolbar {
-                settingToolBarItem()
-                
-                ToolbarItem(placement: .topBarLeading) {
+        }
+    }
+    
+    private func uploadButtonView() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                appCoordinator.openFileImporter { result in
+                    switch result {
+                    case .success(let filePath):
+                        viewModel.packageHandler.extractIpaFileContents(from: filePath)
+                        viewModel.packageHandler.extractAppBundle()
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel))
+                    case .failure(let failure):
+                        ZLogs.shared.error(failure.localizedDescription)
+                        viewModel.presentToast(message: failure.localizedDescription)
+                    }
+                }
+            }, label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+            })
+        }
+    }
+}
+
+struct ListAvailableApplications: View {
+    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
+    
+    var body: some View {
+        GeometryReader(content: { geometry in
+            List(Array(viewModel.allObject.keys).sorted(), id: \.self) { folderName in
+                // Get content object and load image
+                if let contents = viewModel.allObject[folderName] {
+                    
+                    let iconURL = contents.filter({ $0.actualContentType == .png && $0.key.contains("AppIcon60x60@")}).first?.url
+                    let infoPlistURL = contents.filter({ $0.actualContentType == .document && $0.key.contains("Info.plist")}).first?.url
+                    
                     Button(action: {
-                        // Handle side menu
+                        guard let iconURL, let infoPlistURL else { return }
+                        viewModel.downloadInfoFile(url: infoPlistURL)
+                        viewModel.downloadAppIconFile(url: iconURL)
                     }, label: {
-                        Image("menu")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 25, height: 25)
+                        Label(
+                            title: {
+                                Text(folderName)
+                                    .font(.system(size: 16, weight: .regular))
+                                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                            },
+                            icon: {
+                                appIconView(iconURL, folderName: folderName)
+                            }
+                        )
                     })
                 }
             }
-            .onChange(of: viewModel.packageHandler.bundleProperties, { _, newValue in
-                guard let newValue else { return }
-                appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, property: newValue))
-            })
-            .task {
+            .overlay {
+                if viewModel.isDownloadStateEnable {
+                    ProgressView()
+                        .progressViewStyle(.horizontalCircular)
+                }
+            }
+            .refreshable {
                 await viewModel.fetchFoldersFromBucket()
             }
-        }
-            
-    }
-    
-    private func settingToolBarItem() -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                appCoordinator.presentSheet(.settings(viewModel: viewModel))
-            }, label: {
-                if let profileImageData = viewModel.userprofile?.profileImageData, let uiImage = UIImage(data: profileImageData) {
-                    userImageView(uiImage)
-                }else {
-                    let displayName = viewModel.userprofile?.displayName
-                    userImageView(imageWith(name: displayName)!)
-                }
-            })
-        }
-    }
-    
-    @ViewBuilder
-    private func userImageView(_ uiImage: UIImage) -> some View {
-        Image(uiImage: uiImage)
-            .resizable()
-            .defaultProfileImageStyle()
+        })
     }
     
     @ViewBuilder
@@ -110,6 +138,7 @@ struct HomeView: View {
             } placeholder: {
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .foregroundStyle(StyleManager.colorStyle.systemGray)
             }
         }else {
             Image(uiImage: imageWith(name: folderName)!)

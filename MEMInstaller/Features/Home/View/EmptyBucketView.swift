@@ -30,30 +30,46 @@ struct EmptyBucketView: View {
                     Text("com.learn.meminstaller.home.no-file-description")
                 })
                 
-                Button(action: {
-                    appCoordinator.openFileImporter { result in
-                        switch result {
-                        case .success(let filePath):
-                            viewModel.packageHandler.extractIpaFileContents(from: filePath)
-                            viewModel.packageHandler.extractAppBundle()
-                        case .failure(let failure):
-                            ZLogs.shared.error(failure.localizedDescription)
-                            viewModel.presentToast(message: failure.localizedDescription)
-                        }
-                    }
-                }, label: {
-                    Text("Upload file")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.background)
-                        .padding()
-                        .frame(width: geometry.size.width * 0.7, height: 50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(StyleManager.colorStyle.tintColor)
-                        )
-                })
+                UploadButtonView(viewModel: viewModel, geometry: geometry)
             }
             .clipped()
+        })
+    }
+}
+
+struct UploadButtonView: View {
+    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    
+    @ObservedObject var viewModel: HomeViewModel
+    let geometry: GeometryProxy
+    
+    init(viewModel: HomeViewModel, geometry: GeometryProxy) {
+        self.viewModel = viewModel
+        self.geometry = geometry
+    }
+    
+    var body: some View {
+        Button(action: {
+            appCoordinator.openFileImporter { result in
+                switch result {
+                case .success(let filePath):
+                    viewModel.packageHandler.extractIpaFileContents(from: filePath)
+                    viewModel.packageHandler.extractAppBundle()
+                case .failure(let failure):
+                    ZLogs.shared.error(failure.localizedDescription)
+                    viewModel.presentToast(message: failure.localizedDescription)
+                }
+            }
+        }, label: {
+            Text("com.learn.meminstaller.home.btn_upload")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(.background)
+                .padding()
+                .frame(width: geometry.size.width * 0.7, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(StyleManager.colorStyle.tintColor)
+                )
         })
     }
 }

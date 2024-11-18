@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private enum PListCellIdentifiers: String, CaseIterable {
+enum PListCellIdentifiers: String, CaseIterable {
     case bundleName = "Bundle name"
     case bundleIdentifiers = "Bundle identifiers"
     case bundleVersionShort = "Bundle version (short)"
@@ -19,8 +19,6 @@ private enum PListCellIdentifiers: String, CaseIterable {
 
 struct AttachedFileDetailView: View {
     @ObservedObject var viewModel: HomeViewModel
-    @State var isPresentExport: Bool = false
-    let bundleProperty: BundleProperties
     
     private let propertyListCellData: [PListCellIdentifiers: String] = [:]
     
@@ -47,48 +45,42 @@ struct AttachedFileDetailView: View {
                 
                 Spacer()
                 
-                installBtnView()
+                uploadBtnView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(bundleProperty.bundleName ?? "Unknown")
+            .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Export", systemImage: "square.and.arrow.down") {
-                        viewModel.packageHandler.generatePrivacyList {
-                            isPresentExport.toggle()
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $isPresentExport, content: {
-                ActivityViewRepresentable(activityItems: viewModel.packageHandler.shareItem) { completion, error in
-                    if let error = error {
-                        viewModel.presentToast(message: error.localizedDescription)
-                    }else if completion {
-                        viewModel.presentToast(message:"File successfully saved")
-                    }else {
-                        viewModel.presentToast(message:"Activity Dismissed")
-                    }
-                }
-                .presentationDetents([.medium, .large])
-            })
         }
     }
     
     @ViewBuilder
     private func bundleNameWithIdentifierView() -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 5) {
             /// App Name
-            Text(bundleProperty.bundleName ?? "Unknown")
-                .font(.title2)
-                .bold()
-                .lineLimit(1)
+            if let bundleName = viewModel.packageHandler.bundleProperties?.bundleName {
+                Text(bundleName)
+                    .font(.title2)
+                    .bold()
+                    .lineLimit(1)
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 180, height: 20)
+                    .shimmer(enable: .constant(true))
+            }
+            
             /// App Bundle Identifier
-            Text(bundleProperty.bundleIdentifier ?? "nil")
-                .font(.footnote)
-                .foregroundStyle(Color(.secondaryLabel))
-                .lineLimit(1)
+            if let bundleIdentifier = viewModel.packageHandler.bundleProperties?.bundleIdentifier {
+                Text(bundleIdentifier)
+                    .font(.footnote)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .lineLimit(1)
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 100, height: 15)
+                    .shimmer(enable: .constant(true))
+            }
         }
     }
     
@@ -101,11 +93,10 @@ struct AttachedFileDetailView: View {
                 .frame(width: 50, height: 50)
                 .clipShape(.circle)
         }else {
-            Image(uiImage: UIImage.getCurrentAppIcon())
-                .resizable()
-                .scaledToFill()
-                .frame(width: 50, height: 50)
-                .clipShape(.circle)
+            Circle()
+                .fill(.placeholder)
+                .frame(width: 50, height: 50, alignment: .center)
+                .shimmer(enable: .constant(true))
         }
     }
     
@@ -118,20 +109,27 @@ struct AttachedFileDetailView: View {
             
             Spacer()
             
-            Text(value ?? " - No value -")
-                .font(.system(.footnote))
-                .foregroundStyle(Color(uiColor: .secondaryLabel))
+            if let value {
+                Text(value)
+                    .font(.system(.footnote))
+                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 100, height: 15)
+                    .shimmer(enable: .constant(true))
+            }
         }
         .frame(height: 22)
         .padding(.horizontal)
     }
     
     @ViewBuilder
-    private func installBtnView() -> some View {
+    private func uploadBtnView() -> some View {
         Button(action: {
-            viewModel.packageHandler.executeInstall("https://packages-development.zohostratus.com/plist/ZohoFaciMap.plist")
+            // Handle file upload
         }, label: {
-            Text("Install")
+            Text("Upload")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 180, height: 50)
@@ -144,19 +142,26 @@ struct AttachedFileDetailView: View {
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
         switch identifier {
         case .bundleName:
-            return bundleProperty.bundleName
+            return viewModel.packageHandler.bundleProperties?.bundleName
         case .bundleIdentifiers:
-            return bundleProperty.bundleIdentifier
+            return viewModel.packageHandler.bundleProperties?.bundleIdentifier
         case .bundleVersionShort:
-            return bundleProperty.bundleVersionShort
+            return viewModel.packageHandler.bundleProperties?.bundleVersionShort
         case .bundleVersion:
-            return bundleProperty.bundleVersion
+            return viewModel.packageHandler.bundleProperties?.bundleVersion
         case .minOSVersion:
-            return bundleProperty.minimumOSVersion
+            return viewModel.packageHandler.bundleProperties?.minimumOSVersion
         case .requiredDevice:
-            return bundleProperty.requiredDeviceCompability?.joined(separator: ", ")
+            return viewModel.packageHandler.bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
         case .supportedPlatform:
-            return bundleProperty.supportedPlatform?.joined(separator: ", ")
+            return viewModel.packageHandler.bundleProperties?.supportedPlatform?.joined(separator: ", ")
         }
+    }
+}
+
+struct AttachedFileDetailPreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        AttachedFileDetailView(viewModel: HomeViewModel(StratusRepositoryImpl()))
     }
 }

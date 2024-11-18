@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum Screen: Identifiable, Hashable {
     case home
@@ -16,8 +17,8 @@ enum Screen: Identifiable, Hashable {
 
 enum Sheet: Identifiable, Hashable {
     case settings(viewModel: HomeViewModel)
-    case attachedDetail(viewModel: HomeViewModel, property: BundleProperties)
-    case appDetail(content: [ContentModel])
+    case attachedDetail(viewModel: HomeViewModel)
+    case logout
     
     var id: Self { self }
 }
@@ -43,10 +44,10 @@ extension Sheet {
         switch self {
         case .settings(let viewModel):
             hasher.combine(ObjectIdentifier(viewModel))
-        case .attachedDetail(let viewModel, _):
+        case .attachedDetail(let viewModel):
             hasher.combine(ObjectIdentifier(viewModel))
-        case .appDetail(let contents):
-            hasher.combine(contents)
+        case .logout:
+            hasher.combine(true)
         }
     }
     

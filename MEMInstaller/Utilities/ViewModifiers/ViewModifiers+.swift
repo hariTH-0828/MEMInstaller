@@ -29,4 +29,8 @@ extension View {
     func defaultOutlineButtonStyle(outlineColor: Color = StyleManager.colorStyle.placeholderText, foregroundColor: Color, width: CGFloat = 150) -> some View {
         modifier(DefaultOutlineButtonStyle(outlineColor: outlineColor, foregroundColor: foregroundColor, width: width))
     }
+    
+    func shimmer(enable: Binding<Bool>) -> some View {
+        modifier(ShimmerEffect(enable: enable))
+    }
 }

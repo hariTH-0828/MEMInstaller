@@ -68,4 +68,15 @@ struct ContentModel: Codable, Hashable {
         self.lastModified = try container.decode(String.self, forKey: .lastModified)
         self.url = try container.decode(String.self, forKey: .url)
     }
+    
+    init() {
+        self.keyType = "file"
+        self.key = "hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
+        self.size = 6095
+        self.contentType = "application/octet-stream"
+        self.lastModified = "Nov 16, 2024 11:08 PM"
+        self.url = "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
+        self.actualKeyType = .file
+        self.actualContentType = .document
+    }
 }

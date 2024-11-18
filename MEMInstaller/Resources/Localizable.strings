@@ -14,6 +14,9 @@
 "com.learn.meminstaller.home.title" = "Home";
 "com.learn.meminstaller.home.no-file-title" = "Upload Objects";
 "com.learn.meminstaller.home.no-file-description" = "Store and organize your data in Catalyst bucket object, and manage access to your files";
+"com.learn.meminstaller.home.btn_upload" = "Upload file";
 "com.learn.meminstaller.setting.title" = "Settings";
 "com.learn.meminstaller.setting.cache-clear" = "Clear cache";
+"com.learn.meminstaller.setting.share-log" = "Share logs";
+"com.learn.meminstaller.setting.signout" = "Sign out";
 "com.learn.meminstaller.setting.footnote" = "2024, Zoho Corporation Pvt. Ltd., All Rights Reserved.";
