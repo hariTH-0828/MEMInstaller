@@ -32,10 +32,19 @@ struct HomeView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     hambergerButton()
-                    uploadButtonView()
                 }
                 .task {
                     await viewModel.fetchFoldersFromBucket()
+                }
+                .overlay {
+                    if viewModel.isDownOrUpStateEnable {
+                        Color.black
+                            .ignoresSafeArea()
+                            .opacity(0.3)
+                        
+                        ProgressView(viewModel.progressTitle)
+                            .progressViewStyle(.horizontalCircular)
+                    }
                 }
             }
             
@@ -57,27 +66,6 @@ struct HomeView: View {
                     .scaledToFit()
                     .foregroundStyle(StyleManager.colorStyle.invertBackground)
                     .frame(width: 25, height: 25)
-            })
-        }
-    }
-    
-    private func uploadButtonView() -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                appCoordinator.openFileImporter { result in
-                    switch result {
-                    case .success(let filePath):
-                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
-                    case .failure(let failure):
-                        ZLogs.shared.error(failure.localizedDescription)
-                        viewModel.presentToast(message: failure.localizedDescription)
-                    }
-                }
-            }, label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
             })
         }
     }
@@ -103,20 +91,13 @@ struct ListAvailableApplications: View {
                     })
                 }
             }
-            .overlay {
-                if viewModel.isDownOrUpStateEnable {
-                    Color.black
-                        .ignoresSafeArea()
-                        .opacity(0.3)
-                    
-                    ProgressView(viewModel.progressTitle)
-                        .progressViewStyle(.horizontalCircular)
-                }
-            }
             .refreshable {
                 Task {
                     await viewModel.fetchFoldersFromBucket()
                 }
+            }
+            .toolbar {
+                uploadButtonView()
             }
         })
     }
@@ -150,6 +131,27 @@ struct ListAvailableApplications: View {
             }
         }else {
             Image(uiImage: imageWith(name: folderName)!)
+        }
+    }
+    
+    private func uploadButtonView() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                appCoordinator.openFileImporter { result in
+                    switch result {
+                    case .success(let filePath):
+                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
+                    case .failure(let failure):
+                        ZLogs.shared.error(failure.localizedDescription)
+                        viewModel.presentToast(message: failure.localizedDescription)
+                    }
+                }
+            }, label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+            })
         }
     }
     

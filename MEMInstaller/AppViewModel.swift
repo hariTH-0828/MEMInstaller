@@ -60,7 +60,7 @@ final class AppViewModel: ObservableObject {
         
         if isSaveSuccess {
             // Login success: Navigate to Login view to Home View
-            withAnimation(.spring(duration: 1.5)) {
+            withAnimation(.easeInOut) {
                 self.isUserLoggedIn = status
             }
         }
@@ -80,7 +80,7 @@ final class AppViewModel: ObservableObject {
             ZLogs.shared.info("Successfully deleted logged user from keychain")
             
             // Logout success: Navigate to Setting View to Login View
-            withAnimation(.spring(duration: 1.5)) {
+            withAnimation(.easeInOut) {
                 self.isUserLoggedIn = status
             }
         }catch {

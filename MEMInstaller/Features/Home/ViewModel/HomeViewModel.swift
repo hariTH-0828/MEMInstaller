@@ -66,23 +66,34 @@ class HomeViewModel: ObservableObject {
             return
         }
         
-        withAnimation { isDownOrUpStateEnable = true }
         do {
             // Upload *.ipa file
+            withAnimation { isDownOrUpStateEnable = true }
             try await uploadApplication(endpoint)
             
             // Upload appIcon file
+            withAnimation { isDownOrUpStateEnable = true }
             try await uploadIcon(endpoint)
             
             // Upload Info.plist file
+            withAnimation { isDownOrUpStateEnable = true }
             try await uploadInfoPropertyList(endpoint)
             
             // Get url for upload *.ipa file
-            await fetchPackageURL(endpoint)
+            withAnimation { isDownOrUpStateEnable = true }
+            guard let objectURL = await fetchPackageURL(endpoint) else { return }
             
             // Generate *.plist
+            withAnimation { isDownOrUpStateEnable = true }
+            packageHandler.generatePropertyList(fileURL: objectURL)
             
             // Upload *.plist
+            withAnimation { isDownOrUpStateEnable = true }
+            try await uploadInstallerPropertyList(endpoint)
+            
+            // Reload view
+            withAnimation { isLoading = true }
+            await fetchFoldersFromBucket()
             
             // Success
             withAnimation { isDownOrUpStateEnable = false }
@@ -167,14 +178,14 @@ class HomeViewModel: ObservableObject {
         let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/\(bundleName!).ipa")
         
         // Get package data
-        guard let packageData = packageHandler.sourceFileData
-        else {
+        guard let packageData = packageHandler.sourceFileData else {
             ZLogs.shared.warning("Failed to get application. Please check your build configuration.")
             presentToast(message: "Failed to get app data")
             return
         }
         
         // Upload the package
+        self.progressTitle = "Uploading Packages"
         let result = try await repository.uploadObjects(
             endpoint: endpoint,
             headers: HTTPHeaders(arrayLiteral: .contentType(ContentType.document.rawValue)),
@@ -220,10 +231,41 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    private func uploadInstallerPropertyList(_ path: String) async throws {
+        // Construct the custom endpoint
+        guard let bundleName = packageHandler.bundleProperties?.bundleName else { return }
+        
+        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/\(bundleName).plist")
+        
+        // Get package data
+        guard let infoPlistData = packageHandler.sourcePlistData
+        else {
+            ZLogs.shared.warning("Failed to get property list data. Please check your build configuration.")
+            presentToast(message: "Failed to property data")
+            return
+        }
+        
+        // Upload the package
+        let result = try await repository.uploadObjects(
+            endpoint: endpoint,
+            headers: HTTPHeaders(arrayLiteral: .contentType(ContentType.document.rawValue)),
+            data: infoPlistData
+        )
+        
+        switch result {
+        case .success(_):
+            self.progressTitle = "\(bundleName).plist uploaded"
+            ZLogs.shared.info("\(bundleName).plist uploaded")
+        case .failure(let error):
+            ZLogs.shared.error(error.localizedDescription)
+            withAnimation { isDownOrUpStateEnable = false }
+        }
+    }
+    
     private func fetchPackageURL(_ endpoint: String?) async -> String? {
-        if let email = userprofile?.email, let prefix = endpoint {
+        if let prefix = endpoint {
             let params: Parameters = ["bucket_name": "packages",
-                                      "prefix": "/\(prefix)/"]
+                                      "prefix": "\(prefix)/"]
             
             do {
                 let bucketObject = try await repository.getFoldersFromBucket(params)
@@ -232,10 +274,10 @@ class HomeViewModel: ObservableObject {
                 if !bucketObject.contents.isEmpty {
                     return getPackageURL(from: bucketObject.contents)
                 }else {
-                    withAnimation { isLoading = false }
+                    withAnimation { isDownOrUpStateEnable = false }
                 }
             }catch {
-                withAnimation { isLoading = false }
+                withAnimation { isDownOrUpStateEnable = false }
                 presentToast(message: error.localizedDescription)
             }
             

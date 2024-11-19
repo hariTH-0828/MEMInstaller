@@ -36,7 +36,7 @@ struct EmptyBucketView: View {
                             switch result {
                             case .success(let filePath):
                                 viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                viewModel.packageHandler.extractAppBundle()
+                                appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
                                 viewModel.presentToast(message: failure.localizedDescription)
@@ -47,6 +47,7 @@ struct EmptyBucketView: View {
                     
                     Button("com.learn.meminstaller.home.refresh") {
                         Task {
+                            withAnimation { viewModel.isLoading = true }
                             await viewModel.fetchFoldersFromBucket()
                         }
                     }

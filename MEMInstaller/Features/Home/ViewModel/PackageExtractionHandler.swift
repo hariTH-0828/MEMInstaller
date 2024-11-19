@@ -17,6 +17,7 @@ class PackageExtractionHandler {
     var appIcon: Data?
     var sourceFileData: Data?
     var infoPlistData: Data?
+    var sourcePlistData: Data?
     
     var bundleProperties: BundleProperties?
     var objectURL: String?
@@ -31,15 +32,24 @@ class PackageExtractionHandler {
     func initiateAppExtraction(from url: URL) {
         self.sourceURL = url
         
-        self.sourceFileData = fileToData(from: sourceURL)
+        if sourceURL.startAccessingSecurityScopedResource() {
+            self.sourceFileData = fileToData(from: sourceURL)
+            sourceURL.stopAccessingSecurityScopedResource()
+        }
         extractIpaFileContents()
         extractAppBundle()
     }
     
     // MARK: - Convert source as data
     func fileToData(from url: URL) -> Data? {
-        let fileData = try? Data(contentsOf: url)
-        return fileData
+        do {
+            let fileData = try Data(contentsOf: url)
+            return fileData
+        }catch {
+            ZLogs.shared.error(error.localizedDescription)
+        }
+        
+        return nil
     }
     
     // MARK: - Bundle Info
@@ -161,26 +171,18 @@ class PackageExtractionHandler {
         }
     }
     
-    func generatePropertyList(_ sourceURL: URL) {
-        let fileName = sourceURL.lastPathComponent
+    func generatePropertyList(fileURL: String) {
+        
+        let plistURL = plistHandler.createPlistFile(url: fileURL,
+                                                    bundleIdentifier: bundleProperties?.bundleIdentifier,
+                                                    bundleVersion: bundleProperties?.bundleVersion,
+                                                    fileName: bundleProperties?.bundleName)
+        
+        switch plistURL {
+        case .success(let pathLocation):
+            self.sourcePlistData = fileToData(from: pathLocation)
+        case .failure(let failure):
+            ZLogs.shared.error(failure.localizedDescription)
+        }
     }
-    
-//    func generatePrivacyList(completion: @escaping () -> Void) {
-//        // MARK: UPDATE URL OF YOU FILE
-//        let fileName = sourceURL?.lastPathComponent
-//        
-//        guard let fileName, let fileURL = URL(string: "https://packages-development.zohostratus.com/ipa/\(fileName)") else {
-//            ZLogs.shared.log(.warning, message: "Invalid file url")
-//            return
-//        }
-//  
-//        let plistURL = plistHandler.createPlistFile(url: fileURL.absoluteString, content: plistDictionary)
-//        switch plistURL {
-//        case .success(let pathLocation):
-//            shareItem = [pathLocation]
-//            completion()
-//        case .failure(let failure):
-//            ZLogs.shared.error(failure.localizedDescription)
-//        }
-//    }
 }

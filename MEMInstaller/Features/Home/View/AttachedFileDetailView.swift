@@ -19,11 +19,9 @@ enum PListCellIdentifiers: String, CaseIterable {
 
 struct AttachedFileDetailView: View {
     @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    
     @ObservedObject var viewModel: HomeViewModel
-    
     let attachmentMode: AttachmentMode
-    
-    private let propertyListCellData: [PListCellIdentifiers: String] = [:]
     
     var body: some View {
         NavigationStack {
