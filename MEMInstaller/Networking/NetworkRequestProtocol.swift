@@ -9,9 +9,11 @@ import Alamofire
 
 struct NetworkRequest {
     var baseURL: URL = URL(string: ZAPIStrings.BASE_URL)!
+    var uploadBaseURL: URL = URL(string: ZAPIStrings.UPLOAD_BASE_URL)!
     var endpoint: ZAPIStrings.Endpoint
     var parameters: Parameters?
     var headers: HTTPHeaders = ["Content-Type": "application/json"]
+    var data: Data?
 }
 
 extension NetworkRequest {

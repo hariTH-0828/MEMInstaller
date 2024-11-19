@@ -18,7 +18,9 @@ enum PListCellIdentifiers: String, CaseIterable {
 }
 
 struct AttachedFileDetailView: View {
+    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
+    
     let attachmentMode: AttachmentMode
     
     private let propertyListCellData: [PListCellIdentifiers: String] = [:]
@@ -160,11 +162,33 @@ struct AttachedFileDetailView: View {
     }
     
     private func installApplication() {
-        viewModel.packageHandler.executeInstall()
+        guard let objectURL = viewModel.packageHandler.objectURL else {
+            ZLogs.shared.error("Error: Installation - objectURL not found")
+            viewModel.presentToast(message: "Installation failed: URL not found")
+            return
+        }
+        
+        let itmsServicesURLString = "itms-services://?action=download-manifest&url="+objectURL
+
+        if let itmsServiceURL = URL(string: itmsServicesURLString) {
+            UIApplication.shared.open(itmsServiceURL)
+        }
     }
     
     private func uploadApplication() {
+        guard let endpoint = generateUploadBodyParams() else { return }
         
+        Task {
+            appCoordinator.sheet = nil
+            await viewModel.uploadPackageIntoFolder(endpoint)
+        }
+    }
+    
+    private func generateUploadBodyParams() -> String? {
+        guard let userEmail = viewModel.userprofile?.email else { return nil }
+        guard let bundleName = valueFor(.bundleName) else { return nil }
+        
+        return "\(userEmail)/\(bundleName)"
     }
 }
 

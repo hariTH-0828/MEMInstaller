@@ -67,8 +67,7 @@ struct HomeView: View {
                 appCoordinator.openFileImporter { result in
                     switch result {
                     case .success(let filePath):
-                        viewModel.packageHandler.extractIpaFileContents(from: filePath)
-                        viewModel.packageHandler.extractAppBundle()
+                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
                         appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
@@ -90,44 +89,50 @@ struct ListAvailableApplications: View {
     
     var body: some View {
         GeometryReader(content: { geometry in
-            List(Array(viewModel.allObject.keys).sorted(), id: \.self) { folderName in
-                // Get content object and load image
+            // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
+            List(sortedFolderNames(), id: \.self) { folderName in
+                
                 if let contents = viewModel.allObject[folderName] {
-                    
-                    let iconURL = contents.filter({ $0.actualContentType == .png && $0.key.contains("AppIcon60x60@")}).first?.url
-                    let infoPlistURL = contents.filter({ $0.actualContentType == .document && $0.key.contains("Info.plist")}).first?.url
-                    let objectURL = contents.filter({$0.actualContentType == .document && $0.key.contains(folderName + ".plist")}).first?.url
+                    // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
+                    let fileURLs = extractFileURLs(from: contents, folderName: folderName)
                     
                     Button(action: {
-                        guard let iconURL, let infoPlistURL else { return }
-                        viewModel.downloadInfoFile(url: infoPlistURL)
-                        viewModel.downloadAppIconFile(url: iconURL)
-                        viewModel.packageHandler.objectURL = objectURL
-                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .install))
+                        handleAppSelection(with: fileURLs)
                     }, label: {
-                        Label(
-                            title: {
-                                Text(folderName)
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
-                            },
-                            icon: {
-                                appIconView(iconURL, folderName: folderName)
-                            }
-                        )
+                        appLabel(folderName: folderName, iconURL: fileURLs.iconURL)
                     })
                 }
             }
             .overlay {
-                if viewModel.isDownloadStateEnable {
-                    ProgressView()
+                if viewModel.isDownOrUpStateEnable {
+                    Color.black
+                        .ignoresSafeArea()
+                        .opacity(0.3)
+                    
+                    ProgressView(viewModel.progressTitle)
                         .progressViewStyle(.horizontalCircular)
                 }
             }
             .refreshable {
-                await viewModel.fetchFoldersFromBucket()
+                Task {
+                    await viewModel.fetchFoldersFromBucket()
+                }
             }
         })
+    }
+    
+    @ViewBuilder
+    private func appLabel(folderName: String, iconURL: String?) -> some View {
+        Label(
+            title: {
+                Text(folderName)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+            },
+            icon: {
+                appIconView(iconURL, folderName: folderName)
+            }
+        )
     }
     
     @ViewBuilder
@@ -146,6 +151,35 @@ struct ListAvailableApplications: View {
         }else {
             Image(uiImage: imageWith(name: folderName)!)
         }
+    }
+    
+    // MARK: - HELPER METHODS
+    /// Returns a sorted list of folder names from the `allObject` dictionary keys.
+    /// Sorting ensures a consistent display order.
+    private func sortedFolderNames() -> [String] {
+        return Array(viewModel.allObject.keys).sorted()
+    }
+    
+    /// Extracts the URLs for the app icon, Info.plist, and object plist file from a folder's content list.
+    /// - Parameters:
+    ///   - contents: The list of contents in the folder.
+    ///   - folderName: The name of the folder being processed.
+    /// - Returns: A tuple containing the app icon URL, Info.plist URL, and object plist URL (all optional).
+    private func extractFileURLs(from contents: [ContentModel], folderName: String) -> (iconURL: String?, infoPlistURL: String?, objectURL: String?) {
+        let iconURL = contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
+        let infoPlistURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
+        let objectURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
+        return (iconURL, infoPlistURL, objectURL)
+    }
+
+    /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
+    /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
+    private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, objectURL: String?)) {
+        guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL else { return }
+        viewModel.downloadInfoFile(url: infoPlistURL)
+        viewModel.downloadAppIconFile(url: iconURL)
+        viewModel.packageHandler.objectURL = fileURLs.objectURL
+        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .install))
     }
 }
 

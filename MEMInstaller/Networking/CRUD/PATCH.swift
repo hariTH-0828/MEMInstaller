@@ -24,9 +24,7 @@ class PATCH<T: Codable> {
                 throw ZError.NetworkError.tokenRetrievalFailed
             }
             
-            ZLogs.shared.info(accessToken)
-            
-            let url = request.baseURL.appending(path: request.endpoint.rawValue)
+            let url = request.baseURL.appending(path: request.endpoint.path)
             ZLogs.shared.info(url.absoluteString)
             
             self.request.headers.add(.authorization(bearerToken: accessToken))

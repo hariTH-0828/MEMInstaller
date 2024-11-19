@@ -14,10 +14,10 @@ extension View {
     }
     
     func defaultButtonStyle(backgroundColor: Color = StyleManager.colorStyle.tintColor,
-                            foregroundColor: Color = .white,
+                            foregroundColor: Color = Color(uiColor: .systemBackground),
                             bold: Bool = true,
                             width: CGFloat = 150,
-                            height: CGFloat = 40) -> some View
+                            height: CGFloat = 50) -> some View
     {
         modifier(DefaultButtonStyle(backgroundColor: backgroundColor,
                                     foregroundColor: foregroundColor,

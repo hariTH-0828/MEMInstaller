@@ -20,7 +20,15 @@ final class StratusRepositoryImpl: StratusRepository {
         }
     }
     
-    func uploadObjects() async throws {
-        // Implement upload functionality
+    func uploadObjects(endpoint: ZAPIStrings.Endpoint, headers: HTTPHeaders, data: Data) async throws -> Result<String, Error> {
+        let networkRequest = NetworkRequest(endpoint: endpoint,
+                                            headers: headers,
+                                            data: data)
+        do {
+            return try await PUT(request: networkRequest).execute()
+        }catch {
+            ZLogs.shared.error(error.localizedDescription)
+            throw error
+        }
     }
 }

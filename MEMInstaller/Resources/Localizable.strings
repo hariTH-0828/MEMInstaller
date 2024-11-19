@@ -15,6 +15,7 @@
 "com.learn.meminstaller.home.no-file-title" = "Upload Objects";
 "com.learn.meminstaller.home.no-file-description" = "Store and organize your data in Catalyst bucket object, and manage access to your files";
 "com.learn.meminstaller.home.btn_upload" = "Upload file";
+"com.learn.meminstaller.home.refresh" = "Refresh";
 "com.learn.meminstaller.setting.title" = "Settings";
 "com.learn.meminstaller.setting.cache-clear" = "Clear cache";
 "com.learn.meminstaller.setting.share-log" = "Share logs";

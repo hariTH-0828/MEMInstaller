@@ -25,9 +25,7 @@ class GET<T: Codable> {
                 throw ZError.NetworkError.tokenRetrievalFailed
             }
             
-            ZLogs.shared.info(accessToken)
-            
-            let url = request.baseURL.appending(path: request.endpoint.rawValue)
+            let url = request.baseURL.appending(path: request.endpoint.path)
             ZLogs.shared.info(url.absoluteString)
             
             self.request.headers.add(.authorization(bearerToken: accessToken))
@@ -36,7 +34,8 @@ class GET<T: Codable> {
             let afRequest = await AF.request(url, method: .get,
                                              parameters: request.parameters,
                                              encoding: URLEncoding.default,
-                                             headers: request.headers).serializingDecodable(T.self, automaticallyCancelling: true).response
+                                             headers: request.headers)
+                .serializingDecodable(T.self, automaticallyCancelling: true).response
 
             guard let data = afRequest.data, let httpResponse = afRequest.response else {
                 throw ZError.NetworkError.badServerResponse

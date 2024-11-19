@@ -34,12 +34,12 @@ struct DefaultButtonStyle: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: width, alignment: .center)
-            .frame(height: height)
+            .font(.system(size: 16, weight: .semibold))
             .foregroundStyle(foregroundColor)
-            .bold()
+            .padding()
+            .frame(width: width, height: height)
             .background(
-                Capsule()
+                RoundedRectangle(cornerRadius: 12)
                     .fill(backgroundColor)
             )
     }

@@ -12,17 +12,14 @@ import SwiftUI
 class PackageExtractionHandler {
     // Property Handler
     private let plistHandler = PropertyListHandler()
-    private var sourceURL: URL? = nil
+    private var sourceURL: URL!
     
     var appIcon: Data?
+    var sourceFileData: Data?
+    var infoPlistData: Data?
+    
     var bundleProperties: BundleProperties?
     var objectURL: String?
-    
-    var plistDictionary: [String: Any] = [:] {
-        didSet {
-            loadBundleProperties()
-        }
-    }
     
     // Attachment View
     @Published var shareItem: [URL] = []
@@ -31,9 +28,23 @@ class PackageExtractionHandler {
     private let fileManager = FileManager.default
     private let appCacheDirectory = ZFFileManager.shared.getAppCacheDirectory()
     
+    func initiateAppExtraction(from url: URL) {
+        self.sourceURL = url
+        
+        self.sourceFileData = fileToData(from: sourceURL)
+        extractIpaFileContents()
+        extractAppBundle()
+    }
+    
+    // MARK: - Convert source as data
+    func fileToData(from url: URL) -> Data? {
+        let fileData = try? Data(contentsOf: url)
+        return fileData
+    }
+    
     // MARK: - Bundle Info
-    func extractIpaFileContents(from sourceURL: URL) {
-        guard let zipLocation = convertFileIpaToZip(from: sourceURL, to: "zip") else {
+    func extractIpaFileContents() {
+        guard let zipLocation = convertFileIpaToZip(to: "zip") else {
             ZLogs.shared.warning("File conversion failed")
             return
         }
@@ -43,9 +54,7 @@ class PackageExtractionHandler {
     }
     
     // MARK: - File Conversion
-    private func convertFileIpaToZip(from sourceURL: URL, to newExtension: String) -> URL? {
-        self.sourceURL = sourceURL
-        
+    private func convertFileIpaToZip(to newExtension: String) -> URL? {
         do {
             // clear the old data
             clearDirectory(at: appCacheDirectory)
@@ -113,6 +122,9 @@ class PackageExtractionHandler {
             return
         }
         
+        let infoPlistPath = payLoadPath.path() + "/\(appName)/Info.plist"
+        self.infoPlistData = fileToData(from: URL(fileURLWithPath: infoPlistPath))
+        
         try extractAppProperties(from: payLoadPath, appName: appName)
     }
     
@@ -131,14 +143,14 @@ class PackageExtractionHandler {
     
     func parseInfoPlist(_ infoPlistData: Data) throws {
         if let plist = try PropertyListSerialization.propertyList(from: infoPlistData, format: nil) as? [String: Any] {
-            self.plistDictionary = plist
+            loadBundleProperties(with: plist)
         }else {
             ZLogs.shared.error("Failed to cast Info.plist content to directory.")
         }
     }
     
     // MARK: - Bundle property manage
-    func loadBundleProperties() {
+    func loadBundleProperties(with plistDictionary: [String: Any]) {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: plistDictionary)
             
@@ -149,36 +161,26 @@ class PackageExtractionHandler {
         }
     }
     
-    func generatePrivacyList(completion: @escaping () -> Void) {
-        // MARK: UPDATE URL OF YOU FILE
-        let fileName = sourceURL?.lastPathComponent
-        
-        guard let fileName, let fileURL = URL(string: "https://packages-development.zohostratus.com/ipa/\(fileName)") else {
-            ZLogs.shared.log(.warning, message: "Invalid file url")
-            return
-        }
-  
-        let plistURL = plistHandler.createPlistFile(url: fileURL.absoluteString, content: plistDictionary)
-        switch plistURL {
-        case .success(let pathLocation):
-            shareItem = [pathLocation]
-            completion()
-        case .failure(let failure):
-            ZLogs.shared.error(failure.localizedDescription)
-        }
+    func generatePropertyList(_ sourceURL: URL) {
+        let fileName = sourceURL.lastPathComponent
     }
     
-    // MARK: - Execute Install
-    func executeInstall() {
-        guard let objectURL else {
-            ZLogs.shared.error("Error: Installation - objectURL not found")
-            return
-        }
-        
-        let itmsServicesURLString = "itms-services://?action=download-manifest&url="+objectURL
-
-        if let itmsServiceURL = URL(string: itmsServicesURLString) {
-            UIApplication.shared.open(itmsServiceURL)
-        }
-    }
+//    func generatePrivacyList(completion: @escaping () -> Void) {
+//        // MARK: UPDATE URL OF YOU FILE
+//        let fileName = sourceURL?.lastPathComponent
+//        
+//        guard let fileName, let fileURL = URL(string: "https://packages-development.zohostratus.com/ipa/\(fileName)") else {
+//            ZLogs.shared.log(.warning, message: "Invalid file url")
+//            return
+//        }
+//  
+//        let plistURL = plistHandler.createPlistFile(url: fileURL.absoluteString, content: plistDictionary)
+//        switch plistURL {
+//        case .success(let pathLocation):
+//            shareItem = [pathLocation]
+//            completion()
+//        case .failure(let failure):
+//            ZLogs.shared.error(failure.localizedDescription)
+//        }
+//    }
 }
