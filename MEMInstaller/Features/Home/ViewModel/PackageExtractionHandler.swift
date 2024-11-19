@@ -16,6 +16,7 @@ class PackageExtractionHandler {
     
     var appIcon: Data?
     var bundleProperties: BundleProperties?
+    var objectURL: String?
     
     var plistDictionary: [String: Any] = [:] {
         didSet {
@@ -168,8 +169,13 @@ class PackageExtractionHandler {
     }
     
     // MARK: - Execute Install
-    func executeInstall(_ url: String) {
-        let itmsServicesURLString = "itms-services://?action=download-manifest&url=\(url)"
+    func executeInstall() {
+        guard let objectURL else {
+            ZLogs.shared.error("Error: Installation - objectURL not found")
+            return
+        }
+        
+        let itmsServicesURLString = "itms-services://?action=download-manifest&url="+objectURL
 
         if let itmsServiceURL = URL(string: itmsServicesURLString) {
             UIApplication.shared.open(itmsServiceURL)

@@ -19,6 +19,7 @@ enum PListCellIdentifiers: String, CaseIterable {
 
 struct AttachedFileDetailView: View {
     @ObservedObject var viewModel: HomeViewModel
+    let attachmentMode: AttachmentMode
     
     private let propertyListCellData: [PListCellIdentifiers: String] = [:]
     
@@ -127,9 +128,9 @@ struct AttachedFileDetailView: View {
     @ViewBuilder
     private func uploadBtnView() -> some View {
         Button(action: {
-            // Handle file upload
+            attachmentMode == .install ? installApplication() : uploadApplication()
         }, label: {
-            Text("Upload")
+            Text(attachmentMode == .install ? "Install" : "Upload")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 180, height: 50)
@@ -157,11 +158,19 @@ struct AttachedFileDetailView: View {
             return viewModel.packageHandler.bundleProperties?.supportedPlatform?.joined(separator: ", ")
         }
     }
+    
+    private func installApplication() {
+        viewModel.packageHandler.executeInstall()
+    }
+    
+    private func uploadApplication() {
+        
+    }
 }
 
 struct AttachedFileDetailPreviewProvider: PreviewProvider {
     
     static var previews: some View {
-        AttachedFileDetailView(viewModel: HomeViewModel(StratusRepositoryImpl()))
+        AttachedFileDetailView(viewModel: HomeViewModel(StratusRepositoryImpl()), attachmentMode: .install)
     }
 }

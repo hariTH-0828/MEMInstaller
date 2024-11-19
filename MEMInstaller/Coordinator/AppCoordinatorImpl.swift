@@ -49,10 +49,8 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
     @ViewBuilder
     func build(_ sheet: Sheet) -> some View {
         switch sheet {
-        case .settings(viewModel: let viewModel):
-            SettingView(viewModel: viewModel)
-        case .attachedDetail(viewModel: let viewModel):
-            AttachedFileDetailView(viewModel: viewModel)
+        case .attachedDetail(viewModel: let viewModel, mode: let attachmentMode):
+            AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
         case .logout:
             presentLogoutView()
                 .presentationCompactAdaptation(.none)

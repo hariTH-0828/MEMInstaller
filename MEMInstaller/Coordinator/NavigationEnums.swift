@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUI
 
+enum AttachmentMode {
+    case install
+    case upload
+}
+
 enum Screen: Identifiable, Hashable {
     case home
     case login
@@ -16,8 +21,7 @@ enum Screen: Identifiable, Hashable {
 }
 
 enum Sheet: Identifiable, Hashable {
-    case settings(viewModel: HomeViewModel)
-    case attachedDetail(viewModel: HomeViewModel)
+    case attachedDetail(viewModel: HomeViewModel, mode: AttachmentMode)
     case logout
     
     var id: Self { self }
@@ -42,10 +46,9 @@ extension Sheet {
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case .settings(let viewModel):
+        case .attachedDetail(let viewModel, let mode):
             hasher.combine(ObjectIdentifier(viewModel))
-        case .attachedDetail(let viewModel):
-            hasher.combine(ObjectIdentifier(viewModel))
+            hasher.combine(mode)
         case .logout:
             hasher.combine(true)
         }

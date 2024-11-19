@@ -69,7 +69,7 @@ struct HomeView: View {
                     case .success(let filePath):
                         viewModel.packageHandler.extractIpaFileContents(from: filePath)
                         viewModel.packageHandler.extractAppBundle()
-                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel))
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.presentToast(message: failure.localizedDescription)
@@ -96,11 +96,14 @@ struct ListAvailableApplications: View {
                     
                     let iconURL = contents.filter({ $0.actualContentType == .png && $0.key.contains("AppIcon60x60@")}).first?.url
                     let infoPlistURL = contents.filter({ $0.actualContentType == .document && $0.key.contains("Info.plist")}).first?.url
+                    let objectURL = contents.filter({$0.actualContentType == .document && $0.key.contains(folderName + ".plist")}).first?.url
                     
                     Button(action: {
                         guard let iconURL, let infoPlistURL else { return }
                         viewModel.downloadInfoFile(url: infoPlistURL)
                         viewModel.downloadAppIconFile(url: iconURL)
+                        viewModel.packageHandler.objectURL = objectURL
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .install))
                     }, label: {
                         Label(
                             title: {
