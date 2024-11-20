@@ -32,11 +32,9 @@ struct HomeView: View {
                 .navigationTitle(isSideMenuVisible ? "" : "com.learn.meminstaller.home.title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { hambergerButton() }
+                .animation(.smooth, value: isSideMenuVisible)
                 .task {
                     await viewModel.fetchFoldersFromBucket()
-                }
-                .overlay {
-                    loadingOverlay()
                 }
             }
             
@@ -61,18 +59,6 @@ struct HomeView: View {
             })
         }
     }
-    
-    @ViewBuilder
-   private func loadingOverlay() -> some View {
-       if case .uploading(let title) = viewModel.loadingState {
-           Color.black
-               .ignoresSafeArea()
-               .opacity(0.3)
-
-           ProgressView(title)
-               .progressViewStyle(.horizontalCircular)
-       }
-   }
 }
 
 struct ListAvailableApplications: View {
@@ -96,7 +82,7 @@ struct ListAvailableApplications: View {
                 }
             }
             .refreshable { await viewModel.fetchFoldersFromBucket() }
-            .toolbar { uploadButtonView() }
+            .toolbar { addPackageButtonView() }
         })
     }
     
@@ -132,14 +118,16 @@ struct ListAvailableApplications: View {
         }
     }
     
-    private func uploadButtonView() -> some ToolbarContent {
+    private func addPackageButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
                 appCoordinator.openFileImporter { result in
                     switch result {
                     case .success(let filePath):
                         viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload)) {
+                            try? ZFFileManager.shared.clearAllCache()
+                        }
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)

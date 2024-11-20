@@ -23,7 +23,7 @@ struct SideMenu<Content: View>: View where Content: View {
                 
                 content
                     .transition(.move(edge: .leading))
-                    .background(.clear)
+                    .background(Color.clear)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

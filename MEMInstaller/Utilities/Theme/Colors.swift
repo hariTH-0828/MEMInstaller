@@ -48,7 +48,7 @@ struct Colors: ColorStyleProtocol {
 
     var contentBackground: Color {
         let lightGrayColor = UIColor(red: 223/255.0, green: 222/255.0, blue: 222/255.0, alpha: 1.0)
-        let uiColor = UIColor.setAppearance(dark: .black, light: lightGrayColor)
+        let uiColor = UIColor.setAppearance(dark: .systemGray4, light: lightGrayColor)
         return Color(uiColor: uiColor)
     }
     

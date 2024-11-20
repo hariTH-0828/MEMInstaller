@@ -7,12 +7,19 @@
 
 import SwiftUI
 
-class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
+class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresentationProtocol {
+    // NavigationProtocol
     @Published var path: NavigationPath = NavigationPath()
-    @Published var sheet: Sheet?
-    @Published var shouldShowFileImporter: Bool = false
     
+    // ModelPresentation
+    @Published var sheet: Sheet?
+    @Published var onDismiss: (() -> Void)?
+    
+    // FileImporterProtocol
+    @Published var shouldShowFileImporter: Bool = false
     var fileImportCompletion: ((Result<URL, Error>) -> Void)?
+    
+    var fileExportCompletion: ((Bool, Error?) -> Void)?
     
     func push(_ screen: Screen) {
         path.append(screen)
@@ -26,13 +33,25 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
         path.removeLast(path.count)
     }
     
-    func presentSheet(_ sheet: Sheet) {
+    func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)? = nil) {
         self.sheet = sheet
+        self.onDismiss = onDismiss
+    }
+    
+    func dismissSheet() {
+        self.sheet = nil
+        self.onDismiss?() // Execute the onDismiss action
+        self.onDismiss = nil // Reset to avoid unintended reuse
     }
     
     func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void) {
         self.fileImportCompletion = completion
         self.shouldShowFileImporter = true
+    }
+    
+    func presentActivityRepresentable(logFileURL: URL, completion: @escaping (Bool, Error?) -> Void) {
+        fileExportCompletion = completion
+        presentSheet(.activityRepresentable(logFileURL))
     }
     
     // MARK: Presentation Style Providers
@@ -43,6 +62,8 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
             HomeView()
         case .login:
             LoginView()
+        case .about:
+            AboutView()
         }
     }
     
@@ -53,10 +74,16 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
             AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
                 .presentationDragIndicator(.visible)
         case .logout:
-            presentLogoutView()
+            PresentLogoutView()
                 .presentationCompactAdaptation(.none)
                 .padding(.all, 15)
                 .interactiveDismissDisabled()
+        case .activityRepresentable(let logFileURL):
+            ActivityViewRepresentable(activityItems: [logFileURL]) { completion, error in
+                self.fileExportCompletion?(completion, error)
+                self.fileExportCompletion = nil // Reset to prevent reuse
+            }
+            .presentationDetents([.medium, .large])
         }
     }
 }

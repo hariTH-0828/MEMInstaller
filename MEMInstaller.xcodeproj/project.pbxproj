@@ -41,6 +41,10 @@
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
 		5270C5622CEC64C300C051CB /* PUT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5612CEC64C300C051CB /* PUT.swift */; };
+		5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */; };
+		5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */; };
+		5270C56F2CEDEEC500C051CB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56E2CEDEEC500C051CB /* AboutView.swift */; };
+		5270C5712CEDEF0500C051CB /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5702CEDEF0500C051CB /* Bundle+.swift */; };
 		52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */; };
 		52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B54F2CEB341700214F41 /* SideMenuView.swift */; };
 		52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5512CEB343300214F41 /* SideMenu.swift */; };
@@ -48,7 +52,7 @@
 		52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DOWNLOAD.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
 		52E109DB2CE66BC8002D1EDD /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */; };
-		52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */; };
+		52E109DD2CE66E7F002D1EDD /* NavigationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DC2CE66E7F002D1EDD /* NavigationProtocol.swift */; };
 		52E109DF2CE66ED7002D1EDD /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */; };
 		52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E02CE67994002D1EDD /* EmptyBucketView.swift */; };
 		52E109E32CE679EE002D1EDD /* BucketListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E22CE679EE002D1EDD /* BucketListView.swift */; };
@@ -133,6 +137,10 @@
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		5270C5612CEC64C300C051CB /* PUT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PUT.swift; sourceTree = "<group>"; };
+		5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentLogoutView.swift; sourceTree = "<group>"; };
+		5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
+		5270C56E2CEDEEC500C051CB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		5270C5702CEDEF0500C051CB /* Bundle+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
 		52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		52D0B54F2CEB341700214F41 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		52D0B5512CEB343300214F41 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -140,7 +148,7 @@
 		52D0B5572CEB730400214F41 /* DOWNLOAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOWNLOAD.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
-		52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
+		52E109DC2CE66E7F002D1EDD /* NavigationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProtocol.swift; sourceTree = "<group>"; };
 		52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		52E109E02CE67994002D1EDD /* EmptyBucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBucketView.swift; sourceTree = "<group>"; };
 		52E109E22CE679EE002D1EDD /* BucketListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketListView.swift; sourceTree = "<group>"; };
@@ -358,6 +366,7 @@
 				52E109E82CE70725002D1EDD /* Color+.swift */,
 				52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */,
 				52D0B5532CEB3D6C00214F41 /* String+.swift */,
+				5270C5702CEDEF0500C051CB /* Bundle+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -476,6 +485,9 @@
 			children = (
 				52D0B54F2CEB341700214F41 /* SideMenuView.swift */,
 				52D0B5512CEB343300214F41 /* SideMenu.swift */,
+				5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */,
+				5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */,
+				5270C56E2CEDEEC500C051CB /* AboutView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -484,7 +496,7 @@
 			isa = PBXGroup;
 			children = (
 				52E109DA2CE66BC8002D1EDD /* NavigationEnums.swift */,
-				52E109DC2CE66E7F002D1EDD /* CoordinatorProtocol.swift */,
+				52E109DC2CE66E7F002D1EDD /* NavigationProtocol.swift */,
 				52E109DE2CE66ED7002D1EDD /* AppCoordinatorImpl.swift */,
 			);
 			path = Coordinator;
@@ -784,11 +796,13 @@
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
 				52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */,
+				5270C56F2CEDEEC500C051CB /* AboutView.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
+				5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
-				52E109DD2CE66E7F002D1EDD /* CoordinatorProtocol.swift in Sources */,
+				52E109DD2CE66E7F002D1EDD /* NavigationProtocol.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
 				523F722D2CDB690000D564E7 /* UIColor+.swift in Sources */,
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
@@ -812,6 +826,8 @@
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
 				52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
+				5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */,
+				5270C5712CEDEF0500C051CB /* Bundle+.swift in Sources */,
 				52F393B92CE5D15F00C9B23C /* NetworkRequestProtocol.swift in Sources */,
 				52E109E72CE70671002D1EDD /* View+.swift in Sources */,
 				52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */,

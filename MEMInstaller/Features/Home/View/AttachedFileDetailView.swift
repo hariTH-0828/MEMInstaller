@@ -51,7 +51,22 @@ struct AttachedFileDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
+            .overlay {
+                loadingOverlay()
+            }
         }
+    }
+    
+    @ViewBuilder
+    private func loadingOverlay() -> some View {
+       if case .uploading(let title) = viewModel.loadingState {
+           Color.black
+               .ignoresSafeArea()
+               .opacity(0.3)
+
+           ProgressView(title)
+               .progressViewStyle(.horizontalCircular)
+       }
     }
     
     @ViewBuilder
@@ -170,6 +185,7 @@ struct AttachedFileDetailView: View {
 
         if let itmsServiceURL = URL(string: itmsServicesURLString) {
             UIApplication.shared.open(itmsServiceURL)
+            appCoordinator.dismissSheet()
         }
     }
     
@@ -177,8 +193,13 @@ struct AttachedFileDetailView: View {
         guard let endpoint = generateUploadBodyParams() else { return }
         
         Task {
-            appCoordinator.sheet = nil
-            await viewModel.uploadPackage(endpoint: endpoint)
+            await viewModel.uploadPackage(endpoint: endpoint) {
+                appCoordinator.dismissSheet()
+                
+                viewModel.setLoadingState(.loading)
+                await viewModel.fetchFoldersFromBucket()
+                viewModel.setLoadingState(.idle)
+            }
         }
     }
     
@@ -187,5 +208,15 @@ struct AttachedFileDetailView: View {
         guard let bundleName = valueFor(.bundleName) else { return nil }
         
         return "\(userEmail)/\(bundleName)"
+    }
+}
+
+struct AttachedFileDetailPreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        AttachedFileDetailView(viewModel: HomeViewModel(repository: StratusRepositoryImpl(),
+                                                        userDataManager: UserDataManager(),
+                                                        packageHandler: PackageExtractionHandler()),
+                               attachmentMode: .install)
     }
 }

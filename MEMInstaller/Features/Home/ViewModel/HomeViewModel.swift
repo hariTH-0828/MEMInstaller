@@ -22,7 +22,7 @@ class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userprofile: ZUserProfile?
     @Published private(set) var allObjects: [String: [ContentModel]] = [:]
-    @Published var loadingState: LoadingState = .idle
+    @Published var loadingState: LoadingState = .loading
     
     // Toast
     @Published private(set) var toastMessage: String?
@@ -89,7 +89,7 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Upload packages
-    func uploadPackage(endpoint: String?) async {
+    func uploadPackage(endpoint: String?, _ callBack: @escaping () async -> Void) async {
         guard let endpoint else {
             showToast("Invalid upload endpoint.")
             return
@@ -115,10 +115,7 @@ class HomeViewModel: ObservableObject {
                 try await uploadInstallerPropertyList(endpoint)
             }
             
-            // Reload folders
-            setLoadingState(.loading)
-            await fetchFoldersFromBucket()
-            setLoadingState(.idle)
+            await callBack()
         }catch {
             handleError(error)
         }
@@ -176,7 +173,7 @@ class HomeViewModel: ObservableObject {
         }
         let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/\(bundleName).plist")
         try await upload(data: plistData, to: endpoint, contentType: .document)
-        showToast(".plist uploaded successfully.")
+        ZLogs.shared.info("\(bundleName).plist uploaded successfully.")
     }
     
     // MARK: - Download Property List

@@ -7,17 +7,13 @@
 
 import SwiftUI
 
-protocol CoordinatorProtocol: ObservableObject {
+protocol NavigationProtocol: ObservableObject {
     var path: NavigationPath { get set }
-    var sheet: Sheet? { get set }
     
     // Navigation destination
     func push(_ screen: Screen)
     func pop()
     func popToRoot()
-    
-    // Presentation
-    func presentSheet(_ sheet: Sheet)
 }
 
 protocol FileImporterProtocol: ObservableObject {
@@ -25,4 +21,13 @@ protocol FileImporterProtocol: ObservableObject {
     var fileImportCompletion: ((Result<URL, Error>) -> Void)? { get set }
 
     func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void)
+}
+
+protocol ModelPresentationProtocol: ObservableObject {
+    var sheet: Sheet? { get set }
+    var onDismiss: (() -> Void)? { get set }
+    
+    // Presentation
+    func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)?)
+    func dismissSheet()
 }

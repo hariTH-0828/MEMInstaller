@@ -16,6 +16,7 @@ enum AttachmentMode {
 enum Screen: Identifiable, Hashable {
     case home
     case login
+    case about
     
     var id: Self { self }
 }
@@ -23,23 +24,9 @@ enum Screen: Identifiable, Hashable {
 enum Sheet: Identifiable, Hashable {
     case attachedDetail(viewModel: HomeViewModel, mode: AttachmentMode)
     case logout
+    case activityRepresentable(URL)
     
     var id: Self { self }
-}
-
-extension Screen {
-    func hash(into hasher: inout Hasher) {
-        switch self {
-        case .home:
-            hasher.combine(self)
-        case .login:
-            hasher.combine(self)
-        }
-    }
-    
-    static func == (lhs: Screen, rhs: Screen) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
 }
 
 extension Sheet {
@@ -50,7 +37,9 @@ extension Sheet {
             hasher.combine(ObjectIdentifier(viewModel))
             hasher.combine(mode)
         case .logout:
-            hasher.combine(true)
+            hasher.combine(self)
+        case .activityRepresentable(let url):
+            hasher.combine(url)
         }
     }
     

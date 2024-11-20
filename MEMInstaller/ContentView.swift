@@ -29,7 +29,7 @@ struct ContentView: View {
             .navigationDestination(for: Screen.self) { screen in
                 appCoordinator.build(screen)
             }
-            .sheet(item: $appCoordinator.sheet) { sheet in
+            .sheet(item: $appCoordinator.sheet, onDismiss: appCoordinator.dismissSheet) { sheet in
                 appCoordinator.build(sheet)
             }
             .fileImporter(isPresented: $appCoordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
@@ -41,16 +41,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-
-
-
-/*
- .fileImporter(isPresented: $appCoordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
-     switch result {
-     case .success(let location):
-         viewModel.extractIpaFileContents(from: location)
-         viewModel.extractAppBundle()
-     case .failure(let error):
-         viewModel.presentToast(message: error.localizedDescription)
-     }
- */
