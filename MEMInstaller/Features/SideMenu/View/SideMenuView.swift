@@ -29,7 +29,7 @@ struct SideMenuView: View {
                     
                     Button(action: {
                         FileManager.default.fileExists(atPath: logFileURL.path()) ?
-                        isPresentShareLog.toggle() : viewModel.presentToast(message: "Error: No file found")
+                        isPresentShareLog.toggle() : viewModel.showToast("Error: No file found")
                     }, label: {
                         shareLogsButtonView()
                     })
@@ -155,9 +155,9 @@ struct SideMenuView: View {
     private func handleExportLogFile() -> some View {
         ActivityViewRepresentable(activityItems: [logFileURL]) { completion, error in
             if let error = error {
-                viewModel.presentToast(message: error.localizedDescription)
+                viewModel.showToast(error.localizedDescription)
             }else if completion {
-                viewModel.presentToast(message: "File saved successfully")
+                viewModel.showToast("File saved successfully")
             }
         }
         .presentationDetents([.medium, .large])
@@ -168,9 +168,9 @@ struct SideMenuView: View {
             try ZFFileManager.shared.clearAllCache()
             self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
             ZLogs.shared.info("com.learn.meminstaller.setting.cache-clear")
-            viewModel.presentToast(message: "com.learn.meminstaller.setting.cache-clear".ZSLocal)
+            viewModel.showToast("com.learn.meminstaller.setting.cache-clear".ZSLocal)
         }catch {
-            viewModel.presentToast(message: error.localizedDescription)
+            viewModel.showToast(error.localizedDescription)
         }
     }
 }

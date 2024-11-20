@@ -39,7 +39,7 @@ struct EmptyBucketView: View {
                                 appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
-                                viewModel.presentToast(message: failure.localizedDescription)
+                                viewModel.showToast(failure.localizedDescription)
                             }
                         }
                     }
@@ -47,7 +47,7 @@ struct EmptyBucketView: View {
                     
                     Button("com.learn.meminstaller.home.refresh") {
                         Task {
-                            withAnimation { viewModel.isLoading = true }
+                            withAnimation { viewModel.setLoadingState(.loading) }
                             await viewModel.fetchFoldersFromBucket()
                         }
                     }

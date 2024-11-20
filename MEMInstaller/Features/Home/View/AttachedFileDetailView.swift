@@ -162,7 +162,7 @@ struct AttachedFileDetailView: View {
     private func installApplication() {
         guard let objectURL = viewModel.packageHandler.objectURL else {
             ZLogs.shared.error("Error: Installation - objectURL not found")
-            viewModel.presentToast(message: "Installation failed: URL not found")
+            viewModel.showToast("Installation failed: URL not found")
             return
         }
         
@@ -178,7 +178,7 @@ struct AttachedFileDetailView: View {
         
         Task {
             appCoordinator.sheet = nil
-            await viewModel.uploadPackageIntoFolder(endpoint)
+            await viewModel.uploadPackage(endpoint: endpoint)
         }
     }
     
@@ -187,12 +187,5 @@ struct AttachedFileDetailView: View {
         guard let bundleName = valueFor(.bundleName) else { return nil }
         
         return "\(userEmail)/\(bundleName)"
-    }
-}
-
-struct AttachedFileDetailPreviewProvider: PreviewProvider {
-    
-    static var previews: some View {
-        AttachedFileDetailView(viewModel: HomeViewModel(StratusRepositoryImpl()), attachmentMode: .install)
     }
 }

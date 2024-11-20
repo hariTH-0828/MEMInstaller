@@ -11,40 +11,32 @@ import MEMToast
 struct HomeView: View {
     @EnvironmentObject var appCoordinator: AppCoordinatorImpl
     @StateObject var viewModel: HomeViewModel
-    
     @State var isSideMenuVisible: Bool = false
     
     init() {
-        _viewModel = StateObject(wrappedValue: HomeViewModel(StratusRepositoryImpl()))
+        _viewModel = StateObject(wrappedValue: HomeViewModel(repository: StratusRepositoryImpl(),
+                                                             userDataManager: UserDataManager(),
+                                                             packageHandler: PackageExtractionHandler()))
     }
     
     var body: some View {
         ZStack {
             NavigationStack {
-                LoaderView(isLoading: $viewModel.isLoading, content: {
-                    if !viewModel.allObject.isEmpty {
+                LoaderView(loadingState: $viewModel.loadingState) {
+                    if !viewModel.allObjects.isEmpty {
                         ListAvailableApplications(viewModel: viewModel)
                     }else {
                         EmptyBucketView(viewModel: viewModel)
                     }
-                })
+                }
                 .navigationTitle(isSideMenuVisible ? "" : "com.learn.meminstaller.home.title")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    hambergerButton()
-                }
+                .toolbar { hambergerButton() }
                 .task {
                     await viewModel.fetchFoldersFromBucket()
                 }
                 .overlay {
-                    if viewModel.isDownOrUpStateEnable {
-                        Color.black
-                            .ignoresSafeArea()
-                            .opacity(0.3)
-                        
-                        ProgressView(viewModel.progressTitle)
-                            .progressViewStyle(.horizontalCircular)
-                    }
+                    loadingOverlay()
                 }
             }
             
@@ -69,6 +61,18 @@ struct HomeView: View {
             })
         }
     }
+    
+    @ViewBuilder
+   private func loadingOverlay() -> some View {
+       if case .uploading(let title) = viewModel.loadingState {
+           Color.black
+               .ignoresSafeArea()
+               .opacity(0.3)
+
+           ProgressView(title)
+               .progressViewStyle(.horizontalCircular)
+       }
+   }
 }
 
 struct ListAvailableApplications: View {
@@ -80,7 +84,7 @@ struct ListAvailableApplications: View {
             // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
             List(sortedFolderNames(), id: \.self) { folderName in
                 
-                if let contents = viewModel.allObject[folderName] {
+                if let contents = viewModel.allObjects[folderName] {
                     // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
                     let fileURLs = extractFileURLs(from: contents, folderName: folderName)
                     
@@ -91,14 +95,8 @@ struct ListAvailableApplications: View {
                     })
                 }
             }
-            .refreshable {
-                Task {
-                    await viewModel.fetchFoldersFromBucket()
-                }
-            }
-            .toolbar {
-                uploadButtonView()
-            }
+            .refreshable { await viewModel.fetchFoldersFromBucket() }
+            .toolbar { uploadButtonView() }
         })
     }
     
@@ -144,7 +142,7 @@ struct ListAvailableApplications: View {
                         appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
-                        viewModel.presentToast(message: failure.localizedDescription)
+                        viewModel.showToast(failure.localizedDescription)
                     }
                 }
             }, label: {
@@ -159,7 +157,7 @@ struct ListAvailableApplications: View {
     /// Returns a sorted list of folder names from the `allObject` dictionary keys.
     /// Sorting ensures a consistent display order.
     private func sortedFolderNames() -> [String] {
-        return Array(viewModel.allObject.keys).sorted()
+        return Array(viewModel.allObjects.keys).sorted()
     }
     
     /// Extracts the URLs for the app icon, Info.plist, and object plist file from a folder's content list.

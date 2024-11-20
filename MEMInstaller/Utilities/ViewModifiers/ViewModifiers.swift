@@ -99,21 +99,21 @@ struct ZLabel<Title: View, Icon: View>: View {
 
 // MARK: - LoaderView
 struct LoaderView<Content: View, Loader: View>: View {
-    @Binding var isLoading: Bool
+    @Binding var loadingState: LoadingState
     let content: Content
     var progressView: Loader
     
-    init(isLoading: Binding<Bool>,
+    init(loadingState: Binding<LoadingState>,
          @ViewBuilder content: () -> Content,
          @ViewBuilder loader: () -> Loader = { ProgressView() } )
     {
-        self._isLoading = isLoading
+        self._loadingState = loadingState
         self.content = content()
         self.progressView = loader()
     }
     
     var body: some View {
-        if isLoading {
+        if loadingState == .loading {
             ZStack(alignment: .center, content: {
                 progressView
                     .progressViewStyle(.horizontalCircular)

@@ -51,6 +51,7 @@ class AppCoordinatorImpl: CoordinatorProtocol, FileImporterProtocol {
         switch sheet {
         case .attachedDetail(viewModel: let viewModel, mode: let attachmentMode):
             AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
+                .presentationDragIndicator(.visible)
         case .logout:
             presentLogoutView()
                 .presentationCompactAdaptation(.none)
