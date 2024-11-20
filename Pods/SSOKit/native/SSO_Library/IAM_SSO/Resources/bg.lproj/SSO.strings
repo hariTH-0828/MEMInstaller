@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Зареждане...";
+"zohoSSO.manage" = "Управление";
+"zohoSSO.select" = "Избор";
+"zohoSSO.close" = "Затваряне";
+"zohoSSO.addaccount" = "Добавяне на акаунт";
+"zohoSSO.open" = "Отваряне";
+"zohoSSO.remove" = "Премахване";
+"zohoSSO.continue" = "Продължаване";
+"zohoSSO.cancel" = "Отказ";
+"zohoSSO.rooted.alert" = "Вашето устройство е джейлбрейкнато. Продължете на собствен риск, тъй като използването на джейлбрейкнато устройство ще направи приложението уязвимо за злонамерени атаки.";
+"zohoSSO.dcchooser.title" = "Изберете вашия регион";
+"zohoSSO.Cancel" = "Отказ";
+"zohoSSO.dcchooser.china" = "Китай";
+"zohoSSO.dcchooser.other" = "Друго";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

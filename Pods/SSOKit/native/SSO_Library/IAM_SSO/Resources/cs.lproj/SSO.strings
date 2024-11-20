@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Načítání…";
+"zohoSSO.manage" = "Spravovat";
+"zohoSSO.select" = "Vybrat";
+"zohoSSO.close" = "Zavřít";
+"zohoSSO.addaccount" = "Přidat účet";
+"zohoSSO.open" = "Otevřít";
+"zohoSSO.remove" = "Odebrat";
+"zohoSSO.continue" = "Pokračovat";
+"zohoSSO.cancel" = "Zrušit";
+"zohoSSO.rooted.alert" = "Vaše zařízení je ve stavu s jailbreakem Pokud chcete pokračovat, činíte tak na vlastní nebezpečí, protože použití zařízení s jailbreakem může učinit aplikaci zranitelnou vůči škodlivým útokům.";
+"zohoSSO.dcchooser.title" = "Vyberte svoji oblast";
+"zohoSSO.Cancel" = "Zrušit";
+"zohoSSO.dcchooser.china" = "Čína";
+"zohoSSO.dcchooser.other" = "Ostatní";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "กำลังโหลด...";
+"zohoSSO.manage" = "จัดการ";
+"zohoSSO.select" = "เลือก";
+"zohoSSO.close" = "ปิด";
+"zohoSSO.addaccount" = "เพิ่มบัญชี";
+"zohoSSO.open" = "เปิด";
+"zohoSSO.remove" = "นำออก";
+"zohoSSO.continue" = "ดำเนินการต่อ";
+"zohoSSO.cancel" = "ยกเลิก";
+"zohoSSO.rooted.alert" = "อุปกรณ์ของคุณถูกทำเจลเบรค การดำเนินการต่อคุณจะต้องรับความเสี่ยงเองเนื่องจากการใช้อุปกรณ์ที่ถูกทำเจลเบรคจะทำให้แอปมีความเสี่ยงต่อการถูกโจมตีที่มีอันตราย";
+"zohoSSO.dcchooser.title" = "เลือกภูมิภาคของคุณ";
+"zohoSSO.Cancel" = "ยกเลิก";
+"zohoSSO.dcchooser.china" = "จีน";
+"zohoSSO.dcchooser.other" = "อื่นๆ";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

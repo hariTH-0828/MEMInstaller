@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Đang tải...";
+"zohoSSO.manage" = "Quản lý";
+"zohoSSO.select" = "Chọn";
+"zohoSSO.close" = "Đóng";
+"zohoSSO.addaccount" = "Thêm Tài Khoản";
+"zohoSSO.open" = "Mở";
+"zohoSSO.remove" = "Xóa";
+"zohoSSO.continue" = "Tiếp tục";
+"zohoSSO.cancel" = "Hủy";
+"zohoSSO.rooted.alert" = "Thiết bị của bạn bị phá bảo mật (Jailbreak) Bạn tự chịu trách nhiệm nếu tiếp tục bởi sử dụng thiết bị đã bị phá bảo mật sẽ khiến ứng dụng dễ bị tấn công độc hại.";
+"zohoSSO.dcchooser.title" = "Chọn vùng của bạn";
+"zohoSSO.Cancel" = "Hủy";
+"zohoSSO.dcchooser.china" = "Trung Quốc";
+"zohoSSO.dcchooser.other" = "Khác";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Yükleniyor...";
+"zohoSSO.manage" = "Yönet";
+"zohoSSO.select" = "Seç";
+"zohoSSO.close" = "Kapat";
+"zohoSSO.addaccount" = "Hesap Ekle";
+"zohoSSO.open" = "Aç";
+"zohoSSO.remove" = "Kaldır";
+"zohoSSO.continue" = "Devam Et";
+"zohoSSO.cancel" = "İptal";
+"zohoSSO.rooted.alert" = "Aygıtınızın işletim sistemi kısıtlamaları kaldırılmış. İşletim sistemi kısıtlamaları kaldırılmış bir aygıt kullanılması, uygulamayı kötü amaçlı saldırılara karşı korumasız bırakacağından risk size ait olmak üzere devam edebilirsiniz.";
+"zohoSSO.dcchooser.title" = "Bölgenizi seçin";
+"zohoSSO.Cancel" = "İptal";
+"zohoSSO.dcchooser.china" = "Çin";
+"zohoSSO.dcchooser.other" = "Diğer";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

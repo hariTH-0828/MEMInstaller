@@ -12,14 +12,14 @@ struct DefaultProfileImageView: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .frame(width: 45, height: 45)
-            .aspectRatio(contentMode: .fit)
+            .frame(width: 40, height: 40)
+            .scaledToFit()
             .clipShape(.circle)
             .overlay {
                 Circle()
                     .fill(.clear)
                     .strokeBorder(.gray)
-                    .frame(width: 45, height: 45)
+                    .frame(width: 41, height: 41)
             }
     }
 }
@@ -34,12 +34,12 @@ struct DefaultButtonStyle: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: width, alignment: .center)
-            .frame(height: height)
+            .font(.system(size: 16, weight: .semibold))
             .foregroundStyle(foregroundColor)
-            .bold()
+            .padding()
+            .frame(width: width, height: height)
             .background(
-                Capsule()
+                RoundedRectangle(cornerRadius: 12)
                     .fill(backgroundColor)
             )
     }
@@ -94,5 +94,117 @@ struct ZLabel<Title: View, Icon: View>: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - LoaderView
+struct LoaderView<Content: View, Loader: View>: View {
+    @Binding var isLoading: Bool
+    let content: Content
+    var progressView: Loader
+    
+    init(isLoading: Binding<Bool>,
+         @ViewBuilder content: () -> Content,
+         @ViewBuilder loader: () -> Loader = { ProgressView() } )
+    {
+        self._isLoading = isLoading
+        self.content = content()
+        self.progressView = loader()
+    }
+    
+    var body: some View {
+        if isLoading {
+            ZStack(alignment: .center, content: {
+                progressView
+                    .progressViewStyle(.horizontalCircular)
+                    .background(.clear)
+                    .tint(StyleManager.colorStyle.tintColor)
+                    .scaleEffect(1)
+            })
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }else {
+            self.content
+        }
+    }
+}
+
+// MARK: - Shimmer Effect
+struct ShimmerEffect: ViewModifier {
+    @Binding var enable: Bool
+    @State var isAnimating: Bool = false
+    
+    func body(content: Content) -> some View {
+        content
+            .mask {
+                GeometryReader { geometry in
+                    if enable {
+                        shimmerLayer(in: geometry.size)
+                            .onAppear {
+                                withAnimation(Animation.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                                    self.isAnimating = true
+                                }
+                            }
+                    }
+                }
+            }
+    }
+    
+    @ViewBuilder
+    private func shimmerLayer(in size: CGSize) -> some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.white.opacity(0.8), Color(uiColor: .systemGray5)]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .offset(x: isAnimating ? size.width : -size.width)
+            .opacity(0.5)
+            .clipped()
+    }
+}
+
+// MARK: - ShowAlert
+func showAlert(_ title: String = "", message: String, _ actionHandler: ((UIAlertAction) -> Void)? = nil) {
+    if let scenes = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+        if let topView = scenes.windows.first?.rootViewController {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: actionHandler))
+            topView.present(alert, animated: true)
+        }
+    }
+}
+
+// MARK: - LabelWithFieldItem
+struct LabelWithFieldItem<Content>: View where Content: View {
+    let label: String
+    let isMandatory: Bool
+    let content: Content
+    
+    init(label: String, isMandatory: Bool = false, content: () -> Content) {
+        self.label = label
+        self.isMandatory = isMandatory
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 2) {
+                Text(label)
+                    .foregroundStyle(.placeholder)
+                
+                if isMandatory {
+                    Text(" *")
+                        .foregroundStyle(.red)
+                        .baselineOffset(-2)
+                }
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            content
+        }
+        .padding(.vertical, 3)
     }
 }

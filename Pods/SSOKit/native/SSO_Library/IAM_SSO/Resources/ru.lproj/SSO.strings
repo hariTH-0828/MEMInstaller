@@ -1,0 +1,24 @@
+/* 
+  SSO.strings
+  SSO
+
+  Created by Kumareshwaran on 7/29/16.
+  Copyright © 2016 Zoho. All rights reserved.
+*/
+"zohoSSO.loading" = "Загрузка...";
+"zohoSSO.manage" = "Управление";
+"zohoSSO.select" = "Выбрать";
+"zohoSSO.close" = "Закрыть";
+"zohoSSO.addaccount" = "Добавить учетную запись";
+"zohoSSO.open" = "Открыть";
+"zohoSSO.remove" = "Удалить";
+"zohoSSO.continue" = "Продолжить";
+"zohoSSO.cancel" = "Отмена";
+"zohoSSO.rooted.alert" = "У вашего устройства снята защита. Вы принимаете на себя весь риск дальнейшего использования, поскольку установка приложения на устройство со снятой защитой может сделать приложение уязвимым к вредоносным атаками.";
+"zohoSSO.dcchooser.title" = "Выберите ваш регион";
+"zohoSSO.Cancel" = "Отмена";
+"zohoSSO.dcchooser.china" = "Китай";
+"zohoSSO.dcchooser.other" = "Другое";
+
+"zohoSSO.account.session.expired" = "Session expired.";
+"zohoSSO.account.lock.note" = "You must verify your identity using the device lock to complete the sign in process.";

@@ -1,4 +1,6 @@
 ${PODS_ROOT}/Target Support Files/Pods-MEMInstaller-MEMInstallerUITests/Pods-MEMInstaller-MEMInstallerUITests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework
 ${BUILT_PRODUCTS_DIR}/MEMToast/MEMToast.framework
-${BUILT_PRODUCTS_DIR}/ZCatalyst/ZCatalyst.framework
+${BUILT_PRODUCTS_DIR}/SSOKit/SSOKit.framework
 ${BUILT_PRODUCTS_DIR}/Zip/Zip.framework

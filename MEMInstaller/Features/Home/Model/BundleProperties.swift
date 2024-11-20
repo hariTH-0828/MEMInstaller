@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BundleProperties: Decodable, Identifiable {
+struct BundleProperties: Decodable, Identifiable, Hashable {
     var id: String { bundleIdentifier ?? UUID().uuidString }
     let bundleName: String?
     let bundleVersionShort: String?

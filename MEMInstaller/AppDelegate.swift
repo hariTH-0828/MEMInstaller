@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import ZCatalyst
+import SSOKit
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -15,18 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        let sourceApp = options[.sourceApplication] as? String
+        return AppViewModel.shared.applicationOpenUrlHandling(url: url, sourceApp: sourceApp)
+    }
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
           let sceneConfig: UISceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
           sceneConfig.delegateClass = SceneDelegate.self
           return sceneConfig
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        let sourceApp = options[.sourceApplication] as? String
-        let annotation = options[.annotation] as Any
-        
-        ZCatalystApp.shared.handleLoginRedirection(url, sourceApplication: sourceApp, annotation: annotation)
-        return true
     }
     
     public func discardSelfContainedWindows() {
@@ -40,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let options = UIWindowSceneDestructionRequestOptions()
         options.windowDismissalAnimation = windowDismissalAnimation
         UIApplication.shared.requestSceneSessionDestruction(session, options: options) { (error) in
-            print("Error: \(error)")
+            ZLogs.shared.error(error.localizedDescription)
         }
     }
 }

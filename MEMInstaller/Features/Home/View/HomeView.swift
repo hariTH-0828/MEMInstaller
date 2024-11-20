@@ -9,105 +9,187 @@ import SwiftUI
 import MEMToast
 
 struct HomeView: View {
-    @StateObject var viewModel: HomeViewModel = HomeViewModel()
-    @State var isPresentFiles: Bool = false
-    @State var isPresentSetting: Bool = false
+    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    @StateObject var viewModel: HomeViewModel
+    
+    @State var isSideMenuVisible: Bool = false
+    
+    init() {
+        _viewModel = StateObject(wrappedValue: HomeViewModel(StratusRepositoryImpl()))
+    }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                EmptyStateView(isPresentFiles: $isPresentFiles)
-            }
-            .navigationTitle("Home")
-            .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
-            .toolbar { settingToolBarItem() }
-            .fileImporter(isPresented: $isPresentFiles, allowedContentTypes: [.ipa]) { result in
-                switch result {
-                case .success(let location):
-                    viewModel.extractIpaFileContents(from: location)
-                    viewModel.extractAppBundle()
-                case .failure(let error):
-                    viewModel.presentToast(message: error.localizedDescription)
+        ZStack {
+            NavigationStack {
+                LoaderView(isLoading: $viewModel.isLoading, content: {
+                    if !viewModel.allObject.isEmpty {
+                        ListAvailableApplications(viewModel: viewModel)
+                    }else {
+                        EmptyBucketView(viewModel: viewModel)
+                    }
+                })
+                .navigationTitle(isSideMenuVisible ? "" : "com.learn.meminstaller.home.title")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    hambergerButton()
+                }
+                .task {
+                    await viewModel.fetchFoldersFromBucket()
+                }
+                .overlay {
+                    if viewModel.isDownOrUpStateEnable {
+                        Color.black
+                            .ignoresSafeArea()
+                            .opacity(0.3)
+                        
+                        ProgressView(viewModel.progressTitle)
+                            .progressViewStyle(.horizontalCircular)
+                    }
                 }
             }
-            .sheet(item: $viewModel.bundleProperties, content: { property in
-                AttachedFileDetailView(viewModel: viewModel, bundleProperty: property)
-                    .presentationDragIndicator(.visible)
-            })
-            .sheet(isPresented: $isPresentSetting, content: {
-                SettingView(userprofile: viewModel.userprofile!)
-            })
-            .onAppear(perform: {
-                ZCatalystManager.getAccessToken { token in
-                    ZLogs.shared.log(.info, message: "Token: \(token)")
-                } failure: { error in
-                    ZLogs.shared.error(error.localizedDescription)
-                }
+            
+            SideMenu(isSideMenuVisible: $isSideMenuVisible) {
+                SideMenuView(viewModel: viewModel, isPresentSideMenu: $isSideMenuVisible)
+            }
+        }
+        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
+    }
+    
+    private func hambergerButton() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(action: {
+                isSideMenuVisible.toggle()
+            }, label: {
+                Image("ico_menu")
+                    .resizable()
+                    .renderingMode(.template)
+                    .scaledToFit()
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                    .frame(width: 25, height: 25)
             })
         }
-    }
-    
-    private func settingToolBarItem() -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: { isPresentSetting.toggle() }, label: {
-                let userName = viewModel.userprofile?.firstName ?? "Unknown"
-                if let uiImage = imageWith(name: userName) {
-                    userImageView(uiImage)
-                }else {
-                    settingIconView()
-                }
-            })
-        }
-    }
-    
-    @ViewBuilder
-    private func userImageView(_ uiImage: UIImage) -> some View {
-        Image(uiImage: uiImage)
-            .resizable()
-            .frame(width: 35, height: 35)
-            .clipShape(Circle())
-    }
-    
-    @ViewBuilder
-    private func settingIconView() -> some View {
-        Image("gear")
-            .resizable()
-            .renderingMode(.template)
-            .frame(width: 25, height: 25)
-            .foregroundStyle(StyleManager.colorStyle.systemGray)
     }
 }
 
-struct EmptyStateView: View {
-    @Binding var isPresentFiles: Bool
+struct ListAvailableApplications: View {
+    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     
     var body: some View {
         GeometryReader(content: { geometry in
-            ZStack {
-                Image(.noFileFound)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: geometry.size.width * 0.7)
-                    .padding(.bottom, 50)
+            // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
+            List(sortedFolderNames(), id: \.self) { folderName in
                 
-                Button(action: {
-                    isPresentFiles.toggle()
-                }, label: {
-                    Text("Add file")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: geometry.size.width * 0.5, height: 50)
-                        .background(RoundedRectangle(cornerRadius: 12))
-                })
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom, 30)
+                if let contents = viewModel.allObject[folderName] {
+                    // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
+                    let fileURLs = extractFileURLs(from: contents, folderName: folderName)
+                    
+                    Button(action: {
+                        handleAppSelection(with: fileURLs)
+                    }, label: {
+                        appLabel(folderName: folderName, iconURL: fileURLs.iconURL)
+                    })
+                }
             }
-            .clipped()
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            .refreshable {
+                Task {
+                    await viewModel.fetchFoldersFromBucket()
+                }
+            }
+            .toolbar {
+                uploadButtonView()
+            }
         })
+    }
+    
+    @ViewBuilder
+    private func appLabel(folderName: String, iconURL: String?) -> some View {
+        Label(
+            title: {
+                Text(folderName)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+            },
+            icon: {
+                appIconView(iconURL, folderName: folderName)
+            }
+        )
+    }
+    
+    @ViewBuilder
+    private func appIconView(_ iconURL: String?, folderName: String) -> some View {
+        if let iconURL {
+            AsyncImage(url: URL(string: iconURL)!) { image in
+                image
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } placeholder: {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .foregroundStyle(StyleManager.colorStyle.systemGray)
+            }
+        }else {
+            Image(uiImage: imageWith(name: folderName)!)
+        }
+    }
+    
+    private func uploadButtonView() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                appCoordinator.openFileImporter { result in
+                    switch result {
+                    case .success(let filePath):
+                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
+                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
+                    case .failure(let failure):
+                        ZLogs.shared.error(failure.localizedDescription)
+                        viewModel.presentToast(message: failure.localizedDescription)
+                    }
+                }
+            }, label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
+            })
+        }
+    }
+    
+    // MARK: - HELPER METHODS
+    /// Returns a sorted list of folder names from the `allObject` dictionary keys.
+    /// Sorting ensures a consistent display order.
+    private func sortedFolderNames() -> [String] {
+        return Array(viewModel.allObject.keys).sorted()
+    }
+    
+    /// Extracts the URLs for the app icon, Info.plist, and object plist file from a folder's content list.
+    /// - Parameters:
+    ///   - contents: The list of contents in the folder.
+    ///   - folderName: The name of the folder being processed.
+    /// - Returns: A tuple containing the app icon URL, Info.plist URL, and object plist URL (all optional).
+    private func extractFileURLs(from contents: [ContentModel], folderName: String) -> (iconURL: String?, infoPlistURL: String?, objectURL: String?) {
+        let iconURL = contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
+        let infoPlistURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
+        let objectURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
+        return (iconURL, infoPlistURL, objectURL)
+    }
+
+    /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
+    /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
+    private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, objectURL: String?)) {
+        guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL else { return }
+        viewModel.downloadInfoFile(url: infoPlistURL)
+        viewModel.downloadAppIconFile(url: iconURL)
+        viewModel.packageHandler.objectURL = fileURLs.objectURL
+        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .install))
     }
 }
 
-#Preview {
-    HomeView()
+struct HomeViewPreviewProvider: PreviewProvider {
+    
+    static let bucket = BucketModel(bucketName: "packages", projectDetails: ProjectDetail(projectName: "ZInstaller", projectId: 21317000000012001), createdBy: CreatedBy(firstName: "Hariharan", lastName: "R S", emailId: "hariharan.rs@zohocorp.com", userType: "Admin"), createdTime: "Nov 04, 2024 04:10 PM", bucketURL: "https://packages-development.zohostratus.com")
+    
+    static var previews: some View {
+        HomeView()
+    }
 }

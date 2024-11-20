@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private enum PListCellIdentifiers: String, CaseIterable {
+enum PListCellIdentifiers: String, CaseIterable {
     case bundleName = "Bundle name"
     case bundleIdentifiers = "Bundle identifiers"
     case bundleVersionShort = "Bundle version (short)"
@@ -18,17 +18,16 @@ private enum PListCellIdentifiers: String, CaseIterable {
 }
 
 struct AttachedFileDetailView: View {
-    @ObservedObject var viewModel: HomeViewModel
-    @State var isPresentExport: Bool = false
-    let bundleProperty: BundleProperties
+    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
     
-    private let propertyListCellData: [PListCellIdentifiers: String] = [:]
+    @ObservedObject var viewModel: HomeViewModel
+    let attachmentMode: AttachmentMode
     
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    appIconView(viewModel.appIcon)
+                    appIconView(viewModel.packageHandler.appIcon)
                     bundleNameWithIdentifierView()
                 }
                 .padding(.horizontal)
@@ -47,48 +46,42 @@ struct AttachedFileDetailView: View {
                 
                 Spacer()
                 
-                installBtnView()
+                uploadBtnView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(bundleProperty.bundleName ?? "Unknown")
+            .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Export", systemImage: "square.and.arrow.down") {
-                        viewModel.generatePrivacyList {
-                            isPresentExport.toggle()
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $isPresentExport, content: {
-                ActivityViewRepresentable(activityItems: viewModel.shareItem) { completion, error in
-                    if let error = error {
-                        viewModel.presentToast(message: error.localizedDescription)
-                    }else if completion {
-                        viewModel.presentToast(message:"File successfully saved")
-                    }else {
-                        viewModel.presentToast(message:"Activity Dismissed")
-                    }
-                }
-                .presentationDetents([.medium, .large])
-            })
         }
     }
     
     @ViewBuilder
     private func bundleNameWithIdentifierView() -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 5) {
             /// App Name
-            Text(bundleProperty.bundleName ?? "Unknown")
-                .font(.title2)
-                .bold()
-                .lineLimit(1)
+            if let bundleName = viewModel.packageHandler.bundleProperties?.bundleName {
+                Text(bundleName)
+                    .font(.title2)
+                    .bold()
+                    .lineLimit(1)
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 180, height: 20)
+                    .shimmer(enable: .constant(true))
+            }
+            
             /// App Bundle Identifier
-            Text(bundleProperty.bundleIdentifier ?? "nil")
-                .font(.footnote)
-                .foregroundStyle(Color(.secondaryLabel))
-                .lineLimit(1)
+            if let bundleIdentifier = viewModel.packageHandler.bundleProperties?.bundleIdentifier {
+                Text(bundleIdentifier)
+                    .font(.footnote)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .lineLimit(1)
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 100, height: 15)
+                    .shimmer(enable: .constant(true))
+            }
         }
     }
     
@@ -101,11 +94,10 @@ struct AttachedFileDetailView: View {
                 .frame(width: 50, height: 50)
                 .clipShape(.circle)
         }else {
-            Image(uiImage: UIImage.getCurrentAppIcon())
-                .resizable()
-                .scaledToFill()
-                .frame(width: 50, height: 50)
-                .clipShape(.circle)
+            Circle()
+                .fill(.placeholder)
+                .frame(width: 50, height: 50, alignment: .center)
+                .shimmer(enable: .constant(true))
         }
     }
     
@@ -118,20 +110,27 @@ struct AttachedFileDetailView: View {
             
             Spacer()
             
-            Text(value ?? " - No value -")
-                .font(.system(.footnote))
-                .foregroundStyle(Color(uiColor: .secondaryLabel))
+            if let value {
+                Text(value)
+                    .font(.system(.footnote))
+                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+            }else {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.placeholder)
+                    .frame(width: 100, height: 15)
+                    .shimmer(enable: .constant(true))
+            }
         }
         .frame(height: 22)
         .padding(.horizontal)
     }
     
     @ViewBuilder
-    private func installBtnView() -> some View {
+    private func uploadBtnView() -> some View {
         Button(action: {
-            viewModel.executeInstall("https://packages-development.zohostratus.com/plist/ZohoFaciMap.plist")
+            attachmentMode == .install ? installApplication() : uploadApplication()
         }, label: {
-            Text("Install")
+            Text(attachmentMode == .install ? "Install" : "Upload")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 180, height: 50)
@@ -144,23 +143,56 @@ struct AttachedFileDetailView: View {
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
         switch identifier {
         case .bundleName:
-            return bundleProperty.bundleName
+            return viewModel.packageHandler.bundleProperties?.bundleName
         case .bundleIdentifiers:
-            return bundleProperty.bundleIdentifier
+            return viewModel.packageHandler.bundleProperties?.bundleIdentifier
         case .bundleVersionShort:
-            return bundleProperty.bundleVersionShort
+            return viewModel.packageHandler.bundleProperties?.bundleVersionShort
         case .bundleVersion:
-            return bundleProperty.bundleVersion
+            return viewModel.packageHandler.bundleProperties?.bundleVersion
         case .minOSVersion:
-            return bundleProperty.minimumOSVersion
+            return viewModel.packageHandler.bundleProperties?.minimumOSVersion
         case .requiredDevice:
-            return bundleProperty.requiredDeviceCompability?.joined(separator: ", ")
+            return viewModel.packageHandler.bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
         case .supportedPlatform:
-            return bundleProperty.supportedPlatform?.joined(separator: ", ")
+            return viewModel.packageHandler.bundleProperties?.supportedPlatform?.joined(separator: ", ")
         }
+    }
+    
+    private func installApplication() {
+        guard let objectURL = viewModel.packageHandler.objectURL else {
+            ZLogs.shared.error("Error: Installation - objectURL not found")
+            viewModel.presentToast(message: "Installation failed: URL not found")
+            return
+        }
+        
+        let itmsServicesURLString = "itms-services://?action=download-manifest&url="+objectURL
+
+        if let itmsServiceURL = URL(string: itmsServicesURLString) {
+            UIApplication.shared.open(itmsServiceURL)
+        }
+    }
+    
+    private func uploadApplication() {
+        guard let endpoint = generateUploadBodyParams() else { return }
+        
+        Task {
+            appCoordinator.sheet = nil
+            await viewModel.uploadPackageIntoFolder(endpoint)
+        }
+    }
+    
+    private func generateUploadBodyParams() -> String? {
+        guard let userEmail = viewModel.userprofile?.email else { return nil }
+        guard let bundleName = valueFor(.bundleName) else { return nil }
+        
+        return "\(userEmail)/\(bundleName)"
     }
 }
 
-#Preview {
-    AttachedFileDetailView(viewModel: HomeViewModel(), bundleProperty: BundleProperties(bundleName: "Default App", bundleVersionShort: "1.0", bundleVersion: "1111", bundleIdentifier: "com.default.bundlename.ios"))
+struct AttachedFileDetailPreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        AttachedFileDetailView(viewModel: HomeViewModel(StratusRepositoryImpl()), attachmentMode: .install)
+    }
 }
