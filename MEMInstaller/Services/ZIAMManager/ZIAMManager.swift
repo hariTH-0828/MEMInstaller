@@ -62,6 +62,8 @@ final class ZIAMManager {
             userDefaults.synchronize()
         }
         
+        ZIAMUtil.shared()?.shoulduseASWebAuthenticationSession = true
+        
         ZSSOKit.initWithClientID(oAuthClientId, scope: oAuthScopes(), urlScheme: oAuthURLScheme, mainWindow: window, buildType: oAuthLoginMode)
     }
     

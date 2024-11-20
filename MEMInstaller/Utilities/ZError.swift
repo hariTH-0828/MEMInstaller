@@ -53,6 +53,7 @@ struct ZError {
         case timeOut
         case unknown
         case downloadFailed
+        case invalidResponse
         
         var errorDescription: String? {
             switch self {
@@ -84,6 +85,8 @@ struct ZError {
                 return NSLocalizedString("Something went wrong", comment: "Error when network responses are not match with us.")
             case .downloadFailed:
                 return NSLocalizedString("Failed to download file", comment: "Error with some network reason or url may or maybe in wrong format.")
+            case .invalidResponse:
+                return NSLocalizedString("Invalid or missing HTTP response", comment: "Displayed when the HTTP response is invalid or missing")
             }
         }
     }
