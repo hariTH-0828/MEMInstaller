@@ -18,7 +18,7 @@ enum PListCellIdentifiers: String, CaseIterable {
 }
 
 struct AttachedFileDetailView: View {
-    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    @EnvironmentObject var coordinator: AppCoordinatorImpl
     
     @ObservedObject var viewModel: HomeViewModel
     let attachmentMode: AttachmentMode
@@ -27,7 +27,7 @@ struct AttachedFileDetailView: View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    appIconView(viewModel.packageHandler.appIcon)
+                    appIconView(viewModel.packageHandler?.appIcon)
                     bundleNameWithIdentifierView()
                 }
                 .padding(.horizontal)
@@ -49,7 +49,7 @@ struct AttachedFileDetailView: View {
                 uploadBtnView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
+            .navigationTitle(viewModel.packageHandler?.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
             .overlay {
                 loadingOverlay()
@@ -73,7 +73,7 @@ struct AttachedFileDetailView: View {
     private func bundleNameWithIdentifierView() -> some View {
         VStack(alignment: .leading, spacing: 5) {
             /// App Name
-            if let bundleName = viewModel.packageHandler.bundleProperties?.bundleName {
+            if let bundleName = viewModel.packageHandler?.bundleProperties?.bundleName {
                 Text(bundleName)
                     .font(.title2)
                     .bold()
@@ -86,7 +86,7 @@ struct AttachedFileDetailView: View {
             }
             
             /// App Bundle Identifier
-            if let bundleIdentifier = viewModel.packageHandler.bundleProperties?.bundleIdentifier {
+            if let bundleIdentifier = viewModel.packageHandler?.bundleProperties?.bundleIdentifier {
                 Text(bundleIdentifier)
                     .font(.footnote)
                     .foregroundStyle(Color(.secondaryLabel))
@@ -158,24 +158,24 @@ struct AttachedFileDetailView: View {
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
         switch identifier {
         case .bundleName:
-            return viewModel.packageHandler.bundleProperties?.bundleName
+            return viewModel.packageHandler?.bundleProperties?.bundleName
         case .bundleIdentifiers:
-            return viewModel.packageHandler.bundleProperties?.bundleIdentifier
+            return viewModel.packageHandler?.bundleProperties?.bundleIdentifier
         case .bundleVersionShort:
-            return viewModel.packageHandler.bundleProperties?.bundleVersionShort
+            return viewModel.packageHandler?.bundleProperties?.bundleVersionShort
         case .bundleVersion:
-            return viewModel.packageHandler.bundleProperties?.bundleVersion
+            return viewModel.packageHandler?.bundleProperties?.bundleVersion
         case .minOSVersion:
-            return viewModel.packageHandler.bundleProperties?.minimumOSVersion
+            return viewModel.packageHandler?.bundleProperties?.minimumOSVersion
         case .requiredDevice:
-            return viewModel.packageHandler.bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
+            return viewModel.packageHandler?.bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
         case .supportedPlatform:
-            return viewModel.packageHandler.bundleProperties?.supportedPlatform?.joined(separator: ", ")
+            return viewModel.packageHandler?.bundleProperties?.supportedPlatform?.joined(separator: ", ")
         }
     }
     
     private func installApplication() {
-        guard let objectURL = viewModel.packageHandler.objectURL else {
+        guard let objectURL = viewModel.packageHandler?.objectURL else {
             ZLogs.shared.error("Error: Installation - objectURL not found")
             viewModel.showToast("Installation failed: URL not found")
             return
@@ -185,7 +185,7 @@ struct AttachedFileDetailView: View {
 
         if let itmsServiceURL = URL(string: itmsServicesURLString) {
             UIApplication.shared.open(itmsServiceURL)
-            appCoordinator.dismissSheet()
+            coordinator.dismissSheet()
         }
     }
     
@@ -194,7 +194,7 @@ struct AttachedFileDetailView: View {
         
         Task {
             await viewModel.uploadPackage(endpoint: endpoint) {
-                appCoordinator.dismissSheet()
+                coordinator.dismissSheet()
                 
                 viewModel.setLoadingState(.loading)
                 await viewModel.fetchFoldersFromBucket()

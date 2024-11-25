@@ -25,6 +25,9 @@ final class AppViewModel: ObservableObject {
         /// Initiate IAM
         ZIAMManager.initiate(with: window)
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
+        
+        // Clear existing caches
+        try? ZFFileManager.shared.clearAllCache()
     }
     
     var getWindow: UIWindow? {

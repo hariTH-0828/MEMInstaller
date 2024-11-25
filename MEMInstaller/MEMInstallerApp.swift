@@ -22,6 +22,7 @@ struct MEMInstallerApp: App {
                     }
                 })
                 .environmentObject(appViewModel)
+                .environment(\.userInterfaceIdiom, UIDevice.current.userInterfaceIdiom)
         }
     }
 }

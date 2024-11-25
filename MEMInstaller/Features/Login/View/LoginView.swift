@@ -10,6 +10,7 @@ import MEMToast
 
 struct LoginView: View {
     @StateObject private var appViewModel: AppViewModel = AppViewModel.shared
+    @Environment(\.userInterfaceIdiom) var device
 
     var body: some View {
         NavigationStack {
@@ -18,9 +19,10 @@ struct LoginView: View {
                     .padding(.top, 50)
                 
                 VStack {
-                    loginOnBoardImageView()
+                    loginOnBoardImageView(geometry: geometry)
                     
                     Text("com.learn.meminstaller.loginview.description")
+                        .frame(width: geometry.size.width * 0.5)
                         .padding(.horizontal)
                         .font(.system(size: 15.0))
                         .foregroundStyle(Color(uiColor: .systemGray))
@@ -51,10 +53,10 @@ struct LoginView: View {
     }
     
     @ViewBuilder
-    private func loginOnBoardImageView() -> some View {
+    private func loginOnBoardImageView(geometry: GeometryProxy) -> some View {
         Image(.loginOnboard)
             .resizable()
-            .frame(width: 280, height: 280)
+            .frame(width: min(geometry.size.width * 0.5, 450), height: min(geometry.size.height * 0.4, 450))
             .scaledToFit()
             .padding()
     }
@@ -64,7 +66,7 @@ struct LoginView: View {
         Button(action: { appViewModel.IAMLogin() }, label: {
             Text("com.learn.meminstaller.loginview.loginBtn")
                 .font(.system(size: 18, weight: .regular))
-                .frame(width: geometry.size.width / 1.5, height: 35)
+                .frame(width: min(geometry.size.width / 1.5, 450), height: 35)
                 .foregroundStyle(.white)
                 .padding()
                 .background(

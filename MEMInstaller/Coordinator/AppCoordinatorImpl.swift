@@ -16,16 +16,17 @@ class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresent
     @Published var onDismiss: (() -> Void)?
     
     // FileImporterProtocol
-    @Published var shouldShowFileImporter: Bool = false
+    var shouldShowFileImporter: Bool = false
     var fileImportCompletion: ((Result<URL, Error>) -> Void)?
-    
     var fileExportCompletion: ((Bool, Error?) -> Void)?
     
+    // MARK: - Navigation Management
     func push(_ screen: Screen) {
         path.append(screen)
     }
     
     func pop() {
+        guard !path.isEmpty else { return } // Prevent crash if the path is already empty
         path.removeLast()
     }
     
@@ -33,15 +34,17 @@ class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresent
         path.removeLast(path.count)
     }
     
+    // MARK: - Sheet Management
     func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)? = nil) {
         self.sheet = sheet
         self.onDismiss = onDismiss
     }
     
     func dismissSheet() {
+        let onDismissHandler = onDismiss // Capture the closure to avoid race condition
         self.sheet = nil
-        self.onDismiss?() // Execute the onDismiss action
-        self.onDismiss = nil // Reset to avoid unintended reuse
+        onDismissHandler?()  // Safely execute the captured closure
+        self.onDismiss = nil // Reset for future use
     }
     
     func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void) {
@@ -52,27 +55,24 @@ class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresent
     func presentActivityRepresentable(logFileURL: URL, completion: @escaping (Bool, Error?) -> Void) {
         fileExportCompletion = completion
         presentSheet(.activityRepresentable(logFileURL))
+        ZLogs.shared.info("Activity representable presented for URL: \(logFileURL)")
     }
     
-    // MARK: Presentation Style Providers
+    // MARK: View Builders
     @ViewBuilder
     func build(_ screen: Screen) -> some View {
         switch screen {
-        case .home:
-            HomeView()
-        case .login:
-            LoginView()
-        case .about:
-            AboutView()
+        case .home: HomeView()
+        case .login: LoginView()
+        case .about: AboutView()
+        case .attachedDetail(viewModel: let viewModel, mode: let attachmentMode):
+            AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
         }
     }
     
     @ViewBuilder
     func build(_ sheet: Sheet) -> some View {
         switch sheet {
-        case .attachedDetail(viewModel: let viewModel, mode: let attachmentMode):
-            AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
-                .presentationDragIndicator(.visible)
         case .logout:
             PresentLogoutView()
                 .presentationCompactAdaptation(.none)

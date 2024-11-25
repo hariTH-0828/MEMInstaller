@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AboutView: View {
+    
     var body: some View {
         VStack {
             Image(uiImage: UIImage.getCurrentAppIcon())

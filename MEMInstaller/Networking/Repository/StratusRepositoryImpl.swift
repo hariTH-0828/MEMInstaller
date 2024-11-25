@@ -9,7 +9,7 @@ import Alamofire
 
 final class StratusRepositoryImpl: StratusRepository {
     
-    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel {
+    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel? {
         let networkRequest = NetworkRequest(endpoint: .objects, parameters: params)
         
         do {

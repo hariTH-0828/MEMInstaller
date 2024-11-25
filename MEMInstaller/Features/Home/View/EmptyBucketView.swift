@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EmptyBucketView: View {
-    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    @EnvironmentObject var coordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
@@ -23,7 +23,7 @@ struct EmptyBucketView: View {
                            Image("no-file-found")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: geometry.size.width * 0.7)
+                                .frame(width: min(geometry.size.width * 0.7, 500), height: 500)
                         }
                     )
                 }, description: {
@@ -32,18 +32,18 @@ struct EmptyBucketView: View {
                 
                 HStack(spacing: 20) {
                     Button("com.learn.meminstaller.home.btn_upload") {
-                        appCoordinator.openFileImporter { result in
+                        coordinator.openFileImporter { result in
                             switch result {
                             case .success(let filePath):
-                                viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload))
+                                viewModel.packageHandler?.initiateAppExtraction(from: filePath)
+                                coordinator.push(.attachedDetail(viewModel: viewModel, mode: .upload))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
                                 viewModel.showToast(failure.localizedDescription)
                             }
                         }
                     }
-                    .defaultButtonStyle(width: geometry.size.width * 0.4)
+                    .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
                     
                     Button("com.learn.meminstaller.home.refresh") {
                         Task {
@@ -51,7 +51,7 @@ struct EmptyBucketView: View {
                             await viewModel.fetchFoldersFromBucket()
                         }
                     }
-                    .defaultButtonStyle(width: geometry.size.width * 0.4)
+                    .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
                 }
             }
             .clipped()
@@ -59,6 +59,14 @@ struct EmptyBucketView: View {
     }
 }
 
+
+// MARK: Preview helper
+extension HomeViewModel {
+    static var preview: HomeViewModel {
+        HomeViewModel(repository: nil, userDataManager: nil, packageHandler: nil)
+    }
+}
+
 #Preview {
-    HomeView()
+    EmptyBucketView(viewModel: .preview)
 }

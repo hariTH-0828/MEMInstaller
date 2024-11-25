@@ -22,7 +22,7 @@ struct SideMenuView: View {
                 VStack(alignment: .leading) {
                     UserProfileImageView(viewModel: viewModel, geometry: geometry)
                     
-//                    // About
+                    // About
 //                    SideMenuButton(title: "com.learn.meminstaller.setting.about",
 //                                   systemImage: "i.circle",
 //                                   action: { appCoordinator.push(.about) },

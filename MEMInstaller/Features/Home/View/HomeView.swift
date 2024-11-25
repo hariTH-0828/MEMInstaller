@@ -7,16 +7,19 @@
 
 import SwiftUI
 import MEMToast
+import Alamofire
 
 struct HomeView: View {
-    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
+    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     @StateObject var viewModel: HomeViewModel
     @State var isSideMenuVisible: Bool = false
     
-    init() {
-        _viewModel = StateObject(wrappedValue: HomeViewModel(repository: StratusRepositoryImpl(),
-                                                             userDataManager: UserDataManager(),
-                                                             packageHandler: PackageExtractionHandler()))
+    // Use a default value for `viewModel`
+    init(viewModel: HomeViewModel = HomeViewModel(repository: StratusRepositoryImpl(),
+                                                  userDataManager: UserDataManager(),
+                                                  packageHandler: PackageExtractionHandler()))
+    {
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -62,8 +65,8 @@ struct HomeView: View {
 }
 
 struct ListAvailableApplications: View {
+    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
-    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     
     var body: some View {
         GeometryReader(content: { geometry in
@@ -121,13 +124,11 @@ struct ListAvailableApplications: View {
     private func addPackageButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
-                appCoordinator.openFileImporter { result in
+                coordinator.openFileImporter { result in
                     switch result {
                     case .success(let filePath):
-                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .upload)) {
-                            try? ZFFileManager.shared.clearAllCache()
-                        }
+                        viewModel.packageHandler?.initiateAppExtraction(from: filePath)
+                        coordinator.push(.attachedDetail(viewModel: viewModel, mode: .upload))
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
@@ -166,16 +167,12 @@ struct ListAvailableApplications: View {
         guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL else { return }
         viewModel.downloadInfoFile(url: infoPlistURL)
         viewModel.downloadAppIconFile(url: iconURL)
-        viewModel.packageHandler.objectURL = fileURLs.objectURL
-        appCoordinator.presentSheet(.attachedDetail(viewModel: viewModel, mode: .install))
+        viewModel.packageHandler?.objectURL = fileURLs.objectURL
+        coordinator.push(.attachedDetail(viewModel: viewModel, mode: .install))
     }
 }
 
-struct HomeViewPreviewProvider: PreviewProvider {
-    
-    static let bucket = BucketModel(bucketName: "packages", projectDetails: ProjectDetail(projectName: "ZInstaller", projectId: 21317000000012001), createdBy: CreatedBy(firstName: "Hariharan", lastName: "R S", emailId: "hariharan.rs@zohocorp.com", userType: "Admin"), createdTime: "Nov 04, 2024 04:10 PM", bucketURL: "https://packages-development.zohostratus.com")
-    
-    static var previews: some View {
-        HomeView()
-    }
+
+#Preview {
+    HomeView(viewModel: .preview)
 }

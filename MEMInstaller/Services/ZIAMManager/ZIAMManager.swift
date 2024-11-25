@@ -46,6 +46,7 @@ final class ZIAMManager {
     public class func initiate(with window: UIWindow?) {
         let oAuthClientId: String = "1002.5B3D2AWQPLA6FABTW0R4T9JHJAR1HF"
         let oAuthURLScheme: String = "zadminzorroware://"
+        
         let oAuthLoginMode: SSOBuildType = {
             #if INHOUSE_RELEASE
             return .Live_SSO_Mdm
@@ -62,9 +63,11 @@ final class ZIAMManager {
             userDefaults.synchronize()
         }
         
-        ZIAMUtil.shared()?.shoulduseASWebAuthenticationSession = true
-        
         ZSSOKit.initWithClientID(oAuthClientId, scope: oAuthScopes(), urlScheme: oAuthURLScheme, mainWindow: window, buildType: oAuthLoginMode)
+        
+        if Device.isMac {
+            ZIAMUtil.shared()?.shoulduseASWebAuthenticationSession = true
+        }
     }
     
     class func getCurrentLoggedInUser() -> ZSSOUser? {

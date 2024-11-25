@@ -24,7 +24,7 @@ class ZLogs {
     private init() {}
     
     private let logFilePath: URL = {
-        let appCacheDirectory = ZFFileManager.shared.getAppCacheDirectory()
+        var appCacheDirectory = ZFFileManager.shared.getAppCacheDirectory()
         
         if let infoDictionary = Bundle.main.infoDictionary {
             let appName = infoDictionary["CFBundleName"] as! String

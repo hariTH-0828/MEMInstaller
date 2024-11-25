@@ -40,11 +40,14 @@
 		523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */; };
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
+		525AD98F2CF4424600BF08AF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD98E2CF4424600BF08AF /* Device.swift */; };
+		525AD9912CF446F500BF08AF /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD9902CF446F500BF08AF /* Notification+.swift */; };
 		5270C5622CEC64C300C051CB /* PUT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5612CEC64C300C051CB /* PUT.swift */; };
 		5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */; };
 		5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */; };
 		5270C56F2CEDEEC500C051CB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56E2CEDEEC500C051CB /* AboutView.swift */; };
 		5270C5712CEDEF0500C051CB /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5702CEDEF0500C051CB /* Bundle+.swift */; };
+		52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */; };
 		52D0B53F2CE9DA7400214F41 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */; };
 		52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B54F2CEB341700214F41 /* SideMenuView.swift */; };
 		52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5512CEB343300214F41 /* SideMenu.swift */; };
@@ -136,11 +139,14 @@
 		523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailView.swift; sourceTree = "<group>"; };
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		525AD98E2CF4424600BF08AF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		525AD9902CF446F500BF08AF /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		5270C5612CEC64C300C051CB /* PUT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PUT.swift; sourceTree = "<group>"; };
 		5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentLogoutView.swift; sourceTree = "<group>"; };
 		5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
 		5270C56E2CEDEEC500C051CB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		5270C5702CEDEF0500C051CB /* Bundle+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
+		52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentKey+.swift"; sourceTree = "<group>"; };
 		52D0B53E2CE9DA7400214F41 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		52D0B54F2CEB341700214F41 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		52D0B5512CEB343300214F41 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -328,6 +334,7 @@
 				523F723E2CDB915E00D564E7 /* ZError.swift */,
 				523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */,
 				52E109D72CE6287B002D1EDD /* WindowAccessor.swift */,
+				525AD98E2CF4424600BF08AF /* Device.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -367,6 +374,8 @@
 				52E109EA2CE70A7F002D1EDD /* UIViewController+.swift */,
 				52D0B5532CEB3D6C00214F41 /* String+.swift */,
 				5270C5702CEDEF0500C051CB /* Bundle+.swift */,
+				52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */,
+				525AD9902CF446F500BF08AF /* Notification+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -792,6 +801,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				525AD9912CF446F500BF08AF /* Notification+.swift in Sources */,
 				523F72352CDB794700D564E7 /* HomeViewModel.swift in Sources */,
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
@@ -804,9 +814,11 @@
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
 				52E109DD2CE66E7F002D1EDD /* NavigationProtocol.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
+				525AD98F2CF4424600BF08AF /* Device.swift in Sources */,
 				523F722D2CDB690000D564E7 /* UIColor+.swift in Sources */,
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
 				520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */,
+				52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */,
 				523F722B2CDB68D500D564E7 /* Colors.swift in Sources */,
 				523F72422CDB9EE400D564E7 /* BundleProperties.swift in Sources */,
 				523F72132CDB365C00D564E7 /* LoginView.swift in Sources */,
