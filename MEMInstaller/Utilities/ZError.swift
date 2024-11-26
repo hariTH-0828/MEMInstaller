@@ -9,6 +9,23 @@ import Foundation
 
 struct ZError {
     
+    enum FileConversionError: Error, LocalizedError {
+        case invalidFilePath
+        case fileToDataConversionError
+        case fileReadFailed
+        
+        var errorDescription: String? {
+            switch self {
+            case .fileToDataConversionError:
+                return NSLocalizedString("Unable to convert file to data.", comment: "Displayed when the content of the specified file cannot be converted into data.")
+            case .invalidFilePath:
+                return NSLocalizedString("The specified file path is invalid or does not exist.", comment: "Displayed when the provided file URL is invalid or the file is missing.")
+            case .fileReadFailed:
+                return NSLocalizedString("Failed to read the file at the specified path.", comment: "Displayed when the file cannot be read, either due to an invalid path or a missing file.")
+            }
+        }
+    }
+
     enum LocalError: Error, LocalizedError {
         case castingFailed
         case failedToSaveFile

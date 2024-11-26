@@ -49,6 +49,58 @@ final class PropertyListHandler {
     }
     
     /**
+     Extracts the property list (XML) data from a .mobileprovision file at the specified
+     
+     This method reads the content of a provisioning file and extracts the XML portion, which contains the property list data.
+     - Parameter path: The file system path of the .mobileprovision file.
+     - Returns: A `Data` object representing the extracted property list content.
+     
+     - Throws:
+        - `ZError.FileConversionError.invalidFilePath` if the specified path is invalid or the file does not
+        - `ZError.FileConversionError.fileReadFailed` if the XML content cannot be located or read.
+     */
+    func extractPropertyListData(fromProvisionFileAt path: String) throws -> Data {
+        do {
+            // Ensure the file exists at the given path
+            guard FileManager.default.fileExists(atPath: path) else { throw ZError.FileConversionError.invalidFilePath }
+            
+            // Read the file content
+            let provisionData = try Data(contentsOf: URL(fileURLWithPath: path))
+            
+            // Locate the XML start and end indices
+            let (startRange, endRange) = try rangeOfStartAndEndIndex(of: provisionData)
+            
+            // Extract and return the XML portion
+            return provisionData.subdata(in: startRange..<endRange)
+        }catch {
+            ZLogs.shared.error("Failed to extract properties from .mobileprovision: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    /**
+     Finds the start and end indices of the XML content within a data object.
+    
+     This method searches for the start (`<?xml`) and end (`</plist>`) markers in the given data
+     to identify the range of the XML property list content.
+     
+     - Parameter data: The data to search for XML markers.
+     - Returns: A tuple containing the start and end indices of the XML content.
+     - Throws:
+     - `ZError.FileConversionError.fileReadFailed` if the XML markers cannot be found.
+     */
+    private func rangeOfStartAndEndIndex(of data: Data) throws -> (Int, Int) {
+        // Locate the start and end markers for the XML content
+        guard let xmlStartRange = data.range(of: Data("<?xml".utf8))?.lowerBound,
+              let plistEndRange = data.range(of: Data("</plist>".utf8))?.upperBound
+        else {
+            throw ZError.FileConversionError.fileReadFailed
+        }
+        
+        return (xmlStartRange, plistEndRange)
+    }
+    
+    /**
      Resolves the necessary data to generate a property list, using either the provided parameters or the content dictionary.
      
      This function ensures that the file name, bundle identifier, and bundle version are present and valid.
