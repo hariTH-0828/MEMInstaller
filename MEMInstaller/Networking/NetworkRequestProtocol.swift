@@ -26,10 +26,10 @@ extension NetworkRequest {
     }
     
     func validateOAuthAndLogout() {
-        ZIAMManager.checkOAuthAndForceLogout { _ in
+        ZIAMManager.checkOAuthAndForceLogout {
             showAlert(message: "Invalid_mobile_code") { _ in
-                DispatchQueue.main.async {
-                    AppViewModel.shared.logout()
+                mainQueue {
+                    NotificationCenter.default.post(name: .performLogout, object: nil)
                 }
             }
         }

@@ -136,15 +136,13 @@ struct ShimmerEffect: ViewModifier {
     func body(content: Content) -> some View {
         content
             .mask {
-                GeometryReader { geometry in
-                    if enable {
-                        shimmerLayer(in: geometry.size)
-                            .onAppear {
-                                withAnimation(Animation.linear(duration: 1.5).repeatForever(autoreverses: false)) {
-                                    self.isAnimating = true
-                                }
+                if enable {
+                    shimmerLayer(in: UIScreen.main.bounds.size)
+                        .onAppear {
+                            withAnimation(Animation.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                                self.isAnimating = true
                             }
-                    }
+                        }
                 }
             }
     }
@@ -161,7 +159,7 @@ struct ShimmerEffect: ViewModifier {
             )
             .offset(x: isAnimating ? size.width : -size.width)
             .opacity(0.5)
-            .clipped()
+//            .clipped()
     }
 }
 

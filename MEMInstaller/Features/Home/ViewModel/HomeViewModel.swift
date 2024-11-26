@@ -173,7 +173,7 @@ class HomeViewModel: ObservableObject, Identifiable {
     
     private func uploadInstallerPropertyList(_ path: String) async throws {
         guard let bundleName = packageHandler?.bundleProperties?.bundleName,
-              let plistData = packageHandler?.sourcePlistData else {
+              let plistData = packageHandler?.installablePropertyListData else {
             showToast("Missing .plist data.")
             return
         }
@@ -191,12 +191,13 @@ class HomeViewModel: ObservableObject, Identifiable {
             
             switch result {
             case .success(let fileData):
-                do {
-                    try self.packageHandler?.parseInfoPlist(fileData)
-                    self.setLoadingState(.idle)
-                }catch {
-                    self.handleError(error)
+                guard let fileProperties = self.packageHandler?.parseInfoPlist(fileData) else {
+                    ZLogs.shared.error(ZError.FileConversionError.fileReadFailed.localizedDescription)
+                    return
                 }
+                
+                self.packageHandler?.loadBundleProperties(with: fileProperties)
+                self.setLoadingState(.idle)
             case .failure(let error):
                 self.handleError(error)
             }

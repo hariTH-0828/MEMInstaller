@@ -6,23 +6,19 @@
 //
 
 import SwiftUI
+import SSOKit
 
 @main
 struct MEMInstallerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @StateObject var appViewModel: AppViewModel = AppViewModel.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .tint(StyleManager.colorStyle.tintColor)
-                .onAppear(perform: {
-                    if let window = AppViewModel.shared.getWindow {
-                        appViewModel.initiate(window: window)
-                    }
+                .onOpenURL(perform: { url in
+                    ZSSOKit.handle(url, sourceApplication: nil, annotation: [UIApplication.OpenURLOptionsKey.annotation])
                 })
-                .environmentObject(appViewModel)
-                .environment(\.userInterfaceIdiom, UIDevice.current.userInterfaceIdiom)
         }
     }
 }

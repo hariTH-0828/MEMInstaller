@@ -9,8 +9,7 @@ import SwiftUI
 import MEMToast
 
 struct LoginView: View {
-    @StateObject private var appViewModel: AppViewModel = AppViewModel.shared
-    @Environment(\.userInterfaceIdiom) var device
+    @EnvironmentObject private var appViewModel: AppViewModel
 
     var body: some View {
         NavigationStack {

@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct SideMenuView: View {
-    @EnvironmentObject var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
     @Binding var isPresentSideMenu: Bool
+    
+    @State private var isPresentLogout: Bool = false
+    @State private var isPresentLogExporter: Bool = false
     
     var logFileURL: URL {
         return ZLogs.shared.exportLogFile()
@@ -30,12 +32,12 @@ struct SideMenuView: View {
                     // Share Logs
                     SideMenuButton(title: "com.learn.meminstaller.setting.share-log",
                                    systemImage: "arrow.right",
-                                   action: shareLogHandler,
+                                   action: { isPresentLogExporter = true },
                                    foregroundColor: StyleManager.colorStyle.invertBackground)
                     // Sign out
                     SideMenuButton(title: "com.learn.meminstaller.setting.signout",
                                    systemImage: "power",
-                                   action: { appCoordinator.presentSheet(.logout) },
+                                   action: { isPresentLogout = true },
                                    foregroundColor: .red)
                     Spacer()
                     FooterView()
@@ -44,20 +46,27 @@ struct SideMenuView: View {
                 .frame(maxWidth: geometry.size.width * 0.7, alignment: .topLeading)
                 .background(Color(uiColor: .systemBackground))
             }
+            .sheet(isPresented: $isPresentLogout, content: {
+                PresentLogoutView(isPresentLogOut: $isPresentLogout)
+            })
+            .sheet(isPresented: $isPresentLogExporter, content: {
+                if FileManager.default.fileExists(atPath: logFileURL.path()) {
+                    ActivityViewRepresentable(activityItems: [logFileURL]) { status, error in
+                        if let error = error {
+                            viewModel.showToast("Export failed: \(error.localizedDescription)")
+                        }else if status {
+                            viewModel.showToast("Export successful!")
+                        }
+                    }
+                    .presentationDetents([.medium, .large])
+                }
+            })
         })
         .background(.clear)
     }
 
     private func shareLogHandler() {
-        if FileManager.default.fileExists(atPath: logFileURL.path()) {
-            appCoordinator.presentActivityRepresentable(logFileURL: logFileURL) { status, error in
-                if let error = error {
-                    viewModel.showToast("Export failed: \(error.localizedDescription)")
-                }else if status {
-                    viewModel.showToast("Export successful!")
-                }
-            }
-        }
+        
     }
 }
 

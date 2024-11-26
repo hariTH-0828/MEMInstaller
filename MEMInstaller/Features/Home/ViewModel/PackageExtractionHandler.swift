@@ -9,17 +9,50 @@ import Foundation
 import Zip
 import SwiftUI
 
+class PackageExtractionDataManager {
+    private(set) var appIcon: Data?
+    private(set) var sourceFileData: Data?
+    private(set) var infoPlistData: Data?
+    private(set) var installablePropertyListData: Data?
+    
+    func setAppIcon(_ icon: Data) {
+        self.appIcon = icon
+    }
+    
+    func setSourceFileData(_ source: Data) {
+        self.sourceFileData = source
+    }
+    
+    func setInfoData(_ info: Data) {
+        self.infoPlistData = info
+    }
+    
+    func setInstallablePropertyData(_ info: Data) {
+        self.installablePropertyListData = info
+    }
+    
+    func reset() {
+        appIcon = nil
+        sourceFileData = nil
+        infoPlistData = nil
+        installablePropertyListData = nil
+    }
+}
+
 class PackageExtractionHandler {
     // Property Handler
     private let plistHandler = PropertyListHandler()
+//    private let packageDataManager = PackageExtractionDataManager()
+    
     private var sourceURL: URL!
     
     var appIcon: Data?
     var sourceFileData: Data?
     var infoPlistData: Data?
-    var sourcePlistData: Data?
+    var installablePropertyListData: Data?
     
     var bundleProperties: BundleProperties?
+    var mobileProvision: MobileProvision?
     var objectURL: String?
     
     // Attachment View
@@ -42,12 +75,8 @@ class PackageExtractionHandler {
     
     // MARK: - Convert source as data
     func fileToData(from url: URL) -> Data? {
-        do {
-            let fileData = try Data(contentsOf: url)
-            return fileData
-        }catch {
-            ZLogs.shared.error(error.localizedDescription)
-        }
+        do { return try Data(contentsOf: url) }
+        catch { ZLogs.shared.error(error.localizedDescription) }
         
         return nil
     }
@@ -139,36 +168,96 @@ class PackageExtractionHandler {
     }
     
     private func extractAppProperties(from payLoadPath: URL, appName: String) throws {
-        let infoPlistPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/Info.plist")
-        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/AppIcon60x60@2x.png")
-        
-        if let infoPlistData = fileManager.contents(atPath: infoPlistPath) {
-            try parseInfoPlist(infoPlistData)
+        // Info.plist
+        if let propertyListObject = try readInfoPlistFile(from: payLoadPath, appName: appName) {
+            loadBundleProperties(with: propertyListObject)
         }
         
-        if let appIconData = fileManager.contents(atPath: appIconPath) {
-            self.appIcon = appIconData
+        // embedded.plist
+        if let mobileProvisionObj = try readMobileProvisionFile(from: payLoadPath, appName: appName) {
+            loadMobileProvision(with: mobileProvisionObj)
         }
+        
+        // AppIcon
+        let appIconData = try readApplicationIcon(from: payLoadPath, appName: appName)
+        self.appIcon = appIconData
     }
     
-    func parseInfoPlist(_ infoPlistData: Data) throws {
-        if let plist = try PropertyListSerialization.propertyList(from: infoPlistData, format: nil) as? [String: Any] {
-            loadBundleProperties(with: plist)
-        }else {
-            ZLogs.shared.error("Failed to cast Info.plist content to directory.")
+    private func readInfoPlistFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
+        // Read Info.plist
+        let infoPlistPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/Info.plist")
+        
+        // Check file exist in path and convert file into data
+        guard fileManager.fileExists(atPath: infoPlistPath), let fileData = fileToData(from: URL(filePath: infoPlistPath)) else {
+            throw ZError.FileConversionError.invalidFilePath
         }
+        
+        return parseInfoPlist(fileData)
+    }
+    
+    private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
+        // Read embedded.mobileprovision
+        let provisionPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/embedded.mobileprovision")
+        
+        // Check file exist in path and convert file into data
+        guard fileManager.fileExists(atPath: provisionPath) else {
+            throw ZError.FileConversionError.invalidFilePath
+        }
+        
+        let fileData = try plistHandler.extractPropertyListData(fromProvisionFileAt: provisionPath)
+        
+        return parseInfoPlist(fileData)
+    }
+    
+    private func readApplicationIcon(from payLoadPath: URL, appName: String) throws -> Data {
+        // Read App Icon
+        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/AppIcon60x60@2x.png")
+        
+        // Check file exist in path and convert file into data
+        guard fileManager.fileExists(atPath: appIconPath), let fileData = fileToData(from: URL(filePath: appIconPath)) else {
+            throw ZError.FileConversionError.invalidFilePath
+        }
+        
+        return fileData
+    }
+    
+    func parseInfoPlist(_ plistData: Data) -> [String: Any]? {
+        guard let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any] else {
+            ZLogs.shared.error("Failed to cast Info.plist content to directory.")
+            return nil
+        }
+        
+        return plist
     }
     
     // MARK: - Bundle property manage
     func loadBundleProperties(with plistDictionary: [String: Any]) {
+        let decoder = JSONDecoder()
+        
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: plistDictionary)
-            
-            let decoder = JSONDecoder()
             self.bundleProperties = try decoder.decode(BundleProperties.self, from: jsonData)
         }catch {
             ZLogs.shared.error(error.localizedDescription)
         }
+    }
+    
+    func loadMobileProvision(with plistDictionary: [String: Any]) {
+        guard let teamIdentifier = plistDictionary[MobileProvision.CodingKeys.teamIdentifier.rawValue] as? [String],
+              let expirationDate = plistDictionary[MobileProvision.CodingKeys.expirationDate.rawValue] as? Date,
+              let name = plistDictionary[MobileProvision.CodingKeys.name.rawValue] as? String,
+              let teamName = plistDictionary[MobileProvision.CodingKeys.teamName.rawValue] as? String,
+              let creationDate = plistDictionary[MobileProvision.CodingKeys.creationDate.rawValue] as? Date,
+              let version = plistDictionary[MobileProvision.CodingKeys.version.rawValue] as? Int
+        else {
+            return
+        }
+    
+        self.mobileProvision = MobileProvision(name: name,
+                                               teamIdentifier: teamIdentifier,
+                                               creationDate: creationDate,
+                                               expirationDate: expirationDate,
+                                               teamName: teamName, version: version)
     }
     
     func generatePropertyList(fileURL: String) {
@@ -180,9 +269,23 @@ class PackageExtractionHandler {
         
         switch plistURL {
         case .success(let pathLocation):
-            self.sourcePlistData = fileToData(from: pathLocation)
+            self.installablePropertyListData = fileToData(from: pathLocation)
         case .failure(let failure):
             ZLogs.shared.error(failure.localizedDescription)
         }
     }
 }
+
+
+/*
+  
+ Mobile Provision
+ 
+ 1. Team Identifier
+ 2. ExpirationDate
+ 3. TeamName
+ 4. Version
+ 5. Name
+ 6. CreationDate
+ 
+ */

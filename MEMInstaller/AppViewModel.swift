@@ -9,22 +9,32 @@ import SwiftUI
 import SSOKit
 
 final class AppViewModel: ObservableObject {
-    static let shared = AppViewModel()
-    
-    @Published private(set) var isUserLoggedIn: UserLoggedStatus = .logOut
+    @Published var isUserLoggedIn: Bool = false
     let userDataManager = UserDataManager()
     
     // Toast
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
-    private init() {}
+    init() {
+        #if DEBUG
+        initConfig()
+        #else
+        initConfig(buildType: .Local_SSO_Development)
+        #endif
+    }
     
-    @MainActor
-    func initiate(window: UIWindow) {
-        /// Initiate IAM
+    func initConfig(buildType: SSOBuildType = .Live_SSO) {
+        guard let scene = UIApplication.shared.connectedScenes.first,
+              let windowSceneDelegate = scene.delegate as? UIWindowSceneDelegate,
+              let window = windowSceneDelegate.window else { return }
+        
         ZIAMManager.initiate(with: window)
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
+        
+        NotificationCenter.default.addObserver(forName: .performLogout, object: nil, queue: .main) { _ in
+            self.logout()
+        }
         
         // Clear existing caches
         try? ZFFileManager.shared.clearAllCache()
@@ -57,7 +67,7 @@ final class AppViewModel: ObservableObject {
     }
     
     @MainActor
-    private func loginSuccessHandler(_ status: UserLoggedStatus) {
+    private func loginSuccessHandler(_ status: Bool) {
         
         let isSaveSuccess = userDataManager.saveLoggedUserIntoKeychain()
         
@@ -70,35 +80,28 @@ final class AppViewModel: ObservableObject {
     }
     
     func logout() {
-        if ZIAMManager.isUserLoggedIn == .logIn {
-            ZIAMManager.logout { logoutStatus in
-                try? self.logoutSuccessHandler(logoutStatus)
+        if ZIAMManager.isUserLoggedIn {
+            ZIAMManager.logout {
+                try? self.logoutSuccessHandler()
             }
         }
     }
     
-    private func logoutSuccessHandler(_ status: UserLoggedStatus) throws {
+    private func logoutSuccessHandler() throws {
         do {
             try KeychainService.delete(forKey: KCKeys.loggedUserProfile)
             ZLogs.shared.info("Successfully deleted logged user from keychain")
             
             // Logout success: Navigate to Setting View to Login View
-            withAnimation(.easeInOut) {
-                self.isUserLoggedIn = status
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.isUserLoggedIn = false
+                }
             }
         }catch {
             ZLogs.shared.error(error.localizedDescription)
             throw error
         }
-    }
-    
-    @discardableResult
-    func applicationOpenUrlHandling(url: URL,sourceApp: String?)  -> Bool {
-        let ssoHandle = ZSSOKit.handle(url, sourceApplication: sourceApp, annotation: nil)
-         if ssoHandle == true {
-             return true
-         }
-         return true
     }
     
     @MainActor

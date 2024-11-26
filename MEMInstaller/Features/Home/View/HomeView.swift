@@ -10,7 +10,6 @@ import MEMToast
 import Alamofire
 
 struct HomeView: View {
-    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     @StateObject var viewModel: HomeViewModel
     @State var isSideMenuVisible: Bool = false
     
@@ -37,7 +36,9 @@ struct HomeView: View {
                 .toolbar { hambergerButton() }
                 .animation(.smooth, value: isSideMenuVisible)
                 .task {
-                    await viewModel.fetchFoldersFromBucket()
+                    if viewModel.allObjects.isEmpty {
+                        await viewModel.fetchFoldersFromBucket()
+                    }
                 }
             }
             
@@ -65,8 +66,11 @@ struct HomeView: View {
 }
 
 struct ListAvailableApplications: View {
-    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
+    
+    @State private var isPresentDetailView: Bool = false
+    @State private var isPresentFileUploadView: Bool = false
+    @State private var isPresentFileImporter: Bool = false
     
     var body: some View {
         GeometryReader(content: { geometry in
@@ -87,6 +91,22 @@ struct ListAvailableApplications: View {
             .refreshable { await viewModel.fetchFoldersFromBucket() }
             .toolbar { addPackageButtonView() }
         })
+        .navigationDestination(isPresented: $isPresentDetailView) {
+            AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
+        }
+        .sheet(isPresented: $isPresentFileUploadView, content: {
+            AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)
+        })
+        .fileImporter(isPresented: $isPresentFileImporter, allowedContentTypes: [.ipa]) { result in
+            switch result {
+            case .success(let filePath):
+                viewModel.packageHandler?.initiateAppExtraction(from: filePath)
+                isPresentFileUploadView.toggle()
+            case .failure(let failure):
+                ZLogs.shared.error(failure.localizedDescription)
+                viewModel.showToast(failure.localizedDescription)
+            }
+        }
     }
     
     @ViewBuilder
@@ -124,16 +144,7 @@ struct ListAvailableApplications: View {
     private func addPackageButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
-                coordinator.openFileImporter { result in
-                    switch result {
-                    case .success(let filePath):
-                        viewModel.packageHandler?.initiateAppExtraction(from: filePath)
-                        coordinator.push(.attachedDetail(viewModel: viewModel, mode: .upload))
-                    case .failure(let failure):
-                        ZLogs.shared.error(failure.localizedDescription)
-                        viewModel.showToast(failure.localizedDescription)
-                    }
-                }
+                isPresentFileImporter.toggle()
             }, label: {
                 Image(systemName: "plus")
                     .font(.system(size: 16, weight: .regular))
@@ -168,7 +179,7 @@ struct ListAvailableApplications: View {
         viewModel.downloadInfoFile(url: infoPlistURL)
         viewModel.downloadAppIconFile(url: iconURL)
         viewModel.packageHandler?.objectURL = fileURLs.objectURL
-        coordinator.push(.attachedDetail(viewModel: viewModel, mode: .install))
+        isPresentDetailView.toggle()
     }
 }
 

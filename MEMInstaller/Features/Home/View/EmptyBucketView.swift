@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct EmptyBucketView: View {
-    @EnvironmentObject var coordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
+    @State private var isPresentFileImportView: Bool = false
+    @State private var isPresentFileUploadView: Bool = false
     
     var body: some View {
         GeometryReader(content: { geometry in
@@ -32,16 +33,7 @@ struct EmptyBucketView: View {
                 
                 HStack(spacing: 20) {
                     Button("com.learn.meminstaller.home.btn_upload") {
-                        coordinator.openFileImporter { result in
-                            switch result {
-                            case .success(let filePath):
-                                viewModel.packageHandler?.initiateAppExtraction(from: filePath)
-                                coordinator.push(.attachedDetail(viewModel: viewModel, mode: .upload))
-                            case .failure(let failure):
-                                ZLogs.shared.error(failure.localizedDescription)
-                                viewModel.showToast(failure.localizedDescription)
-                            }
-                        }
+                        isPresentFileImportView.toggle()
                     }
                     .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
                     
@@ -55,6 +47,19 @@ struct EmptyBucketView: View {
                 }
             }
             .clipped()
+            .fileImporter(isPresented: $isPresentFileImportView, allowedContentTypes: [.ipa]) { result in
+                switch result {
+                case .success(let filePath):
+                    viewModel.packageHandler?.initiateAppExtraction(from: filePath)
+                    isPresentFileUploadView.toggle()
+                case .failure(let failure):
+                    ZLogs.shared.error(failure.localizedDescription)
+                    viewModel.showToast(failure.localizedDescription)
+                }
+            }
+            .sheet(isPresented: $isPresentFileUploadView, content: {
+                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)
+            })
         })
     }
 }

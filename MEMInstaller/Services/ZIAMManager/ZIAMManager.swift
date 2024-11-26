@@ -11,12 +11,7 @@ import SSOKit
 typealias getIAMTokenSuccessBlock = (String) -> Void
 typealias getIAMTokenErrorBlock = (Error?) -> Void
 typealias getIAMPofilePicSuccessBlock = (UIImage) -> Void
-typealias getIAMLogoutSuccessBlock = (UserLoggedStatus) -> Void
-
-public enum UserLoggedStatus {
-    case logIn
-    case logOut
-}
+typealias getIAMLogoutSuccessBlock = () -> Void
 
 final class ZIAMManager {
     
@@ -55,14 +50,6 @@ final class ZIAMManager {
             #endif
         }()
         
-        let userDefaults = UserDefaults.standard
-        
-        if !userDefaults.bool(forKey: UserDefaultsKey.appFirstLaunch) {
-            ZSSOKit.clearSSODetailsForFirstLaunch()
-            userDefaults.set(true, forKey: UserDefaultsKey.appFirstLaunch)
-            userDefaults.synchronize()
-        }
-        
         ZSSOKit.initWithClientID(oAuthClientId, scope: oAuthScopes(), urlScheme: oAuthURLScheme, mainWindow: window, buildType: oAuthLoginMode)
         
         if Device.isMac {
@@ -86,19 +73,19 @@ final class ZIAMManager {
         return ZSSOKit.getCurrentUser().userZUID
     }
 
-    public class var isUserLoggedIn: UserLoggedStatus {
-        return ZSSOKit.isUserSignedIn() ? .logIn : .logOut
+    public class var isUserLoggedIn: Bool {
+        return ZSSOKit.isUserSignedIn()
     }
     
     // MARK: PRESENT LOGIN
-    public class func presentIAMLoginViewController() async throws -> UserLoggedStatus {
+    public class func presentIAMLoginViewController() async throws -> Bool {
         return try await withCheckedThrowingContinuation { continuation in
-            if ZIAMManager.isUserLoggedIn == .logOut {
+            if !ZIAMManager.isUserLoggedIn {
                 ZSSOKit.presentInitialViewController(withCustomParams: "hide_fs=true") { (_, error) in
                     if let error = error {
                         continuation.resume(throwing: error)
                     }else {
-                        continuation.resume(returning: .logIn)
+                        continuation.resume(returning: true)
                     }
                 }
             }
@@ -164,19 +151,18 @@ final class ZIAMManager {
 
     // MARK: LOGOUT
     public class func logout(_ successBlock:@escaping getIAMLogoutSuccessBlock) {
-        if !ZSSOKit.isUserSignedIn(){
-            successBlock(.logOut)
-            return
-        }
-        
-        ZSSOKit.revokeAccessToken { (_error) in
-            DispatchQueue.main.async {
-                if _error != nil{
-                    ZSSOKit.clearSSODetailsForFirstLaunch()
+        if ZSSOKit.isUserSignedIn() {
+            ZSSOKit.revokeAccessToken { (_error) in
+                mainQueue {
+                    if _error != nil{
+                        ZSSOKit.clearSSODetailsForFirstLaunch()
+                    }
+                    successBlock()
                 }
-                successBlock(.logOut)
             }
         }
+        
+        successBlock()
     }
     
     // MARK: CHECK AND FORCE LOGOUT
@@ -188,7 +174,7 @@ final class ZIAMManager {
                     return
                 }
                 
-                successBlock(.logOut)
+                successBlock()
             }
         }
     }

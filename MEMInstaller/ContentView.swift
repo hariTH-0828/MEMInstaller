@@ -9,27 +9,21 @@ import SwiftUI
 import MEMToast
 
 struct ContentView: View {
-    @EnvironmentObject var appViewModel: AppViewModel
-    @StateObject private var coordinator = AppCoordinatorImpl()
+    @StateObject var appViewModel: AppViewModel = AppViewModel()
 
     var body: some View {
-        NavigationStack(path: $coordinator.path) {
-            coordinator.build(appViewModel.isUserLoggedIn == .logIn ? .home : .login)
-                .navigationDestination(for: Screen.self) { screen in
-                    coordinator.build(screen)
-                }
-                .sheet(item: $coordinator.sheet, onDismiss: coordinator.dismissSheet) { sheet in
-                    coordinator.build(sheet)
-                }
-                .fileImporter(isPresented: $coordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
-                    coordinator.fileImportCompletion?(result)
-                }
-        }
-        .environmentObject(coordinator)
+        NavigationView(content: {
+            LoginView()
+                .fullScreenCover(isPresented: $appViewModel.isUserLoggedIn, content: {
+                    HomeView()
+                        .environmentObject(appViewModel)
+                })
+        })
+        .environmentObject(appViewModel)
     }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(AppViewModel.shared)
+        .environmentObject(AppViewModel())
 }

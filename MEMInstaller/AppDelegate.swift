@@ -10,35 +10,31 @@ import UIKit
 import SSOKit
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    let userDefaults = UserDefaults.standard
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        if !userDefaults.bool(forKey: UserDefaultsKey.appFirstLaunch) {
+            userDefaults.set(true, forKey: UserDefaultsKey.appFirstLaunch)
+            userDefaults.synchronize()
+            ZSSOKit.clearSSODetailsForFirstLaunch()
+        }
         return true
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        let sourceApp = options[.sourceApplication] as? String
-        return AppViewModel.shared.applicationOpenUrlHandling(url: url, sourceApp: sourceApp)
-    }
-    
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-          let sceneConfig: UISceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
-          sceneConfig.delegateClass = SceneDelegate.self
-          return sceneConfig
-    }
-    
-    public func discardSelfContainedWindows() {
-        let scenes = UIApplication.shared.connectedScenes
-        scenes.forEach({
-            dismissWindow(with: .standard,session: $0.session)
-        })
-    }
-    
-    func dismissWindow(with windowDismissalAnimation: UIWindowScene.DismissalAnimation,session : UISceneSession){
-        let options = UIWindowSceneDestructionRequestOptions()
-        options.windowDismissalAnimation = windowDismissalAnimation
-        UIApplication.shared.requestSceneSessionDestruction(session, options: options) { (error) in
-            ZLogs.shared.error(error.localizedDescription)
-        }
-    }
+//
+//    public func discardSelfContainedWindows() {
+//        let scenes = UIApplication.shared.connectedScenes
+//        scenes.forEach({
+//            dismissWindow(with: .standard,session: $0.session)
+//        })
+//    }
+//    
+//    func dismissWindow(with windowDismissalAnimation: UIWindowScene.DismissalAnimation,session : UISceneSession){
+//        let options = UIWindowSceneDestructionRequestOptions()
+//        options.windowDismissalAnimation = windowDismissalAnimation
+//        UIApplication.shared.requestSceneSessionDestruction(session, options: options) { (error) in
+//            ZLogs.shared.error(error.localizedDescription)
+//        }
+//    }
 }
 
