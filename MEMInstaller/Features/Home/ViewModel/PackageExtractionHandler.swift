@@ -15,19 +15,19 @@ class PackageExtractionDataManager {
     private(set) var infoPlistData: Data?
     private(set) var installablePropertyListData: Data?
     
-    func setAppIcon(_ icon: Data) {
+    func setAppIcon(_ icon: Data?) {
         self.appIcon = icon
     }
     
-    func setSourceFileData(_ source: Data) {
+    func setSourceFileData(_ source: Data?) {
         self.sourceFileData = source
     }
     
-    func setInfoData(_ info: Data) {
+    func setInfoData(_ info: Data?) {
         self.infoPlistData = info
     }
     
-    func setInstallablePropertyData(_ info: Data) {
+    func setInstallablePropertyData(_ info: Data?) {
         self.installablePropertyListData = info
     }
     
@@ -41,15 +41,10 @@ class PackageExtractionDataManager {
 
 class PackageExtractionHandler {
     // Property Handler
-    private let plistHandler = PropertyListHandler()
-//    private let packageDataManager = PackageExtractionDataManager()
+    let plistHandler = PropertyListHandler()
+    let packageDataManager = PackageExtractionDataManager()
     
     private var sourceURL: URL!
-    
-    var appIcon: Data?
-    var sourceFileData: Data?
-    var infoPlistData: Data?
-    var installablePropertyListData: Data?
     
     var bundleProperties: BundleProperties?
     var mobileProvision: MobileProvision?
@@ -66,7 +61,7 @@ class PackageExtractionHandler {
         self.sourceURL = url
         
         if sourceURL.startAccessingSecurityScopedResource() {
-            self.sourceFileData = fileToData(from: sourceURL)
+            packageDataManager.setSourceFileData(fileToData(from: sourceURL))
             sourceURL.stopAccessingSecurityScopedResource()
         }
         extractIpaFileContents()
@@ -99,7 +94,7 @@ class PackageExtractionHandler {
             clearDirectory(at: appCacheDirectory)
             
             let newFileURL = createZipFileURL(from: sourceURL)
-            try copyFileToCache(from: sourceURL, to: newFileURL)
+            try ZFFileManager.shared.copyFileToCache(from: sourceURL, to: newFileURL)
             return newFileURL
         }catch {
             ZLogs.shared.error(error.localizedDescription)
@@ -110,15 +105,6 @@ class PackageExtractionHandler {
     private func createZipFileURL(from sourceURL: URL) -> URL {
         let fileName = sourceURL.deletingPathExtension().lastPathComponent
         return appCacheDirectory.appendingPathComponent(fileName, conformingTo: .zip)
-    }
-    
-    private func copyFileToCache(from sourceURL: URL, to destinationURL: URL) throws {
-        if sourceURL.startAccessingSecurityScopedResource() {
-            try fileManager.copyItem(at: sourceURL, to: destinationURL)
-        }else {
-            ZLogs.shared.warning("Permission denied")
-        }
-        sourceURL.stopAccessingSecurityScopedResource()
     }
     
     // MARK: - Directory Managerment
@@ -162,7 +148,7 @@ class PackageExtractionHandler {
         }
         
         let infoPlistPath = payLoadPath.path() + "/\(appName)/Info.plist"
-        self.infoPlistData = fileToData(from: URL(fileURLWithPath: infoPlistPath))
+        packageDataManager.setInfoData(fileToData(from: URL(fileURLWithPath: infoPlistPath)))
         
         try extractAppProperties(from: payLoadPath, appName: appName)
     }
@@ -180,7 +166,7 @@ class PackageExtractionHandler {
         
         // AppIcon
         let appIconData = try readApplicationIcon(from: payLoadPath, appName: appName)
-        self.appIcon = appIconData
+        packageDataManager.setAppIcon(appIconData)
     }
     
     private func readInfoPlistFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
@@ -204,7 +190,9 @@ class PackageExtractionHandler {
             throw ZError.FileConversionError.invalidFilePath
         }
         
-        let fileData = try plistHandler.extractPropertyListData(fromProvisionFileAt: provisionPath)
+        // Read the file content
+        let provisionData = try Data(contentsOf: URL(fileURLWithPath: provisionPath))
+        let fileData = try plistHandler.extractXMLDataFromMobileProvision(provisionData)
         
         return parseInfoPlist(fileData)
     }
@@ -269,23 +257,9 @@ class PackageExtractionHandler {
         
         switch plistURL {
         case .success(let pathLocation):
-            self.installablePropertyListData = fileToData(from: pathLocation)
+            packageDataManager.setInstallablePropertyData(fileToData(from: pathLocation))
         case .failure(let failure):
             ZLogs.shared.error(failure.localizedDescription)
         }
     }
 }
-
-
-/*
-  
- Mobile Provision
- 
- 1. Team Identifier
- 2. ExpirationDate
- 3. TeamName
- 4. Version
- 5. Name
- 6. CreationDate
- 
- */

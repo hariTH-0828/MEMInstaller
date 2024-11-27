@@ -17,13 +17,15 @@ enum LoadingState: Hashable {
     case error
 }
 
-class HomeViewModel: ObservableObject, Identifiable {
+class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userprofile: ZUserProfile?
     @Published private(set) var allObjects: [String: [ContentModel]] = [:]
-    @Published var loadingState: LoadingState = .loading
     
-    var id: Self { self }
+    @Published var sideBarLoadingState: LoadingState = .loading
+    @Published var detailViewLoadingState: LoadingState = .idle
+    
+    @Published var shouldShowDetailView: Bool = false
     
     // Toast
     @Published private(set) var toastMessage: String?
@@ -130,7 +132,7 @@ class HomeViewModel: ObservableObject, Identifiable {
     // MARK: - Upload Helper Methods
     private func uploadApplication(_ path: String) async throws {
         guard let bundleName = packageHandler?.bundleProperties?.bundleName,
-              let packageData = packageHandler?.sourceFileData
+              let packageData = packageHandler?.packageDataManager.sourceFileData
         else {
             showToast("Missing app data")
             return
@@ -142,7 +144,7 @@ class HomeViewModel: ObservableObject, Identifiable {
     }
     
     private func uploadIcon(_ path: String) async throws {
-        guard let iconData = packageHandler?.appIcon ?? generateDefaultAppIcon() else {
+        guard let iconData = packageHandler?.packageDataManager.appIcon ?? generateDefaultAppIcon() else {
             showToast("Failed to generate app icon.")
             return
         }
@@ -153,7 +155,7 @@ class HomeViewModel: ObservableObject, Identifiable {
     }
     
     private func uploadInfoPropertyList(_ path: String) async throws {
-        guard let plistData = packageHandler?.infoPlistData else {
+        guard let plistData = packageHandler?.packageDataManager.infoPlistData else {
             showToast("Missing Info.plist data.")
             return
         }
@@ -173,7 +175,7 @@ class HomeViewModel: ObservableObject, Identifiable {
     
     private func uploadInstallerPropertyList(_ path: String) async throws {
         guard let bundleName = packageHandler?.bundleProperties?.bundleName,
-              let plistData = packageHandler?.installablePropertyListData else {
+              let plistData = packageHandler?.packageDataManager.installablePropertyListData else {
             showToast("Missing .plist data.")
             return
         }
@@ -183,8 +185,8 @@ class HomeViewModel: ObservableObject, Identifiable {
     }
     
     // MARK: - Download Property List
-    @MainActor func downloadInfoFile(url: String) {
-        setLoadingState(.loading)
+    @MainActor func downloadInfoFile(url: String, completion: @escaping () -> Void) {
+        setDetailLoadingState(.loading)
         
         Download(url: url).downloadFile {[weak self] result in
             guard let self = self else { return }
@@ -197,26 +199,51 @@ class HomeViewModel: ObservableObject, Identifiable {
                 }
                 
                 self.packageHandler?.loadBundleProperties(with: fileProperties)
-                self.setLoadingState(.idle)
+                self.setDetailLoadingState(.idle)
+                completion()
             case .failure(let error):
-                self.handleError(error)
+                self.handleErrorInDetailView(error)
+                completion()
             }
         }
     }
     
     // MARK: - Download App Icon
-    @MainActor func downloadAppIconFile(url: String) {
-        setLoadingState(.loading)
+    @MainActor func downloadAppIconFile(url: String, completion: @escaping () -> Void) {
+        setDetailLoadingState(.loading)
         
         Download(url: url).downloadFile {[weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let iconData):
-                self.packageHandler?.appIcon = iconData
-                self.setLoadingState(.idle)
+                self.packageHandler?.packageDataManager.setAppIcon(iconData)
+                self.setDetailLoadingState(.idle)
+                completion()
             case .failure(let error):
-                self.handleError(error)
+                self.handleErrorInDetailView(error)
+                completion()
+            }
+        }
+    }
+    
+    @MainActor func downloadProvisionFile(url: String, completion: @escaping () -> Void) {
+        setDetailLoadingState(.loading)
+        
+        Download(url: url).downloadFile {[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let provisionFile):
+                guard let extractedData = try? self.packageHandler?.plistHandler.extractXMLDataFromMobileProvision(provisionFile) else { return }
+                if let mobileProvisionDic = self.packageHandler?.parseInfoPlist(extractedData) {
+                    self.packageHandler?.loadMobileProvision(with: mobileProvisionDic)
+                    self.setDetailLoadingState(.idle)
+                    completion()
+                }
+            case .failure(let error):
+                self.handleErrorInDetailView(error)
+                completion()
             }
         }
     }
@@ -259,6 +286,12 @@ class HomeViewModel: ObservableObject, Identifiable {
         showToast(error.localizedDescription)
     }
     
+    @MainActor private func handleErrorInDetailView(_ error: Error) {
+        setDetailLoadingState(.error)
+        ZLogs.shared.error(error.localizedDescription)
+        showToast(error.localizedDescription)
+    }
+    
     func showToast(_ message: String) {
         toastMessage = message
         isPresentToast = true
@@ -267,7 +300,14 @@ class HomeViewModel: ObservableObject, Identifiable {
     @MainActor
     func setLoadingState(_ state: LoadingState) {
         withAnimation {
-            self.loadingState = state
+            self.sideBarLoadingState = state
+        }
+    }
+    
+    @MainActor
+    func setDetailLoadingState(_ state: LoadingState) {
+        withAnimation {
+            self.detailViewLoadingState = state
         }
     }
     

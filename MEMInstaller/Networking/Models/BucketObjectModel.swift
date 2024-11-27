@@ -14,6 +14,7 @@ enum ContentKeyType: String {
 
 enum ContentType: String {
     case document = "application/octet-stream"
+    case mobileProvision = "application/x-apple-aspen-mobileprovision"
     case png = "image/png"
 }
 

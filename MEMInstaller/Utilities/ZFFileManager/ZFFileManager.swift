@@ -34,7 +34,7 @@ struct ZFFileObject: Hashable {
     }
 }
 
-class ZFFileManager: ObservableObject {
+class ZFFileManager: ZFFileProtocol {
     static let shared = ZFFileManager()
     
     private let fileManager = FileManager.default
@@ -48,7 +48,7 @@ class ZFFileManager: ObservableObject {
     /// Returns the URL of the cache directory for the application.
     /// If the directory does not exist, it creates the directory.
     /// - Returns: URL of the app's cache directory.
-    private var appCacheDirectory: URL {
+    internal var appCacheDirectory: URL {
         let cacheDirectoryURL = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         
         guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
@@ -100,6 +100,15 @@ class ZFFileManager: ObservableObject {
         do { try data.write(to: fileURL) }
         catch { throw error }
         return fileURL
+    }
+    
+    public func copyFileToCache(from sourceURL: URL, to destinationURL: URL) throws {
+        if sourceURL.startAccessingSecurityScopedResource() {
+            try fileManager.copyItem(at: sourceURL, to: destinationURL)
+        }else {
+            ZLogs.shared.warning("Permission denied")
+        }
+        sourceURL.stopAccessingSecurityScopedResource()
     }
     
     /// Checks if a file exists in the cache directory by its name.
@@ -160,24 +169,16 @@ class ZFFileManager: ObservableObject {
     /// Deletes all files from the temporary directory.
     /// - Throws: An error if the deletion fails.
     public func clearTempFiles() throws {
-        do {
-            let fileURLs = fileManager.temporaryDirectory
-            try fileManager.removeItem(atPath: fileURLs.path())
-        }catch {
-            throw error
-        }
+        let fileURLs = fileManager.temporaryDirectory
+        try fileManager.removeItem(atPath: fileURLs.path())
     }
     
     /// Deletes a file at a given URL.
     /// - Parameter url: The URL of the file to delete.
     /// - Throws: An error if the deletion fails.
     public func removeItemUsing(fileURL url: URL) throws {
-        do {
-            if fileManager.fileExists(atPath: url.path()) {
-                try fileManager.removeItem(atPath: url.path())
-            }
-        }catch {
-            throw error
+        if fileManager.fileExists(atPath: url.path()) {
+            try fileManager.removeItem(atPath: url.path())
         }
     }
     
@@ -217,7 +218,7 @@ class ZFFileManager: ObservableObject {
     /// Formats the size of a folder into a human-readable string.
     /// - Parameter size: The size of the folder in bytes.
     /// - Returns: A string representing the folder size.
-    private func format(size: Int64) -> String {
+    internal func format(size: Int64) -> String {
         let folderSizeAsString = ByteCountFormatter.string(fromByteCount: size, countStyle: ByteCountFormatter.CountStyle.file)
         return folderSizeAsString
     }

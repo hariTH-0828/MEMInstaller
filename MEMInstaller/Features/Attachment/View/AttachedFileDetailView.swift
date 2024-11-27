@@ -41,7 +41,7 @@ struct AttachedFileDetailView: View {
             VStack(alignment: .leading) {
                 if let packageHandler = viewModel.packageHandler {
                     HStack {
-                        appIconView(packageHandler.appIcon)
+                        appIconView(packageHandler.packageDataManager.appIcon)
                         bundleNameWithIdentifierView(bundleName: packageHandler.bundleProperties?.bundleName,
                                                      bundleId: packageHandler.bundleProperties?.bundleIdentifier)
                     }
@@ -75,26 +75,11 @@ struct AttachedFileDetailView: View {
     
     @ViewBuilder
     private func loadingOverlay() -> some View {
-       if case .uploading(let title) = viewModel.loadingState {
-           overlayView(with: title)
-       }else if case .loading = viewModel.loadingState {
-           overlayView()
+       if case .uploading(let title) = viewModel.detailViewLoadingState {
+           overlayLoaderView(with: title)
+       }else if case .loading = viewModel.detailViewLoadingState {
+           overlayLoaderView()
        }
-    }
-    
-    @ViewBuilder
-    private func overlayView(with title: String? = nil) -> some View {
-        Color.black
-            .ignoresSafeArea()
-            .opacity(0.3)
-
-        if let title {
-            ProgressView(title)
-                .progressViewStyle(.horizontalCircular)
-        }else {
-            ProgressView()
-                .progressViewStyle(.horizontalCircular)
-        }
     }
     
     @ViewBuilder
@@ -228,7 +213,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func generateUploadBodyParams() -> String? {
-        guard let userEmail = viewModel.userprofile?.email else { return nil }
+        guard let userEmail = viewModel.userDataManager?.userProfile?.email else { return nil }
         guard let bundleName = valueFor(.bundleName) else { return nil }
         
         return "\(userEmail)/\(bundleName)"

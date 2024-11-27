@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct UserProfileImageView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    var manager: UserDataManager
     let geometry: GeometryProxy
     
     var body: some View {
         VStack {
-            if let userprofile = viewModel.userprofile {
+            if let userprofile = manager.userProfile {
                 let uiImage = UIImage(data: userprofile.profileImageData)
                 Image(uiImage: uiImage!)
                     .resizable()

@@ -19,12 +19,6 @@ struct LoginView: View {
                 
                 VStack {
                     loginOnBoardImageView(geometry: geometry)
-                    
-                    Text("com.learn.meminstaller.loginview.description")
-                        .frame(width: geometry.size.width * 0.5)
-                        .padding(.horizontal)
-                        .font(.system(size: 15.0))
-                        .foregroundStyle(Color(uiColor: .systemGray))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
@@ -53,11 +47,24 @@ struct LoginView: View {
     
     @ViewBuilder
     private func loginOnBoardImageView(geometry: GeometryProxy) -> some View {
+        var isPhone: Bool {
+            return Device.isIphone ? true : false
+        }
+        
         Image(.loginOnboard)
             .resizable()
-            .frame(width: min(geometry.size.width * 0.5, 450), height: min(geometry.size.height * 0.4, 450))
+            .frame(
+                width: isPhone ? 300 : min(geometry.size.width * 0.5, 450),
+                height: isPhone ? 300 : min(geometry.size.height * 0.4, 450)
+            )
             .scaledToFit()
             .padding()
+        
+        Text("com.learn.meminstaller.loginview.description")
+            .frame(width: isPhone ? .infinity : geometry.size.width * 0.5)
+            .padding(.horizontal)
+            .font(.system(size: 15.0))
+            .foregroundStyle(Color(uiColor: .systemGray))
     }
     
     @ViewBuilder
@@ -65,7 +72,7 @@ struct LoginView: View {
         Button(action: { appViewModel.IAMLogin() }, label: {
             Text("com.learn.meminstaller.loginview.loginBtn")
                 .font(.system(size: 18, weight: .regular))
-                .frame(width: min(geometry.size.width / 1.5, 450), height: 35)
+                .frame(width: min(geometry.size.width / 1.5, 350), height: 30)
                 .foregroundStyle(.white)
                 .padding()
                 .background(
@@ -79,5 +86,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(AppViewModel())
 }
-

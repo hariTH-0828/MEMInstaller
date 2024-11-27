@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct SideMenuView: View {
-    @ObservedObject var viewModel: HomeViewModel
-    @Binding var isPresentSideMenu: Bool
-    
+//    @ObservedObject var viewModel: HomeViewModel
     @State private var isPresentLogout: Bool = false
     @State private var isPresentLogExporter: Bool = false
+    let userDataManager: UserDataManager = UserDataManager()
     
     var logFileURL: URL {
         return ZLogs.shared.exportLogFile()
@@ -22,7 +21,7 @@ struct SideMenuView: View {
         GeometryReader(content: { geometry in
             ZStack {
                 VStack(alignment: .leading) {
-                    UserProfileImageView(viewModel: viewModel, geometry: geometry)
+                    UserProfileImageView(manager: userDataManager, geometry: geometry)
                     
                     // About
 //                    SideMenuButton(title: "com.learn.meminstaller.setting.about",
@@ -53,9 +52,9 @@ struct SideMenuView: View {
                 if FileManager.default.fileExists(atPath: logFileURL.path()) {
                     ActivityViewRepresentable(activityItems: [logFileURL]) { status, error in
                         if let error = error {
-                            viewModel.showToast("Export failed: \(error.localizedDescription)")
+//                            viewModel.showToast("Export failed: \(error.localizedDescription)")
                         }else if status {
-                            viewModel.showToast("Export successful!")
+//                            viewModel.showToast("Export successful!")
                         }
                     }
                     .presentationDetents([.medium, .large])

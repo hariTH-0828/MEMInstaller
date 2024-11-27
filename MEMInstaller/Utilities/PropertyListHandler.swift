@@ -59,14 +59,8 @@ final class PropertyListHandler {
         - `ZError.FileConversionError.invalidFilePath` if the specified path is invalid or the file does not
         - `ZError.FileConversionError.fileReadFailed` if the XML content cannot be located or read.
      */
-    func extractPropertyListData(fromProvisionFileAt path: String) throws -> Data {
+    func extractXMLDataFromMobileProvision(_ provisionData: Data) throws -> Data {
         do {
-            // Ensure the file exists at the given path
-            guard FileManager.default.fileExists(atPath: path) else { throw ZError.FileConversionError.invalidFilePath }
-            
-            // Read the file content
-            let provisionData = try Data(contentsOf: URL(fileURLWithPath: path))
-            
             // Locate the XML start and end indices
             let (startRange, endRange) = try rangeOfStartAndEndIndex(of: provisionData)
             

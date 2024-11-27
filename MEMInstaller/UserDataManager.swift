@@ -8,6 +8,7 @@
 import SwiftUI
 
 class UserDataManager: UserManagerProtocol {
+    private(set) var userProfile: ZUserProfile? = nil
 
     /// Saves the currently logged-in user profile to the Keychain.
     /// - Returns: `true` if the profile is saved successfully, otherwise `false`.
@@ -26,6 +27,7 @@ class UserDataManager: UserManagerProtocol {
         do {
             try KeychainService.save(value: zuserProfile, forKey: KCKeys.loggedUserProfile)
             ZLogs.shared.log(.info, message: "Successfully saved the logged-in user profile to the Keychain.")
+            self.userProfile = zuserProfile
             return true
         }catch {
             ZLogs.shared.error(ZError.KeyChainError.failedToSave.localizedDescription)

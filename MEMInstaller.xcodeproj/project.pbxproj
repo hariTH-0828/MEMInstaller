@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */; };
 		520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F02CE383C100659A66 /* ZIAMManager.swift */; };
 		520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F32CE3851600659A66 /* UserDefaultsKey.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
@@ -44,6 +45,11 @@
 		5252A4092CF641CF005DD9CC /* NavigationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */; };
 		5252A40B2CF64272005DD9CC /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */; };
 		5252A40E2CF64FCA005DD9CC /* ZSMultiThreading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */; };
+		5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */; };
+		5252A4142CF6E9A6005DD9CC /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4132CF6E9A6005DD9CC /* TabViewController.swift */; };
+		5252A4162CF6F3F8005DD9CC /* ListAvailableApplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */; };
+		5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4172CF704A2005DD9CC /* ViewBuilders.swift */; };
+		5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4192CF71DB2005DD9CC /* Decimal+.swift */; };
 		525AD98F2CF4424600BF08AF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD98E2CF4424600BF08AF /* Device.swift */; };
 		525AD9912CF446F500BF08AF /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD9902CF446F500BF08AF /* Notification+.swift */; };
 		525AD9932CF5784900BF08AF /* MobileProvision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD9922CF5784900BF08AF /* MobileProvision.swift */; };
@@ -103,6 +109,7 @@
 
 /* Begin PBXFileReference section */
 		0424D3F1459B5F266A470349 /* Pods_MEMInstaller_MEMInstallerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MEMInstaller_MEMInstallerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFFileProtocol.swift; sourceTree = "<group>"; };
 		520732F02CE383C100659A66 /* ZIAMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIAMManager.swift; sourceTree = "<group>"; };
 		520732F32CE3851600659A66 /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,6 +151,11 @@
 		5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProtocol.swift; sourceTree = "<group>"; };
 		5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSMultiThreading.swift; sourceTree = "<group>"; };
+		5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
+		5252A4132CF6E9A6005DD9CC /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListAvailableApplications.swift; sourceTree = "<group>"; };
+		5252A4172CF704A2005DD9CC /* ViewBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBuilders.swift; sourceTree = "<group>"; };
+		5252A4192CF71DB2005DD9CC /* Decimal+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decimal+.swift"; sourceTree = "<group>"; };
 		525AD98E2CF4424600BF08AF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		525AD9902CF446F500BF08AF /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		525AD9922CF5784900BF08AF /* MobileProvision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileProvision.swift; sourceTree = "<group>"; };
@@ -217,6 +229,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5200722E2CF72BA70080D8E8 /* ZFFileManager */ = {
+			isa = PBXGroup;
+			children = (
+				523F723C2CDB912A00D564E7 /* ZFFileManager.swift */,
+				5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */,
+			);
+			path = ZFFileManager;
+			sourceTree = "<group>";
+		};
 		520732EF2CE383A700659A66 /* ZIAMManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,6 +346,7 @@
 		523F71FE2CDB33C800D564E7 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				5200722E2CF72BA70080D8E8 /* ZFFileManager */,
 				52F393C82CE5EA2900C9B23C /* CustomViews */,
 				523F722E2CDB77E100D564E7 /* ViewModifiers */,
 				523F72272CDB689F00D564E7 /* Theme */,
@@ -332,12 +354,12 @@
 				523F721C2CDB3C7C00D564E7 /* ZLogs.swift */,
 				523F72362CDB7A9B00D564E7 /* LetterAvatar.swift */,
 				523F723A2CDB903100D564E7 /* PropertyListHandler.swift */,
-				523F723C2CDB912A00D564E7 /* ZFFileManager.swift */,
 				523F723E2CDB915E00D564E7 /* ZError.swift */,
 				523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */,
 				52E109D72CE6287B002D1EDD /* WindowAccessor.swift */,
 				525AD98E2CF4424600BF08AF /* Device.swift */,
 				5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */,
+				5252A4172CF704A2005DD9CC /* ViewBuilders.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -379,6 +401,7 @@
 				5270C5702CEDEF0500C051CB /* Bundle+.swift */,
 				52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */,
 				525AD9902CF446F500BF08AF /* Notification+.swift */,
+				5252A4192CF71DB2005DD9CC /* Decimal+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -407,6 +430,8 @@
 			children = (
 				523F721A2CDB37D000D564E7 /* HomeView.swift */,
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
+				5252A4132CF6E9A6005DD9CC /* TabViewController.swift */,
+				5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -477,6 +502,7 @@
 			children = (
 				5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */,
 				5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */,
+				5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -830,7 +856,10 @@
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
 				5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */,
+				5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
+				520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */,
+				5252A4142CF6E9A6005DD9CC /* TabViewController.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
 				525AD98F2CF4424600BF08AF /* Device.swift in Sources */,
 				525AD9972CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift in Sources */,
@@ -847,8 +876,10 @@
 				523F72262CDB4EFC00D564E7 /* ZUserProfile.swift in Sources */,
 				5252A40B2CF64272005DD9CC /* AppCoordinatorImpl.swift in Sources */,
 				5270C5622CEC64C300C051CB /* PUT.swift in Sources */,
+				5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
 				52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */,
+				5252A4162CF6F3F8005DD9CC /* ListAvailableApplications.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
@@ -857,6 +888,7 @@
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
+				5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */,
 				5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */,
 				5270C5712CEDEF0500C051CB /* Bundle+.swift in Sources */,
 				52F393B92CE5D15F00C9B23C /* NetworkRequestProtocol.swift in Sources */,

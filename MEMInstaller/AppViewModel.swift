@@ -93,7 +93,7 @@ final class AppViewModel: ObservableObject {
             ZLogs.shared.info("Successfully deleted logged user from keychain")
             
             // Logout success: Navigate to Setting View to Login View
-            DispatchQueue.main.async {
+            mainQueue {
                 withAnimation(.easeInOut) {
                     self.isUserLoggedIn = false
                 }
