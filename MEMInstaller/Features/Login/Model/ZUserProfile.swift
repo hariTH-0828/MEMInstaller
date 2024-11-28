@@ -14,3 +14,8 @@ struct ZUserProfile: Codable {
     let profileImageData: Data
 }
 
+extension ZUserProfile {
+    static let preview: ZUserProfile = {
+        ZUserProfile(name: "Tester", displayName: "Tester", email: "tester@gmail.com", profileImageData: imageWith(name: "Tester")!.pngData()!)
+    }()
+}

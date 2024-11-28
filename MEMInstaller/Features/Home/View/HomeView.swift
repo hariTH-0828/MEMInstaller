@@ -22,28 +22,30 @@ struct HomeView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            NavigationSplitView(preferredCompactColumn: .constant(.sidebar)) {
-                sideBarContentView()
-            } detail: {
-                detailContentView()
-            }
-            .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
+        NavigationSplitView {
+            sideBarContentView()
+        } detail: {
+            detailContentView()
         }
+        .navigationSplitViewStyle(.balanced)
+        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
     }
     
     @ViewBuilder
     private func sideBarContentView() -> some View {
         LoaderView(loadingState: $viewModel.sideBarLoadingState) {
             if viewModel.allObjects.isEmpty {
-                EmptyBucketView(viewModel: viewModel)
+                Text("No apps available")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
             }else {
                 ListAvailableApplications(viewModel: viewModel)
             }
         }
         .navigationTitle("Apps")
+        .toolbar { settingButtonView() }
         .task {
-            if viewModel.allObjects.isEmpty {
+            if viewModel.sideBarLoadingState == .loading {
                 await viewModel.fetchFoldersFromBucket()
             }
         }
@@ -51,12 +53,35 @@ struct HomeView: View {
     
     @ViewBuilder
     private func detailContentView() -> some View {
-        if viewModel.shouldShowDetailView {
-            AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
-        }else {
-            Text("Select a application to view details")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+        LoaderView(loadingState: $viewModel.detailViewLoadingState) {
+            if viewModel.shouldShowDetailView {
+                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
+            }else if viewModel.shouldShowUploadView {
+                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)
+            }else if viewModel.allObjects.isEmpty {
+                EmptyBucketView(viewModel: viewModel)
+            }
+        }
+    }
+    
+    private func settingButtonView() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                Device.isIpad ? appCoordinator.push(.settings) : appCoordinator.presentSheet(.settings)
+            }, label: {
+                var uiImage: UIImage? {
+                    if let userprofile = viewModel.userprofile {
+                        return UIImage(data: userprofile.profileImageData)
+                    }else {
+                        return imageWith(name: "Unknown")
+                    }
+                }
+                
+                Image(uiImage: uiImage!)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .clipShape(Circle())
+            })
         }
     }
 }

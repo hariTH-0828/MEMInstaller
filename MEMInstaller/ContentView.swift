@@ -14,13 +14,13 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
-            coordinator.build(forScreen: appViewModel.isUserLoggedIn ? .tabView : .login)
+            coordinator.build(forScreen: appViewModel.isUserLoggedIn ? .home : .login)
                 .navigationDestination(for: Screen.self) {
                     coordinator.build(forScreen: $0)
                 }
-                .sheet(item: $coordinator.sheet, onDismiss: coordinator.dismissSheet) {
-                    coordinator.build(forSheet: $0)
-                }
+                .sheet(item: $coordinator.sheet, onDismiss: coordinator.onDismiss, content: { sheet in
+                    coordinator.build(forSheet: sheet)
+                })
                 .fileImporter(isPresented: $coordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
                     coordinator.fileImportCompletion?(result)
                 }

@@ -12,8 +12,9 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @Published var navigationPath: NavigationPath = NavigationPath()
     
     // ModelPresentation
-    var sheet: Sheet?
+    @Published var sheet: Sheet?
     var onDismiss: (() -> Void)?
+    var isPopover: Bool { Device.isIpad }
     
     // FileImporterProtocol
     @Published var shouldShowFileImporter: Bool = false
@@ -40,17 +41,21 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     }
     
     // MARK: - Sheet Management
-   func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)? = nil) {
-       self.sheet = sheet
-       self.onDismiss = onDismiss
-   }
-   
-   func dismissSheet() {
-       let onDismissHandler = onDismiss // Capture the closure to avoid race condition
-       self.sheet = nil
-       onDismissHandler?()  // Safely execute the captured closure
-       self.onDismiss = nil // Reset for future use
-   }
+    @inlinable
+    @inline(__always)
+    func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)? = nil) {
+        self.sheet = sheet
+        self.onDismiss = onDismiss
+    }
+    
+    @inlinable
+    @inline(__always)
+    func dismissSheet() {
+        let onDismissHandler = onDismiss // Capture the closure to avoid race condition
+        self.sheet = nil
+        onDismissHandler?()  // Safely execute the captured closure
+        self.onDismiss = nil // Reset for future use
+    }
     
     func openFileImporter(completion: @escaping (Result<URL, any Error>) -> Void) {
         self.fileImportCompletion = completion
@@ -61,30 +66,33 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @ViewBuilder
     func build(forScreen screen: Screen) -> some View {
         switch screen {
-        case .tabView:
-            TabViewController()
-        case .settings:
-            SideMenuView()
-        case .login:
-            LoginView()
         case .home:
             HomeView()
+        case .tabView:
+            TabViewController()
+        case .login:
+            LoginView()
+        case .settings:
+            SettingsView()
+        case .about:
+            AboutView()
         }
     }
     
     @ViewBuilder
     func build(forSheet sheet: Sheet) -> some View {
         switch sheet {
+        case .settings:
+            SettingSideBarView()
         case .logout:
-            PresentLogoutView(isPresentLogOut: .constant(false))
+            PresentLogoutView()
         case .activityRepresentable(let logFileURL):
             ActivityViewRepresentable(activityItems: [logFileURL]) { completion, error in
                 self.fileExportCompletion?(completion, error)
                 self.fileExportCompletion = nil // Reset to prevent reuse
             }
+            .ignoresSafeArea()
             .presentationDetents([.medium, .large])
-        case .attachmentDetailView(let viewModel):
-            AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)
         }
     }
 }

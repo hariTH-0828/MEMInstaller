@@ -11,19 +11,41 @@ struct TabViewController: View {
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     @State private var tabSelection: Screen = .home
     
+    private let tabs: [Screen] = [.home, .settings] // Add all tabs here
+    
     var body: some View {
         TabView(selection: $tabSelection, content:  {
-            appCoordinator.build(forScreen: .home)
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(Screen.home)
-            
-            appCoordinator.build(forScreen: .settings)
-                .tabItem { Label("Settings", systemImage: "gear") }
-                .tag(Screen.settings)
+            ForEach(tabs, id: \.self) { tab in
+                appCoordinator.build(forScreen: tab)
+                    .tabItem { tab.label }
+                    .tag(tab)
+            }
         })
     }
 }
 
-#Preview {
-    TabViewController()
+extension Screen {
+    @ViewBuilder
+    var label: some View {
+        switch self {
+        case .home:
+            Label("Home", systemImage: "house")
+        case .settings:
+            Label("Settings", systemImage: "gear")
+        default:
+            Label("Unknown", systemImage: "x.circle")
+        }
+    }
+    
+    @ViewBuilder
+    var destination: some View {
+        switch self {
+        case .home:
+            HomeView()
+        case .settings:
+            SettingsView()
+        default:
+            EmptyView()
+        }
+    }
 }

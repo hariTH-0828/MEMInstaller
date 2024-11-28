@@ -9,46 +9,12 @@ import Foundation
 import Zip
 import SwiftUI
 
-class PackageExtractionDataManager {
-    private(set) var appIcon: Data?
-    private(set) var sourceFileData: Data?
-    private(set) var infoPlistData: Data?
-    private(set) var installablePropertyListData: Data?
-    
-    func setAppIcon(_ icon: Data?) {
-        self.appIcon = icon
-    }
-    
-    func setSourceFileData(_ source: Data?) {
-        self.sourceFileData = source
-    }
-    
-    func setInfoData(_ info: Data?) {
-        self.infoPlistData = info
-    }
-    
-    func setInstallablePropertyData(_ info: Data?) {
-        self.installablePropertyListData = info
-    }
-    
-    func reset() {
-        appIcon = nil
-        sourceFileData = nil
-        infoPlistData = nil
-        installablePropertyListData = nil
-    }
-}
-
 class PackageExtractionHandler {
     // Property Handler
     let plistHandler = PropertyListHandler()
     let packageDataManager = PackageExtractionDataManager()
     
     private var sourceURL: URL!
-    
-    var bundleProperties: BundleProperties?
-    var mobileProvision: MobileProvision?
-    var objectURL: String?
     
     // Attachment View
     @Published var shareItem: [URL] = []
@@ -61,7 +27,7 @@ class PackageExtractionHandler {
         self.sourceURL = url
         
         if sourceURL.startAccessingSecurityScopedResource() {
-            packageDataManager.setSourceFileData(fileToData(from: sourceURL))
+            packageDataManager.sourceFileData = fileToData(from: sourceURL)
             sourceURL.stopAccessingSecurityScopedResource()
         }
         extractIpaFileContents()
@@ -148,7 +114,7 @@ class PackageExtractionHandler {
         }
         
         let infoPlistPath = payLoadPath.path() + "/\(appName)/Info.plist"
-        packageDataManager.setInfoData(fileToData(from: URL(fileURLWithPath: infoPlistPath)))
+        packageDataManager.infoPlistData = fileToData(from: URL(fileURLWithPath: infoPlistPath))
         
         try extractAppProperties(from: payLoadPath, appName: appName)
     }
@@ -166,7 +132,7 @@ class PackageExtractionHandler {
         
         // AppIcon
         let appIconData = try readApplicationIcon(from: payLoadPath, appName: appName)
-        packageDataManager.setAppIcon(appIconData)
+        packageDataManager.appIcon = appIconData
     }
     
     private func readInfoPlistFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
@@ -192,6 +158,8 @@ class PackageExtractionHandler {
         
         // Read the file content
         let provisionData = try Data(contentsOf: URL(fileURLWithPath: provisionPath))
+        packageDataManager.provisionProfileData = provisionData
+        
         let fileData = try plistHandler.extractXMLDataFromMobileProvision(provisionData)
         
         return parseInfoPlist(fileData)
@@ -224,7 +192,7 @@ class PackageExtractionHandler {
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: plistDictionary)
-            self.bundleProperties = try decoder.decode(BundleProperties.self, from: jsonData)
+            packageDataManager.bundleProperties = try decoder.decode(BundleProperties.self, from: jsonData)
         }catch {
             ZLogs.shared.error(error.localizedDescription)
         }
@@ -241,23 +209,25 @@ class PackageExtractionHandler {
             return
         }
     
-        self.mobileProvision = MobileProvision(name: name,
+        let mobileProvision = MobileProvision(name: name,
                                                teamIdentifier: teamIdentifier,
                                                creationDate: creationDate,
                                                expirationDate: expirationDate,
                                                teamName: teamName, version: version)
+        
+        packageDataManager.mobileProvision = mobileProvision
     }
     
     func generatePropertyList(fileURL: String) {
         
         let plistURL = plistHandler.createPlistFile(url: fileURL,
-                                                    bundleIdentifier: bundleProperties?.bundleIdentifier,
-                                                    bundleVersion: bundleProperties?.bundleVersion,
-                                                    fileName: bundleProperties?.bundleName)
+                                                    bundleIdentifier: packageDataManager.bundleProperties?.bundleIdentifier,
+                                                    bundleVersion: packageDataManager.bundleProperties?.bundleVersion,
+                                                    fileName: packageDataManager.bundleProperties?.bundleName)
         
         switch plistURL {
         case .success(let pathLocation):
-            packageDataManager.setInstallablePropertyData(fileToData(from: pathLocation))
+            packageDataManager.installablePropertyListData = fileToData(from: pathLocation)
         case .failure(let failure):
             ZLogs.shared.error(failure.localizedDescription)
         }

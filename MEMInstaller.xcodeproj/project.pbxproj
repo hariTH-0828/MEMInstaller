@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */; };
+		520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520072332CF77ED40080D8E8 /* SettingsView.swift */; };
 		520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F02CE383C100659A66 /* ZIAMManager.swift */; };
 		520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F32CE3851600659A66 /* UserDefaultsKey.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
@@ -56,12 +57,13 @@
 		525AD9972CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD9962CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift */; };
 		5270C5622CEC64C300C051CB /* PUT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5612CEC64C300C051CB /* PUT.swift */; };
 		5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */; };
-		5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */; };
-		5270C56F2CEDEEC500C051CB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C56E2CEDEEC500C051CB /* AboutView.swift */; };
 		5270C5712CEDEF0500C051CB /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270C5702CEDEF0500C051CB /* Bundle+.swift */; };
 		52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */; };
-		52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B54F2CEB341700214F41 /* SideMenuView.swift */; };
-		52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5512CEB343300214F41 /* SideMenu.swift */; };
+		52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCAE2CF7884500D49186 /* AboutView.swift */; };
+		52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */; };
+		52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */; };
+		52BCCCB52CF83F8B00D49186 /* SettingSideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */; };
+		52BCCCB72CF8814100D49186 /* PackageExtractionDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */; };
 		52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5532CEB3D6C00214F41 /* String+.swift */; };
 		52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DOWNLOAD.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
@@ -110,6 +112,7 @@
 /* Begin PBXFileReference section */
 		0424D3F1459B5F266A470349 /* Pods_MEMInstaller_MEMInstallerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MEMInstaller_MEMInstallerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFFileProtocol.swift; sourceTree = "<group>"; };
+		520072332CF77ED40080D8E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		520732F02CE383C100659A66 /* ZIAMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIAMManager.swift; sourceTree = "<group>"; };
 		520732F32CE3851600659A66 /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,12 +165,13 @@
 		525AD9962CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleOutlineView.swift; sourceTree = "<group>"; };
 		5270C5612CEC64C300C051CB /* PUT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PUT.swift; sourceTree = "<group>"; };
 		5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentLogoutView.swift; sourceTree = "<group>"; };
-		5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
-		5270C56E2CEDEEC500C051CB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		5270C5702CEDEF0500C051CB /* Bundle+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
 		52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentKey+.swift"; sourceTree = "<group>"; };
-		52D0B54F2CEB341700214F41 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
-		52D0B5512CEB343300214F41 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
+		52BCCCAE2CF7884500D49186 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
+		52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheetModifier.swift; sourceTree = "<group>"; };
+		52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSideBarView.swift; sourceTree = "<group>"; };
+		52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageExtractionDataManager.swift; sourceTree = "<group>"; };
 		52D0B5532CEB3D6C00214F41 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		52D0B5572CEB730400214F41 /* DOWNLOAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOWNLOAD.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
@@ -236,6 +240,26 @@
 				5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */,
 			);
 			path = ZFFileManager;
+			sourceTree = "<group>";
+		};
+		520072312CF77EC20080D8E8 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				520072322CF77EC90080D8E8 /* View */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		520072322CF77EC90080D8E8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				520072332CF77ED40080D8E8 /* SettingsView.swift */,
+				5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */,
+				52BCCCAE2CF7884500D49186 /* AboutView.swift */,
+				52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */,
+				52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		520732EF2CE383A700659A66 /* ZIAMManager */ = {
@@ -326,8 +350,8 @@
 		523F71FC2CDB33BA00D564E7 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				520072312CF77EC20080D8E8 /* Settings */,
 				525AD9942CF5B83B00BF08AF /* Attachment */,
-				52D0B54D2CEB33F700214F41 /* SideMenu */,
 				523F72032CDB34C100D564E7 /* Login */,
 				523F72022CDB34BD00D564E7 /* Home */,
 			);
@@ -484,6 +508,7 @@
 			children = (
 				523F72342CDB794700D564E7 /* HomeViewModel.swift */,
 				52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */,
+				52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -503,6 +528,7 @@
 				5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */,
 				5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */,
 				5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */,
+				52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -534,26 +560,6 @@
 				5270C5612CEC64C300C051CB /* PUT.swift */,
 			);
 			path = CRUD;
-			sourceTree = "<group>";
-		};
-		52D0B54D2CEB33F700214F41 /* SideMenu */ = {
-			isa = PBXGroup;
-			children = (
-				52D0B54E2CEB340B00214F41 /* View */,
-			);
-			path = SideMenu;
-			sourceTree = "<group>";
-		};
-		52D0B54E2CEB340B00214F41 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				52D0B54F2CEB341700214F41 /* SideMenuView.swift */,
-				52D0B5512CEB343300214F41 /* SideMenu.swift */,
-				5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */,
-				5270C56C2CEDED6A00C051CB /* UserProfileImageView.swift */,
-				5270C56E2CEDEEC500C051CB /* AboutView.swift */,
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		52F393BE2CE5DBBB00C9B23C /* Repository */ = {
@@ -850,12 +856,9 @@
 				523F72352CDB794700D564E7 /* HomeViewModel.swift in Sources */,
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
-				52D0B5522CEB343300214F41 /* SideMenu.swift in Sources */,
-				5270C56F2CEDEEC500C051CB /* AboutView.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
-				5270C56D2CEDED6A00C051CB /* UserProfileImageView.swift in Sources */,
 				5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
 				520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */,
@@ -887,6 +890,7 @@
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
+				52BCCCB52CF83F8B00D49186 /* SettingSideBarView.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
 				5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */,
 				5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */,
@@ -896,13 +900,15 @@
 				52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */,
 				5252A4032CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift in Sources */,
 				52F393BD2CE5D9EE00C9B23C /* TokenProviderProtocol.swift in Sources */,
+				52BCCCB72CF8814100D49186 /* PackageExtractionDataManager.swift in Sources */,
 				52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */,
 				523F72082CDB355900D564E7 /* AppDelegate.swift in Sources */,
-				52D0B5502CEB341700214F41 /* SideMenuView.swift in Sources */,
+				52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */,
 				52E109ED2CE75C18002D1EDD /* BucketObjectModel.swift in Sources */,
 				523F71D52CDB323100D564E7 /* ContentView.swift in Sources */,
 				523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */,
 				52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */,
+				520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */,
 				52F393B52CE520A800C9B23C /* ZAPIStrings.swift in Sources */,
 				52F393B72CE5D0AA00C9B23C /* GET.swift in Sources */,
 				523F72232CDB4AB800D564E7 /* KeyChainKeys.swift in Sources */,
@@ -912,7 +918,9 @@
 				52E109EB2CE70A7F002D1EDD /* UIViewController+.swift in Sources */,
 				520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */,
 				523F723F2CDB915E00D564E7 /* ZError.swift in Sources */,
+				52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */,
 				523F72372CDB7A9B00D564E7 /* LetterAvatar.swift in Sources */,
+				52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */,
 				52F393CA2CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift in Sources */,
 				52F393A62CE47ABD00C9B23C /* UserManagerProtocol.swift in Sources */,
 				523F721D2CDB3C7C00D564E7 /* ZLogs.swift in Sources */,
@@ -1093,8 +1101,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1134,8 +1142,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

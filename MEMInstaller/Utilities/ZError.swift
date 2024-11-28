@@ -34,6 +34,7 @@ struct ZError {
         case noDataFound
         case failedToGetCacheSize
         case noFileFound
+        case custom(String, String?)
         
         var errorDescription: String? {
             switch self {
@@ -51,6 +52,8 @@ struct ZError {
                 return NSLocalizedString("Failed to get cache size", comment: "Displayed when failed to get cache directory size.")
             case .noFileFound:
                 return NSLocalizedString("No file has been found", comment: "Displayed when there is not file exist in the provided url.")
+            case .custom(let description, let comments):
+                return NSLocalizedString("description", comment: comments ?? "")
             }
         }
     }
@@ -71,6 +74,7 @@ struct ZError {
         case unknown
         case downloadFailed
         case invalidResponse
+        case missingData
         
         var errorDescription: String? {
             switch self {
@@ -104,6 +108,8 @@ struct ZError {
                 return NSLocalizedString("Failed to download file", comment: "Error with some network reason or url may or maybe in wrong format.")
             case .invalidResponse:
                 return NSLocalizedString("Invalid or missing HTTP response", comment: "Displayed when the HTTP response is invalid or missing")
+            case .missingData:
+                return NSLocalizedString("Invalid or missing file data", comment: "Displayed when the file data is invalid or missing")
             }
         }
     }

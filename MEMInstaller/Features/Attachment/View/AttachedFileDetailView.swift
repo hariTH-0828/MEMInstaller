@@ -39,33 +39,29 @@ struct AttachedFileDetailView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
-                if let packageHandler = viewModel.packageHandler {
-                    HStack {
-                        appIconView(packageHandler.packageDataManager.appIcon)
-                        bundleNameWithIdentifierView(bundleName: packageHandler.bundleProperties?.bundleName,
-                                                     bundleId: packageHandler.bundleProperties?.bundleIdentifier)
-                    }
-                    .padding(.horizontal)
-                    
-                    RoundedRectangleOutlineView {
-                        ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
-                            HorizontalKeyValueContainer(key: identifier.rawValue, value: valueFor(identifier))
-                        }
-                    }
-                    
-                    RoundedRectangleOutlineView {
-                        ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
-                            mobileProvisionCellView(identifier)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    uploadBtnView()
+                HStack {
+                    appIconView(viewModel.packageHandler.packageDataManager.appIcon)
+                    bundleNameWithIdentifierView(bundleName: viewModel.packageHandler.packageDataManager.bundleProperties?.bundleName,
+                                                 bundleId: viewModel.packageHandler.packageDataManager.bundleProperties?.bundleIdentifier)
                 }
+                .padding(.horizontal)
+                
+                RoundedRectangleOutlineView {
+                    ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
+                        HorizontalKeyValueContainer(key: identifier.rawValue, value: valueFor(identifier))
+                    }
+                }
+                
+                RoundedRectangleOutlineView {
+                    ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
+                        mobileProvisionCellView(identifier)
+                    }
+                }
+                Spacer()
+                actionButtonView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(viewModel.packageHandler?.bundleProperties?.bundleName ?? "Loading")
+            .navigationTitle(viewModel.packageHandler.packageDataManager.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
             .overlay {
                 loadingOverlay()
@@ -132,41 +128,48 @@ struct AttachedFileDetailView: View {
     }
     
     @ViewBuilder
-    private func uploadBtnView() -> some View {
-        Button(action: {
-            attachmentMode == .install ? installApplication() : uploadApplication()
-        }, label: {
-            Text(attachmentMode == .install ? "Install" : "Upload")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 180, height: 50)
-                .background(RoundedRectangle(cornerRadius: 14))
-        })
+    private func actionButtonView() -> some View {
+        HStack(spacing: 50) {
+            Button(attachmentMode == .install ? "Install" : "Upload") {
+                attachmentMode == .install ? installApplication() : uploadApplication()
+            }
+            .defaultButtonStyle(width: 180)
+            .padding(.bottom, 30)
+            
+            Button("Cancel") {
+                viewModel.shouldShowUploadView = false
+                viewModel.shouldShowDetailView = false
+                viewModel.packageHandler.packageDataManager.reset()
+            }
+            .defaultButtonStyle(width: 180)
+            .padding(.bottom, 30)
+        }
         .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.bottom, 30)
     }
     
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
+        let bundleProperties = viewModel.packageHandler.packageDataManager.bundleProperties
+        
         switch identifier {
         case .bundleName:
-            return viewModel.packageHandler?.bundleProperties?.bundleName
+            return bundleProperties?.bundleName
         case .bundleIdentifiers:
-            return viewModel.packageHandler?.bundleProperties?.bundleIdentifier
+            return bundleProperties?.bundleIdentifier
         case .bundleVersionShort:
-            return viewModel.packageHandler?.bundleProperties?.bundleVersionShort
+            return bundleProperties?.bundleVersionShort
         case .bundleVersion:
-            return viewModel.packageHandler?.bundleProperties?.bundleVersion
+            return bundleProperties?.bundleVersion
         case .minOSVersion:
-            return viewModel.packageHandler?.bundleProperties?.minimumOSVersion
+            return bundleProperties?.minimumOSVersion
         case .requiredDevice:
-            return viewModel.packageHandler?.bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
+            return bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
         case .supportedPlatform:
-            return viewModel.packageHandler?.bundleProperties?.supportedPlatform?.joined(separator: ", ")
+            return bundleProperties?.supportedPlatform?.joined(separator: ", ")
         }
     }
     
     private func valueFor(provision identifier: ProvisionCellIdentifiers) -> String? {
-        guard let mobileProvision = viewModel.packageHandler?.mobileProvision else { return nil }
+        guard let mobileProvision = viewModel.packageHandler.packageDataManager.mobileProvision else { return nil }
         switch identifier {
         case .name:
             return mobileProvision.name
@@ -184,7 +187,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func installApplication() {
-        guard let objectURL = viewModel.packageHandler?.objectURL else {
+        guard let objectURL = viewModel.packageHandler.packageDataManager.objectURL else {
             ZLogs.shared.error("Error: Installation - objectURL not found")
             viewModel.showToast("Installation failed: URL not found")
             return
@@ -205,15 +208,15 @@ struct AttachedFileDetailView: View {
             await viewModel.uploadPackage(endpoint: endpoint) {
                 dismiss()
                 
-                viewModel.setLoadingState(.loading)
+                viewModel.updateLoadingState(for: .detail, to: .loading)
                 await viewModel.fetchFoldersFromBucket()
-                viewModel.setLoadingState(.idle)
+                viewModel.updateLoadingState(for: .detail, to: .idle)
             }
         }
     }
     
     private func generateUploadBodyParams() -> String? {
-        guard let userEmail = viewModel.userDataManager?.userProfile?.email else { return nil }
+        guard let userEmail = viewModel.userprofile?.email else { return nil }
         guard let bundleName = valueFor(.bundleName) else { return nil }
         
         return "\(userEmail)/\(bundleName)"

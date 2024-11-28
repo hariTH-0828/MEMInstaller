@@ -11,34 +11,28 @@ struct ListAvailableApplications: View {
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
     
-    @State private var isPresentDetailView: Bool = false
-    @State private var isPresentFileUploadView: Bool = false
-    
     var body: some View {
-        NavigationStack {
-            GeometryReader(content: { geometry in
-                // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
-                List(sortedFolderNames(), id: \.self) { folderName in
+        GeometryReader(content: { geometry in
+            // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
+            List(sortedFolderNames(), id: \.self) { folderName in
+                if let contents = viewModel.allObjects[folderName] {
+                    // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
+                    let fileURLs = extractFileURLs(from: contents, folderName: folderName)
                     
-                    if let contents = viewModel.allObjects[folderName] {
-                        // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
-                        let fileURLs = extractFileURLs(from: contents, folderName: folderName)
-                        
-                        // Calculate package size
-                        let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
-                        let packageSizeAsMB = calculatePackageSize(packageSizeAsBytes)
-                        
-                        Button(action: {
-                            handleAppSelection(with: fileURLs)
-                        }, label: {
-                            appLabel(folderName: folderName, iconURL: fileURLs.iconURL, size: packageSizeAsMB)
-                        })
+                    // Calculate package size
+                    let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
+                    let packageSizeAsMB = calculatePackageSize(packageSizeAsBytes)
+                    
+                    Button {
+                        handleAppSelection(with: fileURLs)
+                    } label: {
+                        appLabel(folderName: folderName, iconURL: fileURLs.iconURL, size: packageSizeAsMB)
                     }
                 }
-                .refreshable { await viewModel.fetchFoldersFromBucket() }
-                .toolbar { addPackageButtonView() }
-            })
-        }
+            }
+            .refreshable { await viewModel.fetchFoldersFromBucket() }
+            .toolbar { addPackageButtonView() }
+        })
     }
     
     @ViewBuilder
@@ -94,8 +88,8 @@ struct ListAvailableApplications: View {
                 appCoordinator.openFileImporter { result in
                     switch result {
                     case .success(let filePath):
-                        viewModel.packageHandler?.initiateAppExtraction(from: filePath)
-                        appCoordinator.presentSheet(.attachmentDetailView(viewModel))
+                        viewModel.packageHandler.initiateAppExtraction(from: filePath)
+                        viewModel.shouldShowUploadView = true
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
@@ -161,7 +155,7 @@ struct ListAvailableApplications: View {
         }
         
         dispatchGroup.notify(queue: .main) {
-            viewModel.packageHandler?.objectURL = fileURLs.objectURL
+            viewModel.packageHandler.packageDataManager.objectURL = fileURLs.objectURL
             viewModel.shouldShowDetailView = true
         }
     }

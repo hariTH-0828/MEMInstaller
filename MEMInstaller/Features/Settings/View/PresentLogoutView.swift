@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: Logout View
 struct PresentLogoutView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
-    @Binding var isPresentLogOut: Bool
+    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
     var body: some View {
         VStack(spacing: 20, content: {
@@ -20,7 +20,7 @@ struct PresentLogoutView: View {
             
             HStack(spacing: 30, content: {
                 Button(action: {
-                    isPresentLogOut = false
+                    coordinator.dismissSheet()
                 }, label: {
                     Text("Cancel")
                 })
@@ -28,7 +28,7 @@ struct PresentLogoutView: View {
                 
                 Button(role: .destructive) {
                     appViewModel.logout()
-                    isPresentLogOut = false
+                    coordinator.dismissSheet()
                 } label: {
                     Text("Sign out")
                 }
@@ -40,5 +40,5 @@ struct PresentLogoutView: View {
 }
 
 #Preview {
-    PresentLogoutView(isPresentLogOut: .constant(true))
+    PresentLogoutView()
 }
