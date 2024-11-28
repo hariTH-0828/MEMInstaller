@@ -54,7 +54,11 @@ struct HomeView: View {
     @ViewBuilder
     private func detailContentView() -> some View {
         LoaderView(loadingState: $viewModel.detailViewLoadingState) {
-            if viewModel.shouldShowDetailView {
+            if viewModel.sideBarLoadingState == .loading {
+                Text("select a app to view details")
+                    .font(.footnote)
+                    .foregroundStyle(StyleManager.colorStyle.systemGray)
+            }else if viewModel.shouldShowDetailView {
                 AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
             }else if viewModel.shouldShowUploadView {
                 AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)

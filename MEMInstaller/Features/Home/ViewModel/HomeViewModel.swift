@@ -17,35 +17,19 @@ enum LoadingState: Hashable {
     case error
 }
 
-// MARK: - ViewType
+// MARK: - View Type
 enum ViewType {
     case sidebar
     case detail
 }
 
-// MARK: - Enum for upload components
-enum UploadComponentType {
-    case application(String)
-    case icon, infoPlist, provision
-    case installerPlist(String)
-
-    func endpoint(for path: String) -> ZAPIStrings.Endpoint {
-        switch self {
-        case .application(let appName): return .custom("/\(path)/\(appName).ipa")
-        case .icon: return .custom("/\(path)/AppIcon60x60@2x.png")
-        case .infoPlist: return .custom("/\(path)/Info.plist")
-        case .provision: return .custom("/\(path)/embedded.mobileprovision")
-        case .installerPlist(let appName): return .custom("/\(path)/\(appName).plist")
-        }
-    }
-
-    var contentType: ContentType {
-        switch self {
-        case .application, .infoPlist, .installerPlist: return .document
-        case .icon: return .png
-        case .provision: return .mobileProvision
-        }
-    }
+// MARK: - File Types
+enum SupportedFileTypes {
+    case icon
+    case app
+    case mobileprovision
+    case installationPlist
+    case infoPlist
 }
 
 class HomeViewModel: ObservableObject {
@@ -62,7 +46,7 @@ class HomeViewModel: ObservableObject {
     @Published var shouldShowDetailView: Bool = false
     @Published var shouldShowUploadView: Bool = false
     
-    // Toast
+    // Toast properties
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
@@ -76,11 +60,11 @@ class HomeViewModel: ObservableObject {
         self.repository = repository
         self.userDataManager = userDataManager
         self.packageHandler = packageHandler
-//        Task { await retrieveLoggedUserFromKeychain() }
     }
     
     // MARK: Fetch bucket information
-    @MainActor func fetchFoldersFromBucket() async {
+    @MainActor 
+    func fetchFoldersFromBucket() async {
         guard let email = userprofile?.email else { return }
         updateLoadingState(for: .sidebar, to: .loading)
         
@@ -119,7 +103,7 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Upload Handling
     @MainActor func uploadPackage(endpoint: String?, _ callBack: @escaping () async -> Void) async {
-        guard let endpoint, let appName = packageHandler.packageDataManager.bundleProperties?.bundleName else {
+        guard let endpoint, let appName = packageHandler.bundleProperties?.bundleName else {
             showToast("Invalid upload endpoint.")
             return
         }
@@ -132,34 +116,10 @@ class HomeViewModel: ObservableObject {
         }catch {
             handleError(error.localizedDescription)
         }
-        
-//        do {
-//            // Upload *.ipa file
-//            updateLoadingState(for: .detail, to: .uploading("Uploading application"))
-//            try await uploadApplication(endpoint)
-//            
-//            // Upload appIcon file
-//            updateLoadingState(for: .detail, to: .uploading("Uploading app icon"))
-//            try await uploadIcon(endpoint)
-//            
-//            // Upload Info.plist file
-//            updateLoadingState(for: .detail, to: .uploading("Uploading Info.plist"))
-//            try await uploadInfoPropertyList(endpoint)
-//            
-//            // Upload mobile provision
-//            updateLoadingState(for: .detail, to: .uploading("Uploading provision"))
-//            try await uploadProvisionProfile(endpoint)
-//            
-//            
-//            
-//            await callBack()
-//        }catch {
-//            handleError(error)
-//        }
     }
     
     private func uploadPackageComponents(endpoint: String) async throws {
-        guard let appName = packageHandler.packageDataManager.bundleProperties?.bundleName else {
+        guard let appName = packageHandler.bundleProperties?.bundleName else {
             handleError("Bundle name not found while uploading packages")
             return
         }
@@ -179,11 +139,11 @@ class HomeViewModel: ObservableObject {
     
     private func fetchData(for type: UploadComponentType) throws -> Data? {
         switch type {
-        case .application: return packageHandler.packageDataManager.sourceFileData
-        case .icon: return packageHandler.packageDataManager.appIcon ?? generateDefaultAppIcon()
-        case .infoPlist: return packageHandler.packageDataManager.infoPlistData
-        case .provision: return packageHandler.packageDataManager.provisionProfileData
-        case .installerPlist: return packageHandler.packageDataManager.installablePropertyListData
+        case .application: return packageHandler.fileTypeDataMap[.app]!
+        case .icon: return packageHandler.fileTypeDataMap[.icon]! ?? generateDefaultAppIcon()
+        case .infoPlist: return packageHandler.fileTypeDataMap[.infoPlist]!
+        case .provision: return packageHandler.fileTypeDataMap[.mobileprovision]!
+        case .installerPlist: return packageHandler.fileTypeDataMap[.installationPlist]!
         }
     }
     
@@ -195,66 +155,6 @@ class HomeViewModel: ObservableObject {
             throw ZError.LocalError.custom("Failed to generate installation property", nil)
         }
     }
-    
-//    private func uploadInstallerPropertyList(_ path: String) async throws {
-//        guard let bundleName = packageHandler.packageDataManager.bundleProperties?.bundleName,
-//              let plistData = packageHandler.packageDataManager.installablePropertyListData else {
-//            showToast("Missing .plist data.")
-//            return
-//        }
-//        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/\(bundleName).plist")
-//        try await upload(data: plistData, to: endpoint, contentType: .document)
-//        ZLogs.shared.info("\(bundleName).plist uploaded successfully.")
-//    }
-    
-    
-    // MARK: - Upload Helper Methods
-//    private func uploadApplication(_ path: String) async throws {
-//        guard let bundleName = packageHandler.packageDataManager.bundleProperties?.bundleName,
-//              let packageData = packageHandler.packageDataManager.sourceFileData
-//        else {
-//            showToast("Missing app data")
-//            return
-//        }
-//        
-//        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/\(bundleName).ipa")
-//        try await upload(data: packageData, to: endpoint, contentType: .document)
-//        ZLogs.shared.info("Application uploaded successfully")
-//    }
-//    
-//    private func uploadIcon(_ path: String) async throws {
-//        guard let iconData = packageHandler.packageDataManager.appIcon ?? generateDefaultAppIcon() else {
-//            showToast("Failed to generate app icon.")
-//            return
-//        }
-//        
-//        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/AppIcon60x60@2x.png")
-//        try await upload(data: iconData, to: endpoint, contentType: .png)
-//        ZLogs.shared.info("App icon uploaded successfully.")
-//    }
-//    
-//    private func uploadInfoPropertyList(_ path: String) async throws {
-//        guard let plistData = packageHandler.packageDataManager.infoPlistData else {
-//            showToast("Missing Info.plist data.")
-//            return
-//        }
-//        
-//        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/Info.plist")
-//        try await upload(data: plistData, to: endpoint, contentType: .document)
-//        ZLogs.shared.info("Info.plist uploaded successfully.")
-//    }
-//    
-//    private func uploadProvisionProfile(_ path: String) async throws {
-//        guard let plistData = packageHandler.packageDataManager.provisionProfileData else {
-//            showToast("Missing embedded.mobileprovision data.")
-//            return
-//        }
-//        
-//        let endpoint = ZAPIStrings.Endpoint.custom("/\(path)/embedded.mobileprovision")
-//        try await upload(data: plistData, to: endpoint, contentType: .mobileProvision)
-//        ZLogs.shared.info("embedded.mobileprovision uploaded successfully.")
-//    }
-//    
     
     private func upload(data: Data, to endpoint: ZAPIStrings.Endpoint, contentType: ContentType) async throws {
         let headers = HTTPHeaders([.contentType(contentType.rawValue)])
@@ -283,6 +183,7 @@ class HomeViewModel: ObservableObject {
                 completion()
             case .failure(let error):
                 updateLoadingState(for: .detail, to: .error)
+                handleError(error.localizedDescription)
                 completion()
             }
         }
@@ -297,11 +198,12 @@ class HomeViewModel: ObservableObject {
             
             switch result {
             case .success(let iconData):
-                self.packageHandler.packageDataManager.appIcon = iconData
+                self.packageHandler.fileTypeDataMap[.icon] = iconData
                 updateLoadingState(for: .detail, to: .error)
                 completion()
             case .failure(let error):
                 updateLoadingState(for: .detail, to: .error)
+                handleError(error.localizedDescription)
                 completion()
             }
         }
@@ -323,6 +225,7 @@ class HomeViewModel: ObservableObject {
                 }
             case .failure(let error):
                 updateLoadingState(for: .detail, to: .error)
+                handleError(error.localizedDescription)
                 completion()
             }
         }
@@ -380,6 +283,6 @@ class HomeViewModel: ObservableObject {
     }
     
     private func generateDefaultAppIcon() -> Data? {
-        imageWith(name: packageHandler.packageDataManager.bundleProperties?.bundleName)?.pngData()
+        imageWith(name: packageHandler.bundleProperties?.bundleName)?.pngData()
     }
 }

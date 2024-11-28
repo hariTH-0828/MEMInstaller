@@ -90,6 +90,7 @@ struct ListAvailableApplications: View {
                     case .success(let filePath):
                         viewModel.packageHandler.initiateAppExtraction(from: filePath)
                         viewModel.shouldShowUploadView = true
+                        viewModel.shouldShowDetailView = false
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
@@ -155,7 +156,8 @@ struct ListAvailableApplications: View {
         }
         
         dispatchGroup.notify(queue: .main) {
-            viewModel.packageHandler.packageDataManager.objectURL = fileURLs.objectURL
+            viewModel.packageHandler.objectURL = fileURLs.objectURL
+            viewModel.shouldShowUploadView = false
             viewModel.shouldShowDetailView = true
         }
     }

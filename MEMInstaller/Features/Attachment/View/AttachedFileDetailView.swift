@@ -40,9 +40,9 @@ struct AttachedFileDetailView: View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    appIconView(viewModel.packageHandler.packageDataManager.appIcon)
-                    bundleNameWithIdentifierView(bundleName: viewModel.packageHandler.packageDataManager.bundleProperties?.bundleName,
-                                                 bundleId: viewModel.packageHandler.packageDataManager.bundleProperties?.bundleIdentifier)
+                    appIconView(viewModel.packageHandler.fileTypeDataMap[.icon]!)
+                    bundleNameWithIdentifierView(bundleName: viewModel.packageHandler.bundleProperties?.bundleName,
+                                                 bundleId: viewModel.packageHandler.bundleProperties?.bundleIdentifier)
                 }
                 .padding(.horizontal)
                 
@@ -61,7 +61,7 @@ struct AttachedFileDetailView: View {
                 actionButtonView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(viewModel.packageHandler.packageDataManager.bundleProperties?.bundleName ?? "Loading")
+            .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
             .overlay {
                 loadingOverlay()
@@ -137,9 +137,10 @@ struct AttachedFileDetailView: View {
             .padding(.bottom, 30)
             
             Button("Cancel") {
-                viewModel.shouldShowUploadView = false
+                // Close detailView and reset fileTypeDataMap
                 viewModel.shouldShowDetailView = false
-                viewModel.packageHandler.packageDataManager.reset()
+                viewModel.shouldShowUploadView = false
+//                viewModel.packageHandler.fileTypeDataMap = [:]
             }
             .defaultButtonStyle(width: 180)
             .padding(.bottom, 30)
@@ -148,7 +149,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
-        let bundleProperties = viewModel.packageHandler.packageDataManager.bundleProperties
+        let bundleProperties = viewModel.packageHandler.bundleProperties
         
         switch identifier {
         case .bundleName:
@@ -169,7 +170,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func valueFor(provision identifier: ProvisionCellIdentifiers) -> String? {
-        guard let mobileProvision = viewModel.packageHandler.packageDataManager.mobileProvision else { return nil }
+        guard let mobileProvision = viewModel.packageHandler.mobileProvision else { return nil }
         switch identifier {
         case .name:
             return mobileProvision.name
@@ -187,7 +188,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func installApplication() {
-        guard let objectURL = viewModel.packageHandler.packageDataManager.objectURL else {
+        guard let objectURL = viewModel.packageHandler.objectURL else {
             ZLogs.shared.error("Error: Installation - objectURL not found")
             viewModel.showToast("Installation failed: URL not found")
             return

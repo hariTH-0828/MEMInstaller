@@ -63,7 +63,8 @@
 		52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */; };
 		52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */; };
 		52BCCCB52CF83F8B00D49186 /* SettingSideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */; };
-		52BCCCB72CF8814100D49186 /* PackageExtractionDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */; };
+		52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */; };
+		52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCBA2CF8EC8600D49186 /* Constants.swift */; };
 		52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5532CEB3D6C00214F41 /* String+.swift */; };
 		52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DOWNLOAD.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
@@ -171,7 +172,8 @@
 		52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
 		52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheetModifier.swift; sourceTree = "<group>"; };
 		52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSideBarView.swift; sourceTree = "<group>"; };
-		52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageExtractionDataManager.swift; sourceTree = "<group>"; };
+		52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadComponents.swift; sourceTree = "<group>"; };
+		52BCCCBA2CF8EC8600D49186 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		52D0B5532CEB3D6C00214F41 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		52D0B5572CEB730400214F41 /* DOWNLOAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOWNLOAD.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				525AD98E2CF4424600BF08AF /* Device.swift */,
 				5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */,
 				5252A4172CF704A2005DD9CC /* ViewBuilders.swift */,
+				52BCCCBA2CF8EC8600D49186 /* Constants.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -508,7 +511,7 @@
 			children = (
 				523F72342CDB794700D564E7 /* HomeViewModel.swift */,
 				52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */,
-				52BCCCB62CF8814100D49186 /* PackageExtractionDataManager.swift */,
+				52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -870,6 +873,7 @@
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
 				520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */,
 				52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */,
+				52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */,
 				523F722B2CDB68D500D564E7 /* Colors.swift in Sources */,
 				523F72422CDB9EE400D564E7 /* BundleProperties.swift in Sources */,
 				523F72132CDB365C00D564E7 /* LoginView.swift in Sources */,
@@ -886,6 +890,7 @@
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
+				52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */,
 				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
@@ -900,7 +905,6 @@
 				52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */,
 				5252A4032CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift in Sources */,
 				52F393BD2CE5D9EE00C9B23C /* TokenProviderProtocol.swift in Sources */,
-				52BCCCB72CF8814100D49186 /* PackageExtractionDataManager.swift in Sources */,
 				52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */,
 				523F72082CDB355900D564E7 /* AppDelegate.swift in Sources */,
 				52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */,
