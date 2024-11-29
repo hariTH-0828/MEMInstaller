@@ -13,6 +13,7 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     
     // ModelPresentation
     @Published var sheet: Sheet?
+    @Published var popView: Pop?
     var onDismiss: (() -> Void)?
     var isPopover: Bool { Device.isIpad }
     
@@ -50,9 +51,16 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     
     @inlinable
     @inline(__always)
+    func pop(_ pop: Pop) {
+        self.popView = pop
+    }
+    
+    @inlinable
+    @inline(__always)
     func dismissSheet() {
         let onDismissHandler = onDismiss // Capture the closure to avoid race condition
         self.sheet = nil
+        self.popView = nil
         onDismissHandler?()  // Safely execute the captured closure
         self.onDismiss = nil // Reset for future use
     }
@@ -93,6 +101,15 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
             }
             .ignoresSafeArea()
             .presentationDetents([.medium, .large])
+        }
+    }
+    
+    @ViewBuilder
+    func build(forPop pop: Pop) -> some View {
+        switch pop {
+        case .logout:
+            PresentLogoutView()
+                .padding()
         }
     }
 }

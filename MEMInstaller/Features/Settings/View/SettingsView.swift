@@ -19,24 +19,6 @@ struct SettingsView: View {
     }
 }
 
-struct FooterView: View {
-    var body: some View {
-        Label(
-            title: {
-                Text("com.learn.meminstaller.setting.footnote")
-                    .font(.caption)
-            },
-            icon: {
-                Image(systemName: "c.circle")
-                    .font(.caption)
-            }
-        )
-        .foregroundStyle(StyleManager.colorStyle.systemGray)
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding()
-    }
-}
-
 #Preview {
     SettingsView()
         .environmentObject(AppCoordinatorImpl())

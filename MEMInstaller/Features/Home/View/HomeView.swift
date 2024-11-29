@@ -54,14 +54,12 @@ struct HomeView: View {
     @ViewBuilder
     private func detailContentView() -> some View {
         LoaderView(loadingState: $viewModel.detailViewLoadingState) {
-            if viewModel.sideBarLoadingState == .loading {
+            if viewModel.shouldShowDetailContentAvailable {
                 Text("select a app to view details")
                     .font(.footnote)
                     .foregroundStyle(StyleManager.colorStyle.systemGray)
-            }else if viewModel.shouldShowDetailView {
-                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
-            }else if viewModel.shouldShowUploadView {
-                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .upload)
+            }else if let attachmentMode = viewModel.shouldShowDetailView {
+                AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
             }else if viewModel.allObjects.isEmpty {
                 EmptyBucketView(viewModel: viewModel)
             }
@@ -71,7 +69,7 @@ struct HomeView: View {
     private func settingButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
-                Device.isIpad ? appCoordinator.push(.settings) : appCoordinator.presentSheet(.settings)
+                appCoordinator.presentSheet(.settings)
             }, label: {
                 var uiImage: UIImage? {
                     if let userprofile = viewModel.userprofile {

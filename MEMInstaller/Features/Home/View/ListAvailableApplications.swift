@@ -62,6 +62,7 @@ struct ListAvailableApplications: View {
                 .font(.footnote)
                 .foregroundStyle(StyleManager.colorStyle.systemGray)
         }
+        .padding(.vertical, 10)
     }
     
     @ViewBuilder
@@ -89,8 +90,7 @@ struct ListAvailableApplications: View {
                     switch result {
                     case .success(let filePath):
                         viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                        viewModel.shouldShowUploadView = true
-                        viewModel.shouldShowDetailView = false
+                        viewModel.shouldShowDetailView = .upload
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
@@ -157,8 +157,7 @@ struct ListAvailableApplications: View {
         
         dispatchGroup.notify(queue: .main) {
             viewModel.packageHandler.objectURL = fileURLs.objectURL
-            viewModel.shouldShowUploadView = false
-            viewModel.shouldShowDetailView = true
+            viewModel.shouldShowDetailView = .install
         }
     }
 }

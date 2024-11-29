@@ -36,7 +36,7 @@ struct EmptyBucketView: View {
                             switch result {
                             case .success(let filePath):
                                 viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                viewModel.shouldShowUploadView = true
+                                viewModel.shouldShowDetailView = .upload
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
                                 viewModel.showToast(failure.localizedDescription)

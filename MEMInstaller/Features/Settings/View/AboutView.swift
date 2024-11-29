@@ -34,6 +34,7 @@ struct AboutView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.vertical)
             })
+            .navigationTitle("About")
         }
     }
 }

@@ -32,7 +32,6 @@ enum AttachmentMode {
 }
 
 struct AttachedFileDetailView: View {
-    @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: HomeViewModel
     let attachmentMode: AttachmentMode
     
@@ -137,10 +136,7 @@ struct AttachedFileDetailView: View {
             .padding(.bottom, 30)
             
             Button("Cancel") {
-                // Close detailView and reset fileTypeDataMap
-                viewModel.shouldShowDetailView = false
-                viewModel.shouldShowUploadView = false
-//                viewModel.packageHandler.fileTypeDataMap = [:]
+                viewModel.shouldShowDetailView = nil
             }
             .defaultButtonStyle(width: 180)
             .padding(.bottom, 30)
@@ -198,7 +194,6 @@ struct AttachedFileDetailView: View {
 
         if let itmsServiceURL = URL(string: itmsServicesURLString) {
             UIApplication.shared.open(itmsServiceURL)
-            dismiss()
         }
     }
     
@@ -207,10 +202,9 @@ struct AttachedFileDetailView: View {
         
         Task {
             await viewModel.uploadPackage(endpoint: endpoint) {
-                dismiss()
-                
                 viewModel.updateLoadingState(for: .detail, to: .loading)
                 await viewModel.fetchFoldersFromBucket()
+                viewModel.shouldShowDetailView = nil
                 viewModel.updateLoadingState(for: .detail, to: .idle)
             }
         }

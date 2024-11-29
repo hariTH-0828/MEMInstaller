@@ -20,86 +20,78 @@ struct SettingSideBarView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    UserProfileImageView(userProfile: userProfile ?? .preview)
-                } header: {
-                    Text("User profile")
-                }
+            VStack(spacing: 0) {
+                UserProfileImageView(userProfile: .preview)
                 
                 Section {
-                    Button(action: {
+                    List {
+                        Button(action: {
+                            coordinator.presentSheet(.activityRepresentable(logFileURL))
+                        }, label: {
+                            Label(
+                                title: {
+                                    Text("com.learn.meminstaller.setting.share-log")
+                                        .lineLimit(1)
+                                        .font(.system(size: 16, weight: .regular))
+                                        .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                                },
+                                icon: {
+                                    Image(systemName: "arrow.right")
+                                        .font(.system(size: 16, weight: .regular))
+                                        .foregroundStyle(Color.orange)
+                                }
+                            )
+                        })
+                        .listRowSeparator(.hidden)
                         
-                    }, label: {
-                        Label(
-                            title: {
-                                Text("com.learn.meminstaller.setting.about")
-                                    .lineLimit(1)
-                                    .font(.system(size: 16, weight: .regular))
-                            },
-                            icon: {
-                                Image(systemName: "i.circle")
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(Color.teal)
-                            }
-                        )
-                    })
-                    
-                    Button(action: {
-                        coordinator.presentSheet(.activityRepresentable(logFileURL))
-                    }, label: {
-                        Label(
-                            title: {
-                                Text("com.learn.meminstaller.setting.share-log")
-                                    .lineLimit(1)
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(StyleManager.colorStyle.invertBackground)
-                            },
-                            icon: {
-                                Image(systemName: "arrow.right")
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(Color.orange)
-                            }
-                        )
-                    })
-                    
-                    Button(action: {
-                        coordinator.presentSheet(.logout)
-                    }, label: {
-                        Label(
-                            title: {
-                                Text("com.learn.meminstaller.setting.signout")
-                                    .lineLimit(1)
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(.red)
-                            },
-                            icon: {
-                                Image(systemName: "power")
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(Color.red)
-                            }
-                        )
-                    })
-                } header: {
-                    Text("General")
-                } footer: {
-                    Label(
-                        title: {
-                            Text("com.learn.meminstaller.setting.footnote")
-                                .font(.caption)
-                        },
-                        icon: {
-                            Image(systemName: "c.circle")
-                                .font(.caption)
-                        }
-                    )
+                        Button(action: {
+                            Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
+                        }, label: {
+                            Label(
+                                title: {
+                                    Text("com.learn.meminstaller.setting.signout")
+                                        .lineLimit(1)
+                                        .font(.system(size: 16, weight: .regular))
+                                        .foregroundStyle(.red)
+                                },
+                                icon: {
+                                    Image(systemName: "power")
+                                        .font(.system(size: 16, weight: .regular))
+                                        .foregroundStyle(Color.red)
+                                }
+                            )
+                        })
+                        .listRowSeparator(.hidden)
+                        .popover(item: $coordinator.popView, content: { pop in
+                            coordinator.build(forPop: pop)
+                        })
+                    }
+                    .listStyle(.plain)
+                    .scrollBounceBehavior(.basedOnSize)
                 }
+                .padding(.vertical)
             }
+            .frame(maxHeight: UIScreen.screenHeight, alignment: .top)
             .navigationTitle("Settings")
         }
+    }
+    
+    @ViewBuilder
+    private var footerView: some View {
+        Label(
+            title: {
+                Text("com.learn.meminstaller.setting.footnote")
+                    .font(.caption)
+            },
+            icon: {
+                Image(systemName: "c.circle")
+                    .font(.caption)
+            }
+        )
     }
 }
 
 #Preview {
-    SettingSideBarView()
+    SettingsView()
+        .environmentObject(AppCoordinatorImpl())
 }

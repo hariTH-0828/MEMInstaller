@@ -12,6 +12,8 @@ struct PresentLogoutView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
+//    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         VStack(spacing: 20, content: {
             Text("Do you wise to sign out?")

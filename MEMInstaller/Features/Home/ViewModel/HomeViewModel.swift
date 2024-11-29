@@ -43,8 +43,7 @@ class HomeViewModel: ObservableObject {
     @Published var sideBarLoadingState: LoadingState = .loading
     @Published var detailViewLoadingState: LoadingState = .idle
     
-    @Published var shouldShowDetailView: Bool = false
-    @Published var shouldShowUploadView: Bool = false
+    @Published var shouldShowDetailView: AttachmentMode?
     
     // Toast properties
     @Published private(set) var toastMessage: String?
@@ -280,6 +279,15 @@ class HomeViewModel: ObservableObject {
             case .detail: detailViewLoadingState = state
             }
         }
+    }
+    
+    var shouldShowDetailContentAvailable: Bool {
+        sideBarLoadingState == .loading ||
+        (!(allObjects.isEmpty) && sideBarLoadingState == .idle && !isDetailViewEnabled)
+    }
+    
+    private var isDetailViewEnabled: Bool {
+        shouldShowDetailView != nil
     }
     
     private func generateDefaultAppIcon() -> Data? {

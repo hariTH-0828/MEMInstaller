@@ -61,42 +61,6 @@ struct DefaultOutlineButtonStyle: ViewModifier {
     }
 }
 
-// MARK: - ZLabel
-struct ZLabel<Title: View, Icon: View>: View {
-    var title: Title
-    var content: Title?
-    var icon: Icon
-    var spacing: CGFloat
-    var iconAlignment: VerticalAlignment
-    
-    init(spacing: CGFloat = 10,
-         @ViewBuilder title: () -> Title,
-         @ViewBuilder content: () -> Title? = { nil },
-         @ViewBuilder icon: () -> Icon,
-         alignment iconAlignment: VerticalAlignment = .center) 
-    {
-        self.title = title()
-        self.content = content()
-        self.icon = icon()
-        self.spacing = spacing
-        self.iconAlignment = iconAlignment
-    }
-    
-    var body: some View {
-        HStack(alignment: iconAlignment, spacing: spacing) {
-            icon
-            
-            VStack(alignment: .leading, spacing: 2) {
-                title
-                
-                if let content = content {
-                    content
-                }
-            }
-        }
-    }
-}
-
 // MARK: - LoaderView
 struct LoaderView<Content: View, Loader: View>: View {
     @Binding var loadingState: LoadingState

@@ -25,3 +25,9 @@ enum Sheet: Identifiable, Hashable {
     
     var id: Self { self }
 }
+
+enum Pop: Identifiable, Hashable {
+    case logout
+    
+    var id: Self { self }
+}
