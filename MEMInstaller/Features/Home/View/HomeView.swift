@@ -21,6 +21,7 @@ struct HomeView: View {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
     
+    // MARK: BODY
     var body: some View {
         NavigationSplitView {
             sideBarContentView()
@@ -29,21 +30,30 @@ struct HomeView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
+        .environmentObject(viewModel)
     }
     
+    // MARK: - SIDEBAR
     @ViewBuilder
     private func sideBarContentView() -> some View {
         LoaderView(loadingState: $viewModel.sideBarLoadingState) {
-            if viewModel.allObjects.isEmpty {
-                Text("No apps available")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+            // Handle when state loading
+            ProgressView()
+                .progressViewStyle(.horizontalCircular)
+        } loadedContent: {
+            // Handle when state idle
+            if viewModel.bucketObjectModels.isEmpty {
+                textViewForIdleState("No apps available")
             }else {
-                ListAvailableApplications(viewModel: viewModel)
+                ListAvailableApplications()
             }
         }
         .navigationTitle("Apps")
-        .toolbar { settingButtonView() }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                UserProfileButtonView()
+            }
+        }
         .task {
             if viewModel.sideBarLoadingState == .loading {
                 await viewModel.fetchFoldersFromBucket()
@@ -51,40 +61,30 @@ struct HomeView: View {
         }
     }
     
+    // MARK: - DETAIL
     @ViewBuilder
     private func detailContentView() -> some View {
         LoaderView(loadingState: $viewModel.detailViewLoadingState) {
+            // Handle when state in loading
+            ProgressView()
+                .progressViewStyle(.horizontalCircular)
+        } loadedContent: {
+            // Handle when state in idle
             if viewModel.shouldShowDetailContentAvailable {
-                Text("select a app to view details")
-                    .font(.footnote)
-                    .foregroundStyle(StyleManager.colorStyle.systemGray)
+                textViewForIdleState("select a app to view details")
             }else if let attachmentMode = viewModel.shouldShowDetailView {
-                AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
-            }else if viewModel.allObjects.isEmpty {
+                AttachedFileDetailView(attachmentMode: attachmentMode)
+            }else if viewModel.bucketObjectModels.isEmpty {
                 EmptyBucketView(viewModel: viewModel)
             }
         }
     }
     
-    private func settingButtonView() -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                appCoordinator.presentSheet(.settings)
-            }, label: {
-                var uiImage: UIImage? {
-                    if let userprofile = viewModel.userprofile {
-                        return UIImage(data: userprofile.profileImageData)
-                    }else {
-                        return imageWith(name: "Unknown")
-                    }
-                }
-                
-                Image(uiImage: uiImage!)
-                    .resizable()
-                    .frame(width: 35, height: 35)
-                    .clipShape(Circle())
-            })
-        }
+    @ViewBuilder
+    private func textViewForIdleState(_ message: String) -> Text {
+        Text(message)
+            .font(.footnote)
+            .foregroundStyle(StyleManager.colorStyle.systemGray)
     }
 }
 

@@ -9,30 +9,41 @@ import SwiftUI
 
 struct ListAvailableApplications: View {
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
-    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject private var viewModel: HomeViewModel
+    
+    @State var selectedBucketObject: BucketObjectModel? = nil
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
-            List(sortedFolderNames(), id: \.self) { folderName in
-                if let contents = viewModel.allObjects[folderName] {
-                    // Extract relevant file URLs (icon, Info.plist, object plist) for each folder
-                    let fileURLs = extractFileURLs(from: contents, folderName: folderName)
-                    
-                    // Calculate package size
-                    let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
-                    let packageSizeAsMB = calculatePackageSize(packageSizeAsBytes)
-                    
-                    Button {
-                        handleAppSelection(with: fileURLs)
-                    } label: {
-                        appLabel(folderName: folderName, iconURL: fileURLs.iconURL, size: packageSizeAsMB)
-                    }
-                }
+        // Creates a list of folders, sorted alphabetically, and generates buttons for each folder
+        
+        List(viewModel.bucketObjectModels, id: \.self, selection: $selectedBucketObject) { bucketObject in
+            // fileURLs
+            let fileURLs = viewModel.extractFileURLs(from: bucketObject.contents, folderName: bucketObject.folderName)
+            // Package size
+            let packageFileSize = getPackageFileSize(bucketObject.contents)
+            
+            NavigationLink {
+                AttachedFileDetailView(attachmentMode: .install)
+            } label: {
+                appLabel(folderName: bucketObject.folderName, iconURL: fileURLs.iconURL, size: packageFileSize)
             }
-            .refreshable { await viewModel.fetchFoldersFromBucket() }
-            .toolbar { addPackageButtonView() }
-        })
+        }
+        .refreshable { await viewModel.fetchFoldersFromBucket() }
+        .toolbar { addPackageButtonView() }
+        
+//        List(sortedFolderNames(), id: \.self) { folderName in
+//            let contents = viewModel.allObjects[folderName]!
+//            let fileURLs = viewModel.extractFileURLs(from: contents, folderName: folderName)
+//            let packageFileSize = getPackageFileSize(contents)
+//            
+//            NavigationLink {
+//                AttachedFileDetailView(attachmentMode: .install)
+//            } label: {
+//                appLabel(folderName: folderName, iconURL: fileURLs.iconURL, size: packageFileSize)
+//            }
+//        }
+//        .refreshable { await viewModel.fetchFoldersFromBucket() }
+//        .toolbar { addPackageButtonView() }
     }
     
     @ViewBuilder
@@ -62,7 +73,7 @@ struct ListAvailableApplications: View {
                 .font(.footnote)
                 .foregroundStyle(StyleManager.colorStyle.systemGray)
         }
-        .padding(.vertical, 10)
+        .frame(height: 35)
     }
     
     @ViewBuilder
@@ -105,23 +116,26 @@ struct ListAvailableApplications: View {
     }
     
     // MARK: - HELPER METHODS
-    /// Returns a sorted list of folder names from the `allObject` dictionary keys.
-    /// Sorting ensures a consistent display order.
-    private func sortedFolderNames() -> [String] {
-        return Array(viewModel.allObjects.keys).sorted()
-    }
+//    /// Returns a sorted list of folder names from the `allObject` dictionary keys.
+//    /// Sorting ensures a consistent display order.
+//    private func sortedFolderNames() -> [String] {
+//        return Array(viewModel.allObjects.keys).sorted()
+//    }
     
-    /// Extracts the URLs for the app icon, Info.plist, and object plist file from a folder's content list.
-    /// - Parameters:
-    ///   - contents: The list of contents in the folder.
-    ///   - folderName: The name of the folder being processed.
-    /// - Returns: A tuple containing the app icon URL, Info.plist URL, and object plist URL (all optional).
-    private func extractFileURLs(from contents: [ContentModel], folderName: String) -> (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?) {
-        let iconURL = contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
-        let infoPlistURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
-        let provisionURL = contents.first(where: { $0.actualContentType == .mobileProvision && $0.key.contains("embedded.mobileprovision") })?.url
-        let objectURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
-        return (iconURL, infoPlistURL, provisionURL, objectURL)
+    /// Calculates the size of a package based on its contents.
+    ///
+    /// This method filters the provided content list to find the first item with a `.file` key type
+    /// and a key containing `.ipa`, then calculates its size.
+    ///
+    /// - Parameter contents: An array of `ContentModel` objects representing the contents of the package.
+    /// - Returns: A `String` representing the calculated size of the package, formatted by `calculatePackageSize`.
+    ///
+    /// - Note: If no `.ipa` file is found in the contents, the size will be determined as `nil` and handled by `calculatePackageSize`.
+    ///
+    /// - SeeAlso: `calculatePackageSize(_:)`
+    private func getPackageFileSize(_ contents: [ContentModel]) -> String {
+        let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
+        return calculatePackageSize(packageSizeAsBytes)
     }
     
     /// Calculates the size of a package in megabytes (MB) and returns a formatted string.
@@ -132,37 +146,9 @@ struct ListAvailableApplications: View {
         let sizeInMB = size / 1048576
         return sizeInMB.formattedString() + " MB"
     }
-
-    /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
-    /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
-    private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?)) {
-        guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL, let provisionURL = fileURLs.provisionURL  else { return }
-        
-        let dispatchGroup = DispatchGroup()
-        
-        dispatchGroup.enter()
-        viewModel.downloadInfoFile(url: infoPlistURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        viewModel.downloadProvisionFile(url: provisionURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        viewModel.downloadAppIconFile(url: iconURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            viewModel.packageHandler.objectURL = fileURLs.objectURL
-            viewModel.shouldShowDetailView = .install
-        }
-    }
 }
 
 #Preview {
-    ListAvailableApplications(viewModel: .preview)
+    ListAvailableApplications()
         .environmentObject(AppCoordinatorImpl())
 }

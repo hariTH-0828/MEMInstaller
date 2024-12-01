@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
     @ObservedObject var viewModel: HomeViewModel
@@ -31,7 +32,7 @@ struct EmptyBucketView: View {
                 })
                 
                 HStack(spacing: 20) {
-                    Button("com.learn.meminstaller.home.btn_upload") {
+                    Button {
                         coordinator.openFileImporter { result in
                             switch result {
                             case .success(let filePath):
@@ -42,15 +43,20 @@ struct EmptyBucketView: View {
                                 viewModel.showToast(failure.localizedDescription)
                             }
                         }
+                    } label: {
+                        Text("com.learn.meminstaller.home.btn_upload")
+                            .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
                     }
-                    .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
                     
-                    Button("com.learn.meminstaller.home.refresh") { refreshView() }
-                    .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
+                    Button {
+                        refreshView()
+                    } label: {
+                        Text("com.learn.meminstaller.home.refresh")
+                            .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))
+                    }
                 }
                 .padding(.bottom, 30)
             }
-            .clipped()
         })
     }
     
@@ -76,3 +82,31 @@ extension HomeViewModel {
 #Preview {
     EmptyBucketView(viewModel: .preview)
 }
+
+
+/*
+ 
+ func handleDrop(provider: NSItemProvider) -> Bool {
+     var didHandleDrop = false
+     if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+         provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
+             guard let data = item as? Data,
+                   let url = URL(dataRepresentation: data, relativeTo: nil),
+                   url.pathExtension == "ipa" else {
+                 // Handle invalid file type
+                 viewModel.handleError("Invalid file type")
+                 return
+             }
+
+             DispatchQueue.main.async {
+                 viewModel.packageHandler.initiateAppExtraction(from: url)
+                 viewModel.shouldShowDetailView = .upload
+             }
+         }
+         didHandleDrop = true
+     }
+
+     return didHandleDrop
+ }
+ 
+ */

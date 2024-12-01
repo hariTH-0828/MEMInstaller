@@ -19,9 +19,10 @@ enum ContentType: String {
 }
 
 struct BucketObjectModel: Codable, Hashable {
-    let prefix: String?
+    let prefix: String
     let keyCount: Int
     let contents: [ContentModel]
+    let folderName: String
     
     var id: Self { return self }
     
@@ -33,9 +34,13 @@ struct BucketObjectModel: Codable, Hashable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.prefix = try container.decodeIfPresent(String.self, forKey: .prefix)
+        self.prefix = try container.decode(String.self, forKey: .prefix)
         self.keyCount = try container.decode(Int.self, forKey: .keyCount)
         self.contents = try container.decode([ContentModel].self, forKey: .contents)
+        
+        // Get the folder name from the prefix
+        let paths = prefix.components(separatedBy: "/")
+        self.folderName = paths.count > 2 ? paths[paths.count - 2] : paths[0]
     }
 }
 
@@ -46,6 +51,7 @@ struct ContentModel: Codable, Hashable {
     let contentType: String?
     let lastModified: String
     let url: String
+//    let folderName: String
     let actualKeyType: ContentKeyType
     let actualContentType: ContentType
     
@@ -64,10 +70,11 @@ struct ContentModel: Codable, Hashable {
         self.actualKeyType = ContentKeyType(rawValue: keyType)!
         self.key = try container.decode(String.self, forKey: .key)
         self.size = try container.decode(Decimal.self, forKey: .size)
+        self.url = try container.decode(String.self, forKey: .url)
+        self.lastModified = try container.decode(String.self, forKey: .lastModified)
         self.contentType = try container.decodeIfPresent(String.self, forKey: .contentType)
         self.actualContentType = ContentType(rawValue: contentType ?? "application/octet-stream")!
-        self.lastModified = try container.decode(String.self, forKey: .lastModified)
-        self.url = try container.decode(String.self, forKey: .url)
+//        self.folderName = URL(string: url)!.lastPathComponent
     }
     
     init() {
@@ -79,5 +86,6 @@ struct ContentModel: Codable, Hashable {
         self.url = "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
         self.actualKeyType = .file
         self.actualContentType = .document
+//        self.folderName = "Info"
     }
 }

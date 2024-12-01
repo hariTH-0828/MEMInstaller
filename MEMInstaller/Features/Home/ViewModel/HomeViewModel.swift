@@ -34,14 +34,12 @@ enum SupportedFileTypes {
 
 class HomeViewModel: ObservableObject {
     // Manage logged user profile
-    var userprofile: ZUserProfile? {
-        return userDataManager.retriveLoggedUserFromKeychain()
-    }
-    
-    @Published private(set) var allObjects: [String: [ContentModel]] = [:]
+    @Published private(set) var userprofile: ZUserProfile?
+    @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
     
     @Published var sideBarLoadingState: LoadingState = .loading
     @Published var detailViewLoadingState: LoadingState = .idle
+    @Published var uploadProgress: Double = 0.0
     
     @Published var shouldShowDetailView: AttachmentMode?
     
@@ -59,6 +57,10 @@ class HomeViewModel: ObservableObject {
         self.repository = repository
         self.userDataManager = userDataManager
         self.packageHandler = packageHandler
+        
+        DispatchQueue.main.async {
+            self.userprofile = userDataManager.retriveLoggedUserFromKeychain()
+        }
     }
     
     // MARK: Fetch bucket information
@@ -70,11 +72,8 @@ class HomeViewModel: ObservableObject {
         let params: Parameters = ["bucket_name": "packages", "prefix": "\(email)/"]
         
         do {
-            guard let bucketObject = try await repository.getFoldersFromBucket(params) else { return }
-            
-            if !bucketObject.contents.isEmpty {
-                await processBucketContents(bucketObject)
-            }
+            let bucketObject = try await repository.getFoldersFromBucket(params)
+            self.bucketObjectModels = try await processBucketContents(bucketObject)
             
             updateLoadingState(for: .sidebar, to: .idle)
         }catch {
@@ -83,21 +82,44 @@ class HomeViewModel: ObservableObject {
     }
     
     @MainActor
-    private func processBucketContents(_ bucketData: BucketObjectModel) async {
-        var contentDict: [String: [ContentModel]] = [:]
+    private func processBucketContents(_ bucketData: BucketObjectModel) async throws -> [BucketObjectModel] {
+        var localBucketObjectModel: [BucketObjectModel] = []
+        
         for folder in bucketData.contents where folder.actualKeyType == .folder {
             let folderName = URL(string: folder.url)!.lastPathComponent
             let params: Parameters = ["bucket_name": "packages", "prefix": "\(folder.key)/"]
-            do {
-                let files = try await repository.getFoldersFromBucket(params)?.contents
-                contentDict[folderName] = files
-            } catch {
-                handleError(error.localizedDescription)
-            }
+            let bucketObject = try await repository.getFoldersFromBucket(params)
+            localBucketObjectModel.append(bucketObject)
         }
         
-        self.allObjects = contentDict
-        updateLoadingState(for: .sidebar, to: .idle)
+        return localBucketObjectModel
+    }
+    
+    // MARK: - Fetch Application download link
+    @MainActor private func fetchPackageURL(_ endpoint: String?) async -> String? {
+        guard let prefix = endpoint else {
+            showToast("Invalid reload endpoint")
+            return nil
+        }
+
+        let params: Parameters = ["bucket_name": "packages",
+                                  "prefix": "\(prefix)/"]
+
+        do {
+            let bucketData = try await repository.getFoldersFromBucket(params)
+            
+            if bucketData.contents.isEmpty {
+                updateLoadingState(for: .sidebar, to: .idle)
+                return nil
+            }
+            
+            updateLoadingState(for: .sidebar, to: .idle)
+            return getPackageURL(from: bucketData.contents)
+        } catch {
+            handleError(error.localizedDescription)
+        }
+
+        return nil
     }
     
     // MARK: - Upload Handling
@@ -106,6 +128,8 @@ class HomeViewModel: ObservableObject {
             showToast("Invalid upload endpoint.")
             return
         }
+        
+        self.assignUploadProgress()
         
         do {
             try await uploadPackageComponents(endpoint: endpoint)
@@ -130,7 +154,7 @@ class HomeViewModel: ObservableObject {
     }
     
     private func uploadComponent(type: UploadComponentType, endpoint: String, message: String) async throws {
-        updateLoadingState(for: .detail, to: .uploading(message))
+        updateLoadingState(for: .detail, to: .uploading("\(message) \(uploadProgress)%"))
         guard let data = try fetchData(for: type) else { throw ZError.NetworkError.missingData }
         let apiEndpoint = type.endpoint(for: endpoint)
         try await upload(data: data, to: apiEndpoint, contentType: type.contentType)
@@ -160,6 +184,14 @@ class HomeViewModel: ObservableObject {
         let result = try await repository.uploadObjects(endpoint: endpoint, headers: headers, data: data)
         if case .failure(let error) = result {
             throw error
+        }
+    }
+    
+    private func assignUploadProgress() {
+        if let repository = repository as? StratusRepositoryImpl {
+            repository.$uploadProgress
+                .receive(on: DispatchQueue.main)
+                .assign(to: &$uploadProgress)
         }
     }
     
@@ -208,6 +240,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Download Mobile Provision
     @MainActor func downloadProvisionFile(url: String, completion: @escaping () -> Void) {
         updateLoadingState(for: .detail, to: .loading)
         
@@ -229,39 +262,26 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    
-    @MainActor private func fetchPackageURL(_ endpoint: String?) async -> String? {
-        guard let prefix = endpoint else {
-            showToast("Invalid reload endpoint")
-            return nil
-        }
-
-        let params: Parameters = ["bucket_name": "packages",
-                                  "prefix": "\(prefix)/"]
-
-        do {
-            guard let bucketData = try await repository.getFoldersFromBucket(params) else { return nil }
-            
-            if bucketData.contents.isEmpty {
-                updateLoadingState(for: .sidebar, to: .idle)
-                return nil
-            }
-            
-            updateLoadingState(for: .sidebar, to: .idle)
-            return getPackageURL(from: bucketData.contents)
-        } catch {
-            handleError(error.localizedDescription)
-        }
-
-        return nil
-    }
 
     private func getPackageURL(from contents: [ContentModel]) -> String? {
         contents.filter({ $0.actualContentType == .document && $0.key.contains(".ipa")}).first?.url
     }
     
+    /// Extracts the URLs for the app icon, Info.plist, and object plist file from a folder's content list.
+    /// - Parameters:
+    ///   - contents: The list of contents in the folder.
+    ///   - folderName: The name of the folder being processed.
+    /// - Returns: A tuple containing the app icon URL, Info.plist URL, and object plist URL (all optional).
+    func extractFileURLs(from contents: [ContentModel], folderName: String) -> (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?) {
+        let iconURL = contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
+        let infoPlistURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
+        let provisionURL = contents.first(where: { $0.actualContentType == .mobileProvision && $0.key.contains("embedded.mobileprovision") })?.url
+        let objectURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
+        return (iconURL, infoPlistURL, provisionURL, objectURL)
+    }
+    
     // MARK: - Error and Toast Handling
-    private func handleError(_ error: String) {
+    func handleError(_ error: String) {
         ZLogs.shared.error(error)
         showToast(error)
         updateLoadingState(for: .detail, to: .error)
@@ -283,7 +303,7 @@ class HomeViewModel: ObservableObject {
     
     var shouldShowDetailContentAvailable: Bool {
         sideBarLoadingState == .loading ||
-        (!(allObjects.isEmpty) && sideBarLoadingState == .idle && !isDetailViewEnabled)
+        (!(bucketObjectModels.isEmpty) && sideBarLoadingState == .idle && !isDetailViewEnabled)
     }
     
     private var isDetailViewEnabled: Bool {

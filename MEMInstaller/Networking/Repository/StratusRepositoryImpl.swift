@@ -7,9 +7,10 @@
 
 import Alamofire
 
-final class StratusRepositoryImpl: StratusRepository {
+final class StratusRepositoryImpl: StratusRepository, ObservableObject {
+    @Published var uploadProgress: Double = 0.0 // Observable progress
     
-    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel? {
+    func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel {
         let networkRequest = NetworkRequest(endpoint: .objects, parameters: params)
         
         do {
@@ -24,8 +25,14 @@ final class StratusRepositoryImpl: StratusRepository {
         let networkRequest = NetworkRequest(endpoint: endpoint,
                                             headers: headers,
                                             data: data)
+        let uploader = PUT(request: networkRequest)
+        
+        // Observe progress from PUT
+        uploader.$uploadProgress
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$uploadProgress)
         do {
-            return try await PUT(request: networkRequest).execute()
+            return try await uploader.execute()
         }catch {
             ZLogs.shared.error(error.localizedDescription)
             throw error

@@ -8,9 +8,11 @@
 import Foundation
 import Alamofire
 
-class PUT {
+class PUT: ObservableObject {
     private var request: NetworkRequest
     private let tokenProvider: TokenProvider
+    
+    @Published var uploadProgress: Double = 0.0
     
     init(request: NetworkRequest, tokenProvider: TokenProvider = ZIAMTokenProvider()) {
         self.request = request
@@ -33,6 +35,11 @@ class PUT {
         
         return try await withCheckedThrowingContinuation { continuation in
             AF.upload(fileData, to: url, method: .put, headers: request.headers)
+                .uploadProgress(closure: { progress in
+                    DispatchQueue.main.async {
+                        self.uploadProgress = progress.fractionCompleted
+                    }
+                })
                 .validate()
                 .response { response in
                     switch response.result {

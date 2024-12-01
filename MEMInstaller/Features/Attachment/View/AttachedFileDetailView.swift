@@ -32,11 +32,13 @@ enum AttachmentMode {
 }
 
 struct AttachedFileDetailView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject var viewModel: HomeViewModel
     let attachmentMode: AttachmentMode
     
     var body: some View {
-        NavigationStack {
+        LoaderView(loadingState: $viewModel.detailViewLoadingState) {
+            loadingOverlay()
+        } loadedContent: {
             VStack(alignment: .leading) {
                 HStack {
                     appIconView(viewModel.packageHandler.fileTypeDataMap[.icon]!)
@@ -60,11 +62,14 @@ struct AttachedFileDetailView: View {
                 actionButtonView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
-            .navigationBarTitleDisplayMode(.inline)
-            .overlay {
-                loadingOverlay()
-            }
+        }
+        .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: viewModel.uploadProgress) { oldValue, newValue in
+            print("Uploading: \(newValue)")
+        }
+        .onAppear {
+            // Handle detail view data's
         }
     }
     
@@ -117,7 +122,7 @@ struct AttachedFileDetailView: View {
             HorizontalKeyValueContainer(key: identifier.rawValue, value: valueFor(provision: identifier))
         }else {
             HorizontalKeyValueContainer(key: identifier.rawValue) {
-                let isExpired: Bool = validateMobileProvisionExpiration(valueFor(provision: identifier) ?? Date().formatted())
+                let isExpired: Bool = isMobileProvisionValid(valueFor(provision: identifier))
                 
                 Text(valueFor(provision: identifier) ?? "No Expiration Date")
                     .font(.system(.footnote))
@@ -142,6 +147,37 @@ struct AttachedFileDetailView: View {
             .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+    
+    
+    // MARK: - HELPER METHODS
+    
+    /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
+    /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
+    private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?)) {
+        guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL, let provisionURL = fileURLs.provisionURL  else { return }
+        
+        let dispatchGroup = DispatchGroup()
+        
+        dispatchGroup.enter()
+        viewModel.downloadInfoFile(url: infoPlistURL) {
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        viewModel.downloadProvisionFile(url: provisionURL) {
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        viewModel.downloadAppIconFile(url: iconURL) {
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            viewModel.packageHandler.objectURL = fileURLs.objectURL
+            viewModel.shouldShowDetailView = .install
+        }
     }
     
     private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
@@ -217,12 +253,13 @@ struct AttachedFileDetailView: View {
         return "\(userEmail)/\(bundleName)"
     }
     
-    private func validateMobileProvisionExpiration(_ date: String) -> Bool {
-        let expireDate = date.dateFormat(by: "d MMM yyyy 'at' h:mm a")
+    private func isMobileProvisionValid(_ date: String?) -> Bool {
+        guard let expireDate = date?.dateFormat(by: "d MMM yyyy 'at' h:mm a") else { return false }
         return expireDate < Date()
     }
 }
 
 #Preview {
-    AttachedFileDetailView(viewModel: .preview, attachmentMode: .install)
+    AttachedFileDetailView(attachmentMode: .install)
+        .environmentObject(HomeViewModel.preview)
 }
