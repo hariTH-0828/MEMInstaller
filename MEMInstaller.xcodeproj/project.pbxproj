@@ -11,6 +11,11 @@
 		520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520072332CF77ED40080D8E8 /* SettingsView.swift */; };
 		520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F02CE383C100659A66 /* ZIAMManager.swift */; };
 		520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F32CE3851600659A66 /* UserDefaultsKey.swift */; };
+		521648072CFD6BE800D599E2 /* HomeSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648062CFD6BE800D599E2 /* HomeSidebarView.swift */; };
+		521648092CFD6CE700D599E2 /* HomeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648082CFD6CE700D599E2 /* HomeDetailView.swift */; };
+		5216480B2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */; };
+		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
+		521648112CFD98D700D599E2 /* OverlayLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* OverlayLoaderView.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -48,7 +53,6 @@
 		5252A40E2CF64FCA005DD9CC /* ZSMultiThreading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */; };
 		5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */; };
 		5252A4142CF6E9A6005DD9CC /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4132CF6E9A6005DD9CC /* TabViewController.swift */; };
-		5252A4162CF6F3F8005DD9CC /* ListAvailableApplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */; };
 		5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4172CF704A2005DD9CC /* ViewBuilders.swift */; };
 		5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4192CF71DB2005DD9CC /* Decimal+.swift */; };
 		525AD98F2CF4424600BF08AF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD98E2CF4424600BF08AF /* Device.swift */; };
@@ -119,6 +123,11 @@
 		520072332CF77ED40080D8E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		520732F02CE383C100659A66 /* ZIAMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIAMManager.swift; sourceTree = "<group>"; };
 		520732F32CE3851600659A66 /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
+		521648062CFD6BE800D599E2 /* HomeSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSidebarView.swift; sourceTree = "<group>"; };
+		521648082CFD6CE700D599E2 /* HomeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDetailView.swift; sourceTree = "<group>"; };
+		5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSideBarAppLabel.swift; sourceTree = "<group>"; };
+		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
+		521648102CFD98D700D599E2 /* OverlayLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLoaderView.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -160,7 +169,6 @@
 		5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSMultiThreading.swift; sourceTree = "<group>"; };
 		5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
 		5252A4132CF6E9A6005DD9CC /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
-		5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListAvailableApplications.swift; sourceTree = "<group>"; };
 		5252A4172CF704A2005DD9CC /* ViewBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBuilders.swift; sourceTree = "<group>"; };
 		5252A4192CF71DB2005DD9CC /* Decimal+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decimal+.swift"; sourceTree = "<group>"; };
 		525AD98E2CF4424600BF08AF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -464,9 +472,12 @@
 			isa = PBXGroup;
 			children = (
 				523F721A2CDB37D000D564E7 /* HomeView.swift */,
+				521648062CFD6BE800D599E2 /* HomeSidebarView.swift */,
+				521648082CFD6CE700D599E2 /* HomeDetailView.swift */,
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
 				5252A4132CF6E9A6005DD9CC /* TabViewController.swift */,
-				5252A4152CF6F3F8005DD9CC /* ListAvailableApplications.swift */,
+				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
+				521648102CFD98D700D599E2 /* OverlayLoaderView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -521,6 +532,7 @@
 				52E109F12CE7BCE0002D1EDD /* PackageExtractionHandler.swift */,
 				52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */,
 				52A77EF42CF9F5830064A063 /* UserProfileButtonView.swift */,
+				5216480E2CFD976500D599E2 /* StateManagementEnums.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -882,12 +894,14 @@
 				525AD9972CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift in Sources */,
 				523F722D2CDB690000D564E7 /* UIColor+.swift in Sources */,
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
+				5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */,
 				520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */,
 				52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */,
 				52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */,
 				523F722B2CDB68D500D564E7 /* Colors.swift in Sources */,
 				523F72422CDB9EE400D564E7 /* BundleProperties.swift in Sources */,
 				523F72132CDB365C00D564E7 /* LoginView.swift in Sources */,
+				5216480B2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift in Sources */,
 				5252A40E2CF64FCA005DD9CC /* ZSMultiThreading.swift in Sources */,
 				5252A4092CF641CF005DD9CC /* NavigationProtocol.swift in Sources */,
 				523F72392CDB8DDB00D564E7 /* UTType+.swift in Sources */,
@@ -897,12 +911,13 @@
 				5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
 				52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */,
-				5252A4162CF6F3F8005DD9CC /* ListAvailableApplications.swift in Sources */,
 				529E6FEA2CFCDA45002AB497 /* Array+.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
 				52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */,
+				521648092CFD6CE700D599E2 /* HomeDetailView.swift in Sources */,
+				521648112CFD98D700D599E2 /* OverlayLoaderView.swift in Sources */,
 				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
@@ -938,6 +953,7 @@
 				523F72372CDB7A9B00D564E7 /* LetterAvatar.swift in Sources */,
 				52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */,
 				52F393CA2CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift in Sources */,
+				521648072CFD6BE800D599E2 /* HomeSidebarView.swift in Sources */,
 				52F393A62CE47ABD00C9B23C /* UserManagerProtocol.swift in Sources */,
 				523F721D2CDB3C7C00D564E7 /* ZLogs.swift in Sources */,
 				523F72292CDB68B300D564E7 /* StyleManager.swift in Sources */,

@@ -13,7 +13,7 @@ class PackageExtractionHandler {
     // Property Handler
     let plistHandler = PropertyListHandler()
     
-    var fileTypeDataMap: [SupportedFileTypes: Data?] = [:]
+    var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     private var sourceURL: URL!
     var bundleProperties: BundleProperties?

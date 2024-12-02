@@ -8,16 +8,8 @@
 import SwiftUI
 
 @ViewBuilder
-func overlayLoaderView(with title: String? = nil) -> some View {
-    Color.black
-        .ignoresSafeArea()
-        .opacity(0.3)
-
-    if let title {
-        ProgressView(title)
-            .progressViewStyle(.horizontalCircular)
-    }else {
-        ProgressView()
-            .progressViewStyle(.horizontalCircular)
-    }
+func textViewForIdleState(_ message: String) -> Text {
+    Text(message)
+        .font(.footnote)
+        .foregroundStyle(StyleManager.colorStyle.systemGray)
 }

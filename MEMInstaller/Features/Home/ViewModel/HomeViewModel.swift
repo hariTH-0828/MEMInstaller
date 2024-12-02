@@ -9,20 +9,6 @@ import SwiftUI
 import Zip
 import Alamofire
 
-// MARK: - State Management
-enum LoadingState: Hashable {
-    case idle
-    case loading
-    case uploading(String)
-    case error
-}
-
-// MARK: - View Type
-enum ViewType {
-    case sidebar
-    case detail
-}
-
 // MARK: - File Types
 enum SupportedFileTypes {
     case icon
@@ -38,10 +24,8 @@ class HomeViewModel: ObservableObject {
     @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
     
     @Published var sideBarLoadingState: LoadingState = .loading
-    @Published var detailViewLoadingState: LoadingState = .idle
+    @Published var detailViewLoadingState: LoadingState = .idle(.empty)
     @Published var uploadProgress: Double = 0.0
-    
-    @Published var shouldShowDetailView: AttachmentMode?
     
     // Toast properties
     @Published private(set) var toastMessage: String?
@@ -75,7 +59,7 @@ class HomeViewModel: ObservableObject {
             let bucketObject = try await repository.getFoldersFromBucket(params)
             self.bucketObjectModels = try await processBucketContents(bucketObject)
             
-            updateLoadingState(for: .sidebar, to: .idle)
+            updateLoadingState(for: .sidebar, to: .idle())
         }catch {
             handleError(error.localizedDescription)
         }
@@ -86,7 +70,6 @@ class HomeViewModel: ObservableObject {
         var localBucketObjectModel: [BucketObjectModel] = []
         
         for folder in bucketData.contents where folder.actualKeyType == .folder {
-            let folderName = URL(string: folder.url)!.lastPathComponent
             let params: Parameters = ["bucket_name": "packages", "prefix": "\(folder.key)/"]
             let bucketObject = try await repository.getFoldersFromBucket(params)
             localBucketObjectModel.append(bucketObject)
@@ -109,11 +92,11 @@ class HomeViewModel: ObservableObject {
             let bucketData = try await repository.getFoldersFromBucket(params)
             
             if bucketData.contents.isEmpty {
-                updateLoadingState(for: .sidebar, to: .idle)
+                updateLoadingState(for: .sidebar, to: .idle())
                 return nil
             }
             
-            updateLoadingState(for: .sidebar, to: .idle)
+            updateLoadingState(for: .sidebar, to: .idle())
             return getPackageURL(from: bucketData.contents)
         } catch {
             handleError(error.localizedDescription)
@@ -163,7 +146,7 @@ class HomeViewModel: ObservableObject {
     private func fetchData(for type: UploadComponentType) throws -> Data? {
         switch type {
         case .application: return packageHandler.fileTypeDataMap[.app]!
-        case .icon: return packageHandler.fileTypeDataMap[.icon]! ?? generateDefaultAppIcon()
+        case .icon: return packageHandler.fileTypeDataMap[.icon] ?? generateDefaultAppIcon()
         case .infoPlist: return packageHandler.fileTypeDataMap[.infoPlist]!
         case .provision: return packageHandler.fileTypeDataMap[.mobileprovision]!
         case .installerPlist: return packageHandler.fileTypeDataMap[.installationPlist]!
@@ -187,18 +170,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    private func assignUploadProgress() {
-        if let repository = repository as? StratusRepositoryImpl {
-            repository.$uploadProgress
-                .receive(on: DispatchQueue.main)
-                .assign(to: &$uploadProgress)
-        }
-    }
-    
     // MARK: - Download Property List
     @MainActor func downloadInfoFile(url: String, completion: @escaping () -> Void) {
-        updateLoadingState(for: .detail, to: .loading)
-        
         Download(url: url).downloadFile {[weak self] result in
             guard let self = self else { return }
             
@@ -210,10 +183,9 @@ class HomeViewModel: ObservableObject {
                 }
                 
                 self.packageHandler.loadBundleProperties(with: fileProperties)
-                updateLoadingState(for: .detail, to: .idle)
                 completion()
             case .failure(let error):
-                updateLoadingState(for: .detail, to: .error)
+                updateLoadingState(for: .detail, to: .error(.detailError))
                 handleError(error.localizedDescription)
                 completion()
             }
@@ -222,18 +194,15 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Download App Icon
     @MainActor func downloadAppIconFile(url: String, completion: @escaping () -> Void) {
-        updateLoadingState(for: .detail, to: .loading)
-        
         Download(url: url).downloadFile {[weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let iconData):
                 self.packageHandler.fileTypeDataMap[.icon] = iconData
-                updateLoadingState(for: .detail, to: .error)
                 completion()
             case .failure(let error):
-                updateLoadingState(for: .detail, to: .error)
+                updateLoadingState(for: .detail, to: .error(.detailError))
                 handleError(error.localizedDescription)
                 completion()
             }
@@ -242,8 +211,6 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Download Mobile Provision
     @MainActor func downloadProvisionFile(url: String, completion: @escaping () -> Void) {
-        updateLoadingState(for: .detail, to: .loading)
-        
         Download(url: url).downloadFile {[weak self] result in
             guard let self = self else { return }
             
@@ -252,14 +219,52 @@ class HomeViewModel: ObservableObject {
                 guard let extractedData = try? self.packageHandler.plistHandler.extractXMLDataFromMobileProvision(provisionFile) else { return }
                 if let mobileProvisionDic = self.packageHandler.parseInfoPlist(extractedData) {
                     self.packageHandler.loadMobileProvision(with: mobileProvisionDic)
-                    updateLoadingState(for: .detail, to: .idle)
                     completion()
                 }
             case .failure(let error):
-                updateLoadingState(for: .detail, to: .error)
+                updateLoadingState(for: .detail, to: .error(.detailError))
                 handleError(error.localizedDescription)
                 completion()
             }
+        }
+    }
+    
+    func valueFor(_ identifier: PListCellIdentifiers) -> String? {
+        let bundleProperties = packageHandler.bundleProperties
+        
+        switch identifier {
+        case .bundleName:
+            return bundleProperties?.bundleName
+        case .bundleIdentifiers:
+            return bundleProperties?.bundleIdentifier
+        case .bundleVersionShort:
+            return bundleProperties?.bundleVersionShort
+        case .bundleVersion:
+            return bundleProperties?.bundleVersion
+        case .minOSVersion:
+            return bundleProperties?.minimumOSVersion
+        case .requiredDevice:
+            return bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
+        case .supportedPlatform:
+            return bundleProperties?.supportedPlatform?.joined(separator: ", ")
+        }
+    }
+    
+    func valueFor(provision identifier: ProvisionCellIdentifiers) -> String? {
+        guard let mobileProvision = packageHandler.mobileProvision else { return nil }
+        switch identifier {
+        case .name:
+            return mobileProvision.name
+        case .teamIdentifier:
+            return mobileProvision.teamIdentifier.joined(separator: ", ")
+        case .creationDate:
+            return mobileProvision.creationDate.formatted(date: .abbreviated, time: .shortened)
+        case .expiredDate:
+            return mobileProvision.expirationDate.formatted(date: .abbreviated, time: .shortened)
+        case .teamName:
+            return mobileProvision.teamName
+        case .version:
+            return String(mobileProvision.version)
         }
     }
 
@@ -284,7 +289,7 @@ class HomeViewModel: ObservableObject {
     func handleError(_ error: String) {
         ZLogs.shared.error(error)
         showToast(error)
-        updateLoadingState(for: .detail, to: .error)
+        updateLoadingState(for: .detail, to: .error(.detailError))
     }
     
     func showToast(_ message: String) {
@@ -301,13 +306,12 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    var shouldShowDetailContentAvailable: Bool {
-        sideBarLoadingState == .loading ||
-        (!(bucketObjectModels.isEmpty) && sideBarLoadingState == .idle && !isDetailViewEnabled)
-    }
-    
-    private var isDetailViewEnabled: Bool {
-        shouldShowDetailView != nil
+    private func assignUploadProgress() {
+        if let repository = repository as? StratusRepositoryImpl {
+            repository.$uploadProgress
+                .receive(on: DispatchQueue.main)
+                .assign(to: &$uploadProgress)
+        }
     }
     
     private func generateDefaultAppIcon() -> Data? {

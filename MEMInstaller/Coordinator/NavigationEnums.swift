@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum Screen: Hashable, Identifiable, CaseIterable {
+enum Screen: Hashable, Identifiable {
     case tabView
     case login
     case home

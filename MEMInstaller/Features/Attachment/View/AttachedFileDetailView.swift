@@ -26,22 +26,23 @@ enum ProvisionCellIdentifiers: String, CaseIterable {
     case version = "Version"
 }
 
-enum AttachmentMode {
+enum AttachmentMode: Hashable {
     case install
     case upload
 }
 
 struct AttachedFileDetailView: View {
-    @EnvironmentObject var viewModel: HomeViewModel
+    @ObservedObject var viewModel: HomeViewModel
     let attachmentMode: AttachmentMode
     
     var body: some View {
         LoaderView(loadingState: $viewModel.detailViewLoadingState) {
-            loadingOverlay()
+            ProgressView()
+                .progressViewStyle(.horizontalCircular)
         } loadedContent: {
             VStack(alignment: .leading) {
                 HStack {
-                    appIconView(viewModel.packageHandler.fileTypeDataMap[.icon]!)
+                    appIconView(viewModel.packageHandler.fileTypeDataMap[.icon])
                     bundleNameWithIdentifierView(bundleName: viewModel.packageHandler.bundleProperties?.bundleName,
                                                  bundleId: viewModel.packageHandler.bundleProperties?.bundleIdentifier)
                 }
@@ -49,7 +50,7 @@ struct AttachedFileDetailView: View {
                 
                 RoundedRectangleOutlineView {
                     ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
-                        HorizontalKeyValueContainer(key: identifier.rawValue, value: valueFor(identifier))
+                        HorizontalKeyValueContainer(key: identifier.rawValue, value: viewModel.valueFor(identifier))
                     }
                 }
                 
@@ -65,21 +66,6 @@ struct AttachedFileDetailView: View {
         }
         .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: viewModel.uploadProgress) { oldValue, newValue in
-            print("Uploading: \(newValue)")
-        }
-        .onAppear {
-            // Handle detail view data's
-        }
-    }
-    
-    @ViewBuilder
-    private func loadingOverlay() -> some View {
-       if case .uploading(let title) = viewModel.detailViewLoadingState {
-           overlayLoaderView(with: title)
-       }else if case .loading = viewModel.detailViewLoadingState {
-           overlayLoaderView()
-       }
     }
     
     @ViewBuilder
@@ -119,12 +105,12 @@ struct AttachedFileDetailView: View {
     @ViewBuilder
     private func mobileProvisionCellView(_ identifier: ProvisionCellIdentifiers) -> some View {
         if identifier != .expiredDate {
-            HorizontalKeyValueContainer(key: identifier.rawValue, value: valueFor(provision: identifier))
+            HorizontalKeyValueContainer(key: identifier.rawValue, value: viewModel.valueFor(provision: identifier))
         }else {
             HorizontalKeyValueContainer(key: identifier.rawValue) {
-                let isExpired: Bool = isMobileProvisionValid(valueFor(provision: identifier))
+                let isExpired: Bool = isMobileProvisionValid(viewModel.valueFor(provision: identifier))
                 
-                Text(valueFor(provision: identifier) ?? "No Expiration Date")
+                Text(viewModel.valueFor(provision: identifier) ?? "No Expiration Date")
                     .font(.system(.footnote))
                     .foregroundStyle(isExpired ? Color.red : Color(uiColor: .secondaryLabel))
             }
@@ -141,7 +127,7 @@ struct AttachedFileDetailView: View {
             .padding(.bottom, 30)
             
             Button("Cancel") {
-                viewModel.shouldShowDetailView = nil
+                viewModel.detailViewLoadingState = .idle()
             }
             .defaultButtonStyle(width: 180)
             .padding(.bottom, 30)
@@ -149,13 +135,14 @@ struct AttachedFileDetailView: View {
         .frame(maxWidth: .infinity, alignment: .center)
     }
     
-    
     // MARK: - HELPER METHODS
-    
     /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
     /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
     private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?)) {
         guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL, let provisionURL = fileURLs.provisionURL  else { return }
+        
+//        isPresentDetailView.toggle()
+        viewModel.updateLoadingState(for: .detail, to: .loading)
         
         let dispatchGroup = DispatchGroup()
         
@@ -176,46 +163,7 @@ struct AttachedFileDetailView: View {
         
         dispatchGroup.notify(queue: .main) {
             viewModel.packageHandler.objectURL = fileURLs.objectURL
-            viewModel.shouldShowDetailView = .install
-        }
-    }
-    
-    private func valueFor(_ identifier: PListCellIdentifiers) -> String? {
-        let bundleProperties = viewModel.packageHandler.bundleProperties
-        
-        switch identifier {
-        case .bundleName:
-            return bundleProperties?.bundleName
-        case .bundleIdentifiers:
-            return bundleProperties?.bundleIdentifier
-        case .bundleVersionShort:
-            return bundleProperties?.bundleVersionShort
-        case .bundleVersion:
-            return bundleProperties?.bundleVersion
-        case .minOSVersion:
-            return bundleProperties?.minimumOSVersion
-        case .requiredDevice:
-            return bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
-        case .supportedPlatform:
-            return bundleProperties?.supportedPlatform?.joined(separator: ", ")
-        }
-    }
-    
-    private func valueFor(provision identifier: ProvisionCellIdentifiers) -> String? {
-        guard let mobileProvision = viewModel.packageHandler.mobileProvision else { return nil }
-        switch identifier {
-        case .name:
-            return mobileProvision.name
-        case .teamIdentifier:
-            return mobileProvision.teamIdentifier.joined(separator: ", ")
-        case .creationDate:
-            return mobileProvision.creationDate.formatted(date: .abbreviated, time: .shortened)
-        case .expiredDate:
-            return mobileProvision.expirationDate.formatted(date: .abbreviated, time: .shortened)
-        case .teamName:
-            return mobileProvision.teamName
-        case .version:
-            return String(mobileProvision.version)
+            viewModel.detailViewLoadingState = .idle(.detail(.install))
         }
     }
     
@@ -240,15 +188,14 @@ struct AttachedFileDetailView: View {
             await viewModel.uploadPackage(endpoint: endpoint) {
                 viewModel.updateLoadingState(for: .detail, to: .loading)
                 await viewModel.fetchFoldersFromBucket()
-                viewModel.shouldShowDetailView = nil
-                viewModel.updateLoadingState(for: .detail, to: .idle)
+                viewModel.updateLoadingState(for: .detail, to: .idle())
             }
         }
     }
     
     private func generateUploadBodyParams() -> String? {
         guard let userEmail = viewModel.userprofile?.email else { return nil }
-        guard let bundleName = valueFor(.bundleName) else { return nil }
+        guard let bundleName = viewModel.valueFor(.bundleName) else { return nil }
         
         return "\(userEmail)/\(bundleName)"
     }
@@ -260,6 +207,6 @@ struct AttachedFileDetailView: View {
 }
 
 #Preview {
-    AttachedFileDetailView(attachmentMode: .install)
+    AttachedFileDetailView(viewModel: .preview, attachmentMode: .install)
         .environmentObject(HomeViewModel.preview)
 }

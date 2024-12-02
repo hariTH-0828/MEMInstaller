@@ -61,43 +61,12 @@ struct DefaultOutlineButtonStyle: ViewModifier {
     }
 }
 
-// MARK: - LoaderView
-//struct LoaderView<Content: View, Loader: View>: View {
-//    @Binding var loadingState: LoadingState
-//    let content: Content
-//    var progressView: Loader
-//    
-//    init(loadingState: Binding<LoadingState>,
-//         @ViewBuilder content: () -> Content,
-//         @ViewBuilder loader: () -> Loader = { ProgressView() } )
-//    {
-//        self._loadingState = loadingState
-//        self.content = content()
-//        self.progressView = loader()
-//    }
-//    
-//    var body: some View {
-//        if loadingState == .loading {
-//            ZStack(alignment: .center, content: {
-//                progressView
-//                    .progressViewStyle(.horizontalCircular)
-//                    .background(.clear)
-//                    .tint(StyleManager.colorStyle.tintColor)
-//                    .scaleEffect(1)
-//            })
-//            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-//        }else {
-//            self.content
-//        }
-//    }
-//}
-
 struct LoaderView<L, R>: View where L: View, R: View {
     @Binding var loadingState: LoadingState
     let loadingContent: L
     let loadedContent: R
     
-    init(loadingState: Binding<LoadingState>, @ViewBuilder loadingContent: () -> L, @ViewBuilder loadedContent: () -> R) {
+    init(loadingState: Binding<LoadingState>, @ViewBuilder loadingContent: @escaping () -> L, @ViewBuilder loadedContent: @escaping () -> R) {
         self._loadingState = loadingState
         self.loadingContent = loadingContent()
         self.loadedContent = loadedContent()

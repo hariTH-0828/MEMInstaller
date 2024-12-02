@@ -42,6 +42,13 @@ struct BucketObjectModel: Codable, Hashable {
         let paths = prefix.components(separatedBy: "/")
         self.folderName = paths.count > 2 ? paths[paths.count - 2] : paths[0]
     }
+    
+    init() {
+        self.prefix = "hariharan.rs@zohocorp.com/SDP/"
+        self.keyCount = 2
+        self.contents = []
+        self.folderName = "SDP"
+    }
 }
 
 struct ContentModel: Codable, Hashable {
