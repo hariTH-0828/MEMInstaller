@@ -69,7 +69,6 @@
 		52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCAE2CF7884500D49186 /* AboutView.swift */; };
 		52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */; };
 		52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */; };
-		52BCCCB52CF83F8B00D49186 /* SettingSideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */; };
 		52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */; };
 		52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCBA2CF8EC8600D49186 /* Constants.swift */; };
 		52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5532CEB3D6C00214F41 /* String+.swift */; };
@@ -185,7 +184,6 @@
 		52BCCCAE2CF7884500D49186 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
 		52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheetModifier.swift; sourceTree = "<group>"; };
-		52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSideBarView.swift; sourceTree = "<group>"; };
 		52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadComponents.swift; sourceTree = "<group>"; };
 		52BCCCBA2CF8EC8600D49186 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		52D0B5532CEB3D6C00214F41 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
@@ -273,7 +271,6 @@
 				5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */,
 				52BCCCAE2CF7884500D49186 /* AboutView.swift */,
 				52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */,
-				52BCCCB42CF83F8B00D49186 /* SettingSideBarView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -922,7 +919,6 @@
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
-				52BCCCB52CF83F8B00D49186 /* SettingSideBarView.swift in Sources */,
 				523F723B2CDB903100D564E7 /* PropertyListHandler.swift in Sources */,
 				5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */,
 				5270C56B2CEDECFB00C051CB /* PresentLogoutView.swift in Sources */,

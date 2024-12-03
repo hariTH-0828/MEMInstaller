@@ -21,7 +21,7 @@ struct UserProfileButtonView: View {
     var body: some View {
         ZStack {
             Button(action: {
-                coordinator.presentSheet(.settings)
+                coordinator.push(.settings)
             }, label: {
                 Image(uiImage: UIImage(data: uiImage)!)
                     .resizable()

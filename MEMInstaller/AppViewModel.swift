@@ -16,6 +16,8 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
+    weak var coordinator: AppCoordinatorImpl?
+    
     init() {
         #if DEBUG
         initConfig()
@@ -33,7 +35,10 @@ final class AppViewModel: ObservableObject {
         self.isUserLoggedIn = ZIAMManager.isUserLoggedIn
         
         NotificationCenter.default.addObserver(forName: .performLogout, object: nil, queue: .main) { _ in
-            self.logout()
+            Task {
+                try await ZIAMManager.logout()
+                try await self.logoutSuccessHandler()
+            }
         }
         
         // Clear existing caches
@@ -75,28 +80,22 @@ final class AppViewModel: ObservableObject {
             // Login success: Navigate to Login view to Home View
             withAnimation(.easeInOut) {
                 self.isUserLoggedIn = status
+                coordinator?.popToRoot()
             }
         }
     }
     
-    func logout() {
-        if ZIAMManager.isUserLoggedIn {
-            ZIAMManager.logout {
-                try? self.logoutSuccessHandler()
-            }
-        }
-    }
-    
+    @MainActor
     private func logoutSuccessHandler() throws {
         do {
             try KeychainService.delete(forKey: KCKeys.loggedUserProfile)
             ZLogs.shared.info("Successfully deleted logged user from keychain")
             
             // Logout success: Navigate to Setting View to Login View
-            mainQueue {
-                withAnimation(.easeInOut) {
-                    self.isUserLoggedIn = false
-                }
+            coordinator?.popToRoot()
+            
+            withAnimation(.easeInOut) {
+                self.isUserLoggedIn = false
             }
         }catch {
             ZLogs.shared.error(error.localizedDescription)

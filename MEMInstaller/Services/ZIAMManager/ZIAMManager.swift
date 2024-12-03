@@ -150,19 +150,18 @@ final class ZIAMManager {
     }
 
     // MARK: LOGOUT
-    public class func logout(_ successBlock:@escaping getIAMLogoutSuccessBlock) {
+    public class func logout() async throws {
         if ZSSOKit.isUserSignedIn() {
-            ZSSOKit.revokeAccessToken { (_error) in
-                mainQueue {
-                    if _error != nil{
-                        ZSSOKit.clearSSODetailsForFirstLaunch()
+            return try await withCheckedThrowingContinuation { continuation in
+                ZSSOKit.revokeAccessToken { error in
+                    if let error {
+                        continuation.resume(throwing: error)
                     }
-                    successBlock()
+                    
+                    continuation.resume(returning: ())
                 }
             }
         }
-        
-        successBlock()
     }
     
     // MARK: CHECK AND FORCE LOGOUT

@@ -16,7 +16,7 @@ struct UserProfileImageView: View {
                 Image(uiImage: UIImage(data: userProfile.profileImageData)!)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 55, height: 55)
+                    .frame(width: 45, height: 45)
                     .clipShape(Circle())
                 
                 VStack(alignment: .leading) {
@@ -31,13 +31,11 @@ struct UserProfileImageView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            
-            Divider()
         }
     }
 }
 
 #Preview {
-    UserProfileImageView(userProfile: .preview)
+    SettingsView()
+        .environmentObject(AppCoordinatorImpl())
 }

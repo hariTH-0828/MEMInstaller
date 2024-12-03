@@ -9,10 +9,7 @@ import SwiftUI
 
 // MARK: Logout View
 struct PresentLogoutView: View {
-    @EnvironmentObject private var appViewModel: AppViewModel
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
-    
-//    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(spacing: 20, content: {
@@ -29,8 +26,8 @@ struct PresentLogoutView: View {
                 .defaultOutlineButtonStyle(foregroundColor: Color.primary)
                 
                 Button(role: .destructive) {
-                    appViewModel.logout()
                     coordinator.dismissSheet()
+                    NotificationCenter.default.post(name: .performLogout, object: nil)
                 } label: {
                     Text("Sign out")
                 }

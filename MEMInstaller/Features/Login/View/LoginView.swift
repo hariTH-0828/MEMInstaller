@@ -18,7 +18,19 @@ struct LoginView: View {
                     .padding(.top, 50)
                 
                 VStack {
-                    loginOnBoardImageView(geometry: geometry)
+                    if Device.isIpad {
+                        loginOnBoardImageView(geometry: geometry)
+                            .frame(width: min(geometry.size.height * 0.5, 450),
+                                   height: min(geometry.size.height * 0.5, 450))
+                        
+                        loginOnBoardDescription()
+                            .frame(width: geometry.size.width * 0.6)
+                    }else {
+                        loginOnBoardImageView(geometry: geometry)
+                            .frame(width: 300, height: 300)
+                        
+                        loginOnBoardDescription()
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
@@ -47,21 +59,15 @@ struct LoginView: View {
     
     @ViewBuilder
     private func loginOnBoardImageView(geometry: GeometryProxy) -> some View {
-        var isPhone: Bool {
-            return Device.isIphone ? true : false
-        }
-        
         Image(.loginOnboard)
             .resizable()
-            .frame(
-                width: isPhone ? 300 : min(geometry.size.width * 0.5, 450),
-                height: isPhone ? 300 : min(geometry.size.height * 0.4, 450)
-            )
             .scaledToFit()
             .padding()
-        
+    }
+    
+    @ViewBuilder
+    private func loginOnBoardDescription() -> some View {
         Text("com.learn.meminstaller.loginview.description")
-            .frame(width: isPhone ? .infinity : geometry.size.width * 0.5)
             .padding(.horizontal)
             .font(.system(size: 15.0))
             .foregroundStyle(Color(uiColor: .systemGray))

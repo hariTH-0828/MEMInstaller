@@ -27,6 +27,9 @@ struct ContentView: View {
         }
         .environmentObject(appViewModel)
         .environmentObject(coordinator)
+        .onAppear(perform: {
+            appViewModel.coordinator = coordinator
+        })
     }
 }
 

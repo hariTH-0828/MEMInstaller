@@ -91,7 +91,7 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     func build(forSheet sheet: Sheet) -> some View {
         switch sheet {
         case .settings:
-            SettingSideBarView()
+            SettingsView()
         case .logout:
             PresentLogoutView()
         case .activityRepresentable(let logFileURL):
