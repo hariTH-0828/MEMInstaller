@@ -19,6 +19,8 @@
 "com.learn.meminstaller.setting.title" = "Settings";
 "com.learn.meminstaller.setting.share-log" = "Share logs";
 "com.learn.meminstaller.setting.about" = "About";
+"com.learn.meminstaller.setting.privacy" = "Privacy";
+"com.learn.meminstaller.setting.clear_cache" = "Clear cache";
 "com.learn.meminstaller.setting.about.description" = "Welcome to MEMInstaller, the official in-house application designed exclusively for Zoho Corporation. This app has been developed to enhance productivity and streamline operations, offering a secure platform tailored to meet the specific needs of our team.\n\nDistributed via our enterprise network, MEMInstaller ensures easy access to essential tools and resources anytime, anywhere. Your data privacy and security are our top priorities, with robust encryption and compliance with industry standards.";
 "com.learn.meminstaller.setting.signout" = "Sign out";
 "com.learn.meminstaller.setting.footnote" = "2024, Zoho Corporation Pvt. Ltd., All Rights Reserved.";

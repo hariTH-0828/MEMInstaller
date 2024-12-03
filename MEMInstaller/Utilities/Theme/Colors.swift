@@ -72,5 +72,17 @@ struct Colors: ColorStyleProtocol {
     var alert: Color {
         return .red
     }
+    
+    var settingUserProfileBackground: Color {
+        let lightColor = UIColor(Color(hex: "B9DDFF"))
+        let darkColor = UIColor(Color(hex: "76B4F0"))
+        let uiColor = UIColor.setColor(dark: darkColor, light: lightColor)
+        return Color(uiColor: uiColor)
+    }
+    
+    var settingUserProfileTextColor: Color {
+        let uiColor = UIColor.setColor(dark: UIColor.systemGray5, light: .systemGray)
+        return Color(uiColor: uiColor)
+    }
 }
 

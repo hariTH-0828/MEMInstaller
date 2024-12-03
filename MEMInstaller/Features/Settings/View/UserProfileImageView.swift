@@ -27,15 +27,22 @@ struct UserProfileImageView: View {
                     Text(userProfile.email)
                         .lineLimit(1)
                         .font(.system(size: 16, weight: .regular))
-                        .foregroundStyle(StyleManager.colorStyle.secondary)
+                        .foregroundStyle(StyleManager.colorStyle.settingUserProfileTextColor)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .settingButtonView(background: StyleManager.colorStyle.settingUserProfileBackground)
     }
 }
 
-#Preview {
-    SettingsView()
-        .environmentObject(AppCoordinatorImpl())
+struct UserProfilePreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        NavigationStack {
+            SettingsView()
+                .navigationTitle("Settings")
+                .environmentObject(AppCoordinatorImpl())
+        }
+    }
 }

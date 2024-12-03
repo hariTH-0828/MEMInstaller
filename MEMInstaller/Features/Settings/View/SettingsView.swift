@@ -12,9 +12,21 @@ struct SettingsView: View {
     let userDataManager: UserDataManager
     let userProfile: ZUserProfile?
     
+    // Cache size
+    @State var totalCacheSize: String?
+    
+    // Toast
+    @State var toastMessage: String?
+    @State var isPresentToast: Bool = false
+    
     init(userDataManager: UserDataManager = UserDataManager()) {
         self.userDataManager = userDataManager
-        self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
+        
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+            self.userProfile = .preview
+        }else {
+            self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
+        }
     }
     
     var logFileURL: URL {
@@ -22,34 +34,61 @@ struct SettingsView: View {
     }
     
     var body: some View {
-        Form {
-            Section {
+        GeometryReader { _ in
+            VStack {
                 UserProfileImageView(userProfile: userProfile!)
-            }
-            
-            Section {
-                NavigationLink { coordinator.build(forScreen: .about) } label: {
-                    settingLabelView("About", systemName: "i.circle", iconColor: .accentColor)
+                
+                NavigationLink { } label: {
+                    settingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
                 }
-
+                .settingButtonView()
+                
+                NavigationLink { coordinator.build(forScreen: .about) } label: {
+                    settingLabelView("About", iconName: "i.circle", iconColor: .accentColor)
+                    Text("version " + (Bundle.appVersion ?? "v1.0"))
+                        .font(.system(size: 14))
+                        .foregroundStyle(StyleManager.colorStyle.systemGray)
+                }
+                .settingButtonView()
+                
                 Button(action: {
                     coordinator.presentSheet(.activityRepresentable(logFileURL))
                 }, label: {
-                    settingLabelView("com.learn.meminstaller.setting.share-log", systemName: "arrow.right", iconColor: .orange)
+                    settingLabelView("com.learn.meminstaller.setting.share-log", iconName: "square.and.arrow.up", iconColor: .cyan)
                 })
+                .settingButtonView()
                 
                 Button(action: {
-                    Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
+                    clearCacheData()
                 }, label: {
-                    settingLabelView("com.learn.meminstaller.setting.signout", color: .red, systemName: "power", iconColor: .red)
+                    settingLabelView("com.learn.meminstaller.setting.clear_cache", iconName: "ico_database", iconColor: .blue)
+                    
+                    Text(totalCacheSize ?? "0")
+                        .font(.system(size: 14))
+                        .foregroundStyle(StyleManager.colorStyle.systemGray)
                 })
-            } header: {
-                Text("General")
-            } footer: {
-                footerView
+                .settingButtonView()
+                
+                Section {
+                    Button(action: {
+                        Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
+                    }, label: {
+                        settingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
+                    })
+                    .settingButtonView()
+                } footer: {
+                    footerView
+                }
             }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .showToast(message: toastMessage, isShowing: $isPresentToast)
+            .onAppear(perform: {
+                if !ProcessInfo.processInfo.isPreview {
+                    self.totalCacheSize = try? ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
+                }
+            })
         }
-        .navigationTitle("Settings")
     }
     
     @ViewBuilder
@@ -58,33 +97,68 @@ struct SettingsView: View {
             title: {
                 Text("com.learn.meminstaller.setting.footnote")
                     .font(.caption)
+                    .foregroundStyle(StyleManager.colorStyle.placeholderText)
             },
             icon: {
                 Image(systemName: "c.circle")
                     .font(.caption)
+                    .foregroundStyle(StyleManager.colorStyle.placeholderText)
             }
         )
     }
     
     @ViewBuilder
-    private func settingLabelView(_ title: LocalizedStringKey, color: Color = StyleManager.colorStyle.invertBackground, systemName: String, iconColor: Color) -> some View {
-        Label(
-            title: {
-                Text(title)
-                    .lineLimit(1)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundStyle(color)
-            },
-            icon: {
-                Image(systemName: systemName)
-                    .font(.system(size: 16, weight: .regular))
+    private func settingLabelView(_ title: LocalizedStringKey,
+                                  color: Color = StyleManager.colorStyle.invertBackground,
+                                  iconName: String,
+                                  iconColor: Color) -> some View {
+        HStack {
+            if UIImage.isAssetAvailable(named: iconName) {
+                Image(iconName)
+                    .resizable()
+                    .renderingMode(.template)
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(iconColor)
+            }else {
+                Image(systemName: iconName)
+                    .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(iconColor)
             }
-        )
+            
+            Text(title)
+                .lineLimit(1)
+                .font(.system(size: 18, weight: .regular))
+                .foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    
+    // MARK: - HELPER METHODS
+    private func clearCacheData() {
+        do {
+            try ZFFileManager.shared.clearAllCache()
+            self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
+        }catch {
+            
+        }
     }
 }
 
-#Preview {
-    SettingsView()
-        .environmentObject(AppCoordinatorImpl())
+struct SettingViewPreviewProvider: PreviewProvider {
+    
+    static var previews: some View {
+        NavigationStack {
+            SettingsView()
+                .navigationTitle("Settings")
+                .environmentObject(AppCoordinatorImpl())
+        }
+    }
+}
+
+
+extension ProcessInfo {
+    var isPreview: Bool {
+        environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
 }

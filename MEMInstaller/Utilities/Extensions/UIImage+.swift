@@ -104,4 +104,8 @@ extension UIImage {
         
         return nil
     }
+    
+    static func isAssetAvailable(named: String) -> Bool {
+        return UIImage(named: named) != nil
+    }
 }

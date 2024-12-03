@@ -33,4 +33,8 @@ extension View {
     func shimmer(enable: Binding<Bool>) -> some View {
         modifier(ShimmerEffect(enable: enable))
     }
+    
+    func settingButtonView<S: ShapeStyle>(background: S = .regularMaterial) -> some View {
+        modifier(SettingButtonView(background: background))
+    }
 }

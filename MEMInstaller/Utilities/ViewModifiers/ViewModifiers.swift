@@ -111,7 +111,6 @@ struct ShimmerEffect: ViewModifier {
             )
             .offset(x: isAnimating ? size.width : -size.width)
             .opacity(0.5)
-//            .clipped()
     }
 }
 
@@ -156,5 +155,21 @@ struct LabelWithFieldItem<Content>: View where Content: View {
             content
         }
         .padding(.vertical, 3)
+    }
+}
+
+
+// MARK: - Setting Button View
+struct SettingButtonView<S>: ViewModifier where S: ShapeStyle {
+    let background: S
+    
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(background)
+            )
+            .padding(.horizontal)
     }
 }

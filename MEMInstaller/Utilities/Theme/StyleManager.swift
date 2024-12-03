@@ -20,6 +20,8 @@ protocol ColorStyleProtocol {
     var tabBarShadow: Color { get }
     var secondary: Color { get }
     var alert: Color { get }
+    var settingUserProfileBackground: Color { get }
+    var settingUserProfileTextColor: Color { get }
 }
 
 struct StyleManager {
