@@ -22,12 +22,10 @@ final class StratusRepositoryImpl: StratusRepository, ObservableObject {
     }
     
     func uploadObjects(endpoint: ZAPIStrings.Endpoint, headers: HTTPHeaders, data: Data) async throws -> Result<String, Error> {
-        let networkRequest = NetworkRequest(endpoint: endpoint,
-                                            headers: headers,
-                                            data: data)
+        let networkRequest = NetworkRequest(endpoint: endpoint, headers: headers, data: data)
         let uploader = PUT(request: networkRequest)
         
-        // Observe progress from PUT
+        // Observe progress from PUT and assign to repository's uploadProgress
         uploader.$uploadProgress
             .receive(on: DispatchQueue.main)
             .assign(to: &$uploadProgress)

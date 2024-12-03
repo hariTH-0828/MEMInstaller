@@ -9,5 +9,5 @@ import Foundation
 
 protocol UserManagerProtocol {
     func saveLoggedUserIntoKeychain() -> Bool
-    func retriveLoggedUserFromKeychain() -> ZUserProfile?
+    func retrieveLoggedUserFromKeychain() -> ZUserProfile?
 }

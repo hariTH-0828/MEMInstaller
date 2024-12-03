@@ -11,7 +11,7 @@ struct SettingSideBarView: View {
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
     var userProfile: ZUserProfile? {
-        return UserDataManager().retriveLoggedUserFromKeychain()
+        return UserDataManager().retrieveLoggedUserFromKeychain()
     }
     
     var logFileURL: URL {

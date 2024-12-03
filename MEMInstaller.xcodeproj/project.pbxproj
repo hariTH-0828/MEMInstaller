@@ -15,7 +15,7 @@
 		521648092CFD6CE700D599E2 /* HomeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648082CFD6CE700D599E2 /* HomeDetailView.swift */; };
 		5216480B2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */; };
 		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
-		521648112CFD98D700D599E2 /* OverlayLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* OverlayLoaderView.swift */; };
+		521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -73,7 +73,7 @@
 		52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */; };
 		52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCBA2CF8EC8600D49186 /* Constants.swift */; };
 		52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5532CEB3D6C00214F41 /* String+.swift */; };
-		52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DOWNLOAD.swift */; };
+		52D0B5582CEB730400214F41 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0B5572CEB730400214F41 /* DownloadService.swift */; };
 		52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109D72CE6287B002D1EDD /* WindowAccessor.swift */; };
 		52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E109E02CE67994002D1EDD /* EmptyBucketView.swift */; };
 		52E109E52CE67A2B002D1EDD /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52E109E42CE67A2B002D1EDD /* Launch Screen.storyboard */; };
@@ -127,7 +127,7 @@
 		521648082CFD6CE700D599E2 /* HomeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDetailView.swift; sourceTree = "<group>"; };
 		5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSideBarAppLabel.swift; sourceTree = "<group>"; };
 		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
-		521648102CFD98D700D599E2 /* OverlayLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLoaderView.swift; sourceTree = "<group>"; };
+		521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLoadingWrapper.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -189,7 +189,7 @@
 		52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadComponents.swift; sourceTree = "<group>"; };
 		52BCCCBA2CF8EC8600D49186 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		52D0B5532CEB3D6C00214F41 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
-		52D0B5572CEB730400214F41 /* DOWNLOAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOWNLOAD.swift; sourceTree = "<group>"; };
+		52D0B5572CEB730400214F41 /* DownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		52E109D72CE6287B002D1EDD /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		52E109E02CE67994002D1EDD /* EmptyBucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBucketView.swift; sourceTree = "<group>"; };
 		52E109E42CE67A2B002D1EDD /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -477,7 +477,7 @@
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
 				5252A4132CF6E9A6005DD9CC /* TabViewController.swift */,
 				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
-				521648102CFD98D700D599E2 /* OverlayLoaderView.swift */,
+				521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -580,7 +580,7 @@
 			children = (
 				52F393B62CE5D0AA00C9B23C /* GET.swift */,
 				52F393BA2CE5D9D000C9B23C /* PATCH.swift */,
-				52D0B5572CEB730400214F41 /* DOWNLOAD.swift */,
+				52D0B5572CEB730400214F41 /* DownloadService.swift */,
 				5270C5612CEC64C300C051CB /* PUT.swift */,
 			);
 			path = CRUD;
@@ -910,14 +910,14 @@
 				5270C5622CEC64C300C051CB /* PUT.swift in Sources */,
 				5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
-				52D0B5582CEB730400214F41 /* DOWNLOAD.swift in Sources */,
+				52D0B5582CEB730400214F41 /* DownloadService.swift in Sources */,
 				529E6FEA2CFCDA45002AB497 /* Array+.swift in Sources */,
 				523F72202CDB4A6D00D564E7 /* KeychainServices.swift in Sources */,
 				523F72322CDB780200D564E7 /* ViewModifiers+.swift in Sources */,
 				52F393BB2CE5D9D000C9B23C /* PATCH.swift in Sources */,
 				52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */,
 				521648092CFD6CE700D599E2 /* HomeDetailView.swift in Sources */,
-				521648112CFD98D700D599E2 /* OverlayLoaderView.swift in Sources */,
+				521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */,
 				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,

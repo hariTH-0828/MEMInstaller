@@ -38,7 +38,7 @@ class UserDataManager: UserManagerProtocol {
     
     /// Retrieves the logged-in user profile from the Keychain.
     /// - Returns: The ``ZUserProfile`` if retrieval is successful, or `nil` if it fails.
-    func retriveLoggedUserFromKeychain() -> ZUserProfile? {
+    func retrieveLoggedUserFromKeychain() -> ZUserProfile? {
         do {
             return try KeychainService.retrieve(forKey: KCKeys.loggedUserProfile)
         }catch {

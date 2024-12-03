@@ -148,7 +148,7 @@ class PackageExtractionHandler {
             throw ZError.FileConversionError.invalidFilePath
         }
         
-        return parseInfoPlist(fileData)
+        return parsePlist(fileData)
     }
     
     private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
@@ -166,7 +166,7 @@ class PackageExtractionHandler {
         
         let fileData = try plistHandler.extractXMLDataFromMobileProvision(provisionData)
         
-        return parseInfoPlist(fileData)
+        return parsePlist(fileData)
     }
     
     private func readApplicationIcon(from payLoadPath: URL, appName: String) throws -> Data {
@@ -181,7 +181,7 @@ class PackageExtractionHandler {
         return fileData
     }
     
-    func parseInfoPlist(_ plistData: Data) -> [String: Any]? {
+    func parsePlist(_ plistData: Data) -> [String: Any]? {
         guard let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any] else {
             ZLogs.shared.error("Failed to cast Info.plist content to directory.")
             return nil
@@ -202,36 +202,17 @@ class PackageExtractionHandler {
         }
     }
     
-    func loadMobileProvision(with plistDictionary: [String: Any]) {
-        guard let teamIdentifier = plistDictionary[MobileProvision.CodingKeys.teamIdentifier.rawValue] as? [String],
-              let expirationDate = plistDictionary[MobileProvision.CodingKeys.expirationDate.rawValue] as? Date,
-              let name = plistDictionary[MobileProvision.CodingKeys.name.rawValue] as? String,
-              let teamName = plistDictionary[MobileProvision.CodingKeys.teamName.rawValue] as? String,
-              let creationDate = plistDictionary[MobileProvision.CodingKeys.creationDate.rawValue] as? Date,
-              let version = plistDictionary[MobileProvision.CodingKeys.version.rawValue] as? Int
-        else {
-            return
-        }
-    
-        self.mobileProvision = MobileProvision(name: name,
-                                               teamIdentifier: teamIdentifier,
-                                               creationDate: creationDate,
-                                               expirationDate: expirationDate,
-                                               teamName: teamName, version: version)
+    func loadMobileProvision(with plist: [String: Any]) {
+        guard let provision = MobileProvision(from: plist) else { return }
+        mobileProvision = provision
     }
     
     func generatePropertyList(fileURL: String) {
-        
-        let plistURL = plistHandler.createPlistFile(url: fileURL,
-                                                    bundleIdentifier: bundleProperties?.bundleIdentifier,
-                                                    bundleVersion: bundleProperties?.bundleVersion,
-                                                    fileName: bundleProperties?.bundleName)
-        
-        switch plistURL {
-        case .success(let pathLocation):
-            fileTypeDataMap[.installationPlist] = fileToData(from: pathLocation)
-        case .failure(let failure):
-            ZLogs.shared.error(failure.localizedDescription)
+        switch plistHandler.createPlistFile(url: fileURL, bundleIdentifier: bundleProperties?.bundleIdentifier, bundleVersion: bundleProperties?.bundleVersion, fileName: bundleProperties?.bundleName) {
+        case .success(let url):
+            fileTypeDataMap[.installationPlist] = try? Data(contentsOf: url)
+        case .failure(let error):
+            ZLogs.shared.error(error.localizedDescription)
         }
     }
 }

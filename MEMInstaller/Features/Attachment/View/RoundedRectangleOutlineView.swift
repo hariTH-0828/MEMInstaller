@@ -18,11 +18,12 @@ struct RoundedRectangleOutlineView<T>: View where T: View {
         VStack {
             content
         }
+        .frame(maxHeight: UIScreen.screenHeight * 0.25, alignment: .top)
         .padding(.vertical)
         .background(
             RoundedRectangle(cornerRadius: 15)
                 .fill(.regularMaterial)
         )
-        .padding()
+        .padding(.horizontal, 15)
     }
 }

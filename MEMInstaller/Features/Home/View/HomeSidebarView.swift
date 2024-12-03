@@ -33,7 +33,7 @@ struct HomeSidebarView: View {
         }
         .task {
             if viewModel.sideBarLoadingState == .loading {
-                await viewModel.fetchFoldersFromBucket()
+                viewModel.fetchFolders()
             }
         }
     }
@@ -45,23 +45,19 @@ struct HomeSidebarView: View {
             let fileURLs = viewModel.extractFileURLs(from: bucketObject.contents, folderName: bucketObject.folderName)
 
             Button {
-                isPresentDetailView.toggle()
                 handleAppSelection(with: fileURLs)
             } label: {
                 HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: fileURLs.iconURL)
             }
         }
-        .refreshable { await viewModel.fetchFoldersFromBucket() }
+        .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
-        .navigationDestination(isPresented: $isPresentDetailView) {
-            AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
-        }
     }
     
     @ViewBuilder
     private func loadingOverlay() -> some View {
        if case .loading = viewModel.sideBarLoadingState {
-           OverlayLoaderView()
+           HorizontalLoadingWrapper()
        }
     }
     
@@ -72,7 +68,7 @@ struct HomeSidebarView: View {
                     switch result {
                     case .success(let filePath):
                         viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                        viewModel.detailViewLoadingState = .idle(.detail(.upload))
+                        viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
@@ -94,26 +90,15 @@ struct HomeSidebarView: View {
 
         viewModel.updateLoadingState(for: .detail, to: .loading)
         
-        let dispatchGroup = DispatchGroup()
-        
-        dispatchGroup.enter()
-        viewModel.downloadInfoFile(url: infoPlistURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        viewModel.downloadProvisionFile(url: provisionURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        viewModel.downloadAppIconFile(url: iconURL) {
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.notify(queue: .main) {
+        Task {
+            async let infoPlistData: Void = viewModel.downloadFile(url: infoPlistURL, type: .infoFile)
+            async let provisionData: Void = viewModel.downloadFile(url: provisionURL, type: .provision)
+            async let iconData: Void = viewModel.downloadFile(url: iconURL, type: .appIcon)
+            
+            _ = await (infoPlistData, provisionData, iconData)
+            
             viewModel.packageHandler.objectURL = fileURLs.objectURL
-            viewModel.detailViewLoadingState = .idle(.detail(.install))
+            viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.install)))
         }
     }
 }

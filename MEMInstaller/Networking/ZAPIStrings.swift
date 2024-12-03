@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 struct ZAPIStrings {
     
@@ -25,6 +26,20 @@ struct ZAPIStrings {
                 return "/bucket/objects"
             case .custom(let customPath):
                 return customPath
+            }
+        }
+    }
+    
+    enum Parameter {
+        case folders(String)
+        case packageURL(String)
+        
+        var value: Alamofire.Parameters {
+            switch self {
+            case .folders(let path):
+                return ["bucket_name": "packages", "prefix": "\(path)/"]
+            case .packageURL(let packageURL):
+                return ["bucket_name": "packages", "prefix": "\(packageURL)/"]
             }
         }
     }

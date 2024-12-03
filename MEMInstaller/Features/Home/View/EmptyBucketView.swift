@@ -37,7 +37,7 @@ struct EmptyBucketView: View {
                             switch result {
                             case .success(let filePath):
                                 viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                viewModel.detailViewLoadingState = .idle(.detail(.upload))
+                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
                                 viewModel.showToast(failure.localizedDescription)
@@ -62,10 +62,8 @@ struct EmptyBucketView: View {
     
     // MARK: HELPER METHOD
     func refreshView() {
-        Task {
-            withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
-            await viewModel.fetchFoldersFromBucket()
-        }
+        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
+        viewModel.fetchFolders()
     }
 }
 

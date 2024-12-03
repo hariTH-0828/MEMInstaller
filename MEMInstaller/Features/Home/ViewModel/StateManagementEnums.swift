@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - State Management
 enum LoadingState: Hashable {
-    case idle(IdleViewState = .empty)
+    case idle(IdleViewState = .available)
     case loading
     case uploading(String)
     case error(ErrorViewState = .empty)
@@ -17,6 +17,7 @@ enum LoadingState: Hashable {
 
 enum IdleViewState: Hashable {
     case empty
+    case available
     case detail(AttachmentMode = .install)
 }
 

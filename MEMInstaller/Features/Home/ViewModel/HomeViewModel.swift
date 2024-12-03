@@ -8,23 +8,40 @@
 import SwiftUI
 import Zip
 import Alamofire
+import Combine
 
 // MARK: - File Types
 enum SupportedFileTypes {
-    case icon
-    case app
-    case mobileprovision
-    case installationPlist
-    case infoPlist
+    case icon, app, mobileprovision, installationPlist, infoPlist
 }
 
-class HomeViewModel: ObservableObject {
+enum DownloadType {
+    case infoFile, appIcon, provision
+}
+
+protocol HomeViewModelProtocol: ObservableObject {
+    func fetchFolders()
+    func downloadFile(url: String, type: DownloadType) async
+    var bucketObjectModels: [BucketObjectModel] { get }
+    var sideBarLoadingState: LoadingState { get }
+    var detailViewLoadingState: LoadingState { get }
+    var uploadProgress: Double { get }
+    var toastMessage: String? { get }
+    var isPresentToast: Bool { get }
+    var userProfile: ZUserProfile? { get }
+}
+
+class HomeViewModel: HomeViewModelProtocol {
     // Manage logged user profile
-    @Published private(set) var userprofile: ZUserProfile?
+    @Published private(set) var userProfile: ZUserProfile?
     @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
     
-    @Published var sideBarLoadingState: LoadingState = .loading
-    @Published var detailViewLoadingState: LoadingState = .idle(.empty)
+    @Published var sideBarLoadingState: LoadingState = .loading {
+        didSet {
+            if sideBarLoadingState == .loading { detailViewLoadingState = .idle() }
+        }
+    }
+    @Published var detailViewLoadingState: LoadingState = .idle()
     @Published var uploadProgress: Double = 0.0
     
     // Toast properties
@@ -32,61 +49,82 @@ class HomeViewModel: ObservableObject {
     @Published var isPresentToast: Bool = false
     
     // Dependencies
-    var userDataManager: UserDataManager
-    var repository: StratusRepository
-    var packageHandler: PackageExtractionHandler
+    private let userDataManager: UserDataManager
+    private let repository: StratusRepository
+    let packageHandler: PackageExtractionHandler
+    private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Initialise
-    init(repository: StratusRepository, userDataManager: UserDataManager, packageHandler: PackageExtractionHandler) {
+    init(
+        repository: StratusRepository,
+        userDataManager: UserDataManager,
+        packageHandler: PackageExtractionHandler
+    ) {
         self.repository = repository
         self.userDataManager = userDataManager
         self.packageHandler = packageHandler
+        self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
         
-        DispatchQueue.main.async {
-            self.userprofile = userDataManager.retriveLoggedUserFromKeychain()
+        bindRepositoryProgress()
+    }
+    
+    /// Binds the repository's uploadProgress to the view model's uploadProgress
+    private func bindRepositoryProgress() {
+        if let repo = repository as? StratusRepositoryImpl {
+            repo.$uploadProgress
+                .receive(on: DispatchQueue.main)
+                .assign(to: &$uploadProgress)
         }
     }
     
+    func fetchFolders() {
+        Task {
+            await fetchFoldersFromBucket()
+        }
+    }
+    
+    func downloadFile(url: String, type: DownloadType) async {
+        await downloadFileTask(url: url, type: type)
+    }
+    
     // MARK: Fetch bucket information
-    @MainActor 
-    func fetchFoldersFromBucket() async {
-        guard let email = userprofile?.email else { return }
+    @MainActor
+    private func fetchFoldersFromBucket() async {
         updateLoadingState(for: .sidebar, to: .loading)
         
-        let params: Parameters = ["bucket_name": "packages", "prefix": "\(email)/"]
+        let params: Parameters = ZAPIStrings.Parameter.folders(userProfile!.email).value
         
         do {
             let bucketObject = try await repository.getFoldersFromBucket(params)
             self.bucketObjectModels = try await processBucketContents(bucketObject)
-            
             updateLoadingState(for: .sidebar, to: .idle())
-        }catch {
+            if bucketObjectModels.isEmpty { updateLoadingState(for: .detail, to: .idle(.empty)) }
+        } catch {
             handleError(error.localizedDescription)
         }
     }
     
     @MainActor
     private func processBucketContents(_ bucketData: BucketObjectModel) async throws -> [BucketObjectModel] {
-        var localBucketObjectModel: [BucketObjectModel] = []
-        
-        for folder in bucketData.contents where folder.actualKeyType == .folder {
-            let params: Parameters = ["bucket_name": "packages", "prefix": "\(folder.key)/"]
-            let bucketObject = try await repository.getFoldersFromBucket(params)
-            localBucketObjectModel.append(bucketObject)
+        try await withThrowingTaskGroup(of: BucketObjectModel.self) { group in
+            for folder in bucketData.contents where folder.actualKeyType == .folder {
+                let params: Parameters = ZAPIStrings.Parameter.folders(folder.key).value
+                group.addTask {
+                    try await self.repository.getFoldersFromBucket(params)
+                }
+            }
+            var results: [BucketObjectModel] = []
+            for try await bucket in group {
+                results.append(bucket)
+            }
+            return results
         }
-        
-        return localBucketObjectModel
     }
     
     // MARK: - Fetch Application download link
-    @MainActor private func fetchPackageURL(_ endpoint: String?) async -> String? {
-        guard let prefix = endpoint else {
-            showToast("Invalid reload endpoint")
-            return nil
-        }
-
-        let params: Parameters = ["bucket_name": "packages",
-                                  "prefix": "\(prefix)/"]
+    @MainActor 
+    private func fetchPackageURL(_ endpoint: String?) async -> String? {
+        guard let prefix = endpoint else { return nil }
+        let params: Parameters = ZAPIStrings.Parameter.packageURL(prefix).value
 
         do {
             let bucketData = try await repository.getFoldersFromBucket(params)
@@ -106,16 +144,20 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Upload Handling
-    @MainActor func uploadPackage(endpoint: String?, _ callBack: @escaping () async -> Void) async {
-        guard let endpoint, let appName = packageHandler.bundleProperties?.bundleName else {
+    @MainActor 
+    func uploadPackage(endpoint: String?, _ callBack: @escaping () async -> Void) async {
+        guard let endpoint else {
             showToast("Invalid upload endpoint.")
             return
         }
         
-        self.assignUploadProgress()
+        guard let appName = packageHandler.bundleProperties?.bundleName else {
+            handleError("Bundle name is missing")
+            return
+        }
         
         do {
-            try await uploadPackageComponents(endpoint: endpoint)
+            try await uploadPackageComponents(endpoint: endpoint, appName: appName)
             try await generateInstallerPropertyList(endpoint)
             try await uploadComponent(type: .installerPlist(appName), endpoint: endpoint, message: "Uploading Installer")
             await callBack()
@@ -124,25 +166,24 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    private func uploadPackageComponents(endpoint: String) async throws {
-        guard let appName = packageHandler.bundleProperties?.bundleName else {
-            handleError("Bundle name not found while uploading packages")
-            return
-        }
+    @MainActor
+    private func uploadPackageComponents(endpoint: String, appName: String) async throws {
+        let components: [(UploadComponentType, String)] = [(.application(appName), "Uploading application"), (.icon, "Uploading app icon"), (.infoPlist, "Uploading Info.plist"), (.provision, "Uploading provision")]
         
-        try await uploadComponent(type: .application(appName), endpoint: endpoint, message: "Uploading application")
-        try await uploadComponent(type: .icon, endpoint: endpoint, message: "Uploading app icon")
-        try await uploadComponent(type: .infoPlist, endpoint: endpoint, message: "Uploading Info.plist")
-        try await uploadComponent(type: .provision, endpoint: endpoint, message: "Uploading provision")
+        for (type, message) in components {
+            try await uploadComponent(type: type, endpoint: endpoint, message: message)
+        }
     }
     
+    @MainActor
     private func uploadComponent(type: UploadComponentType, endpoint: String, message: String) async throws {
-        updateLoadingState(for: .detail, to: .uploading("\(message) \(uploadProgress)%"))
+        updateLoadingState(for: .detail, to: .uploading(message))
         guard let data = try fetchData(for: type) else { throw ZError.NetworkError.missingData }
         let apiEndpoint = type.endpoint(for: endpoint)
         try await upload(data: data, to: apiEndpoint, contentType: type.contentType)
     }
     
+    @MainActor
     private func fetchData(for type: UploadComponentType) throws -> Data? {
         switch type {
         case .application: return packageHandler.fileTypeDataMap[.app]!
@@ -153,6 +194,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     private func generateInstallerPropertyList(_ endpoint: String) async throws {
         updateLoadingState(for: .detail, to: .uploading("Generating .plist"))
         if let objectURL = await fetchPackageURL(endpoint) {
@@ -162,6 +204,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     private func upload(data: Data, to endpoint: ZAPIStrings.Endpoint, contentType: ContentType) async throws {
         let headers = HTTPHeaders([.contentType(contentType.rawValue)])
         let result = try await repository.uploadObjects(endpoint: endpoint, headers: headers, data: data)
@@ -170,101 +213,33 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Download Property List
-    @MainActor func downloadInfoFile(url: String, completion: @escaping () -> Void) {
-        Download(url: url).downloadFile {[weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let fileData):
-                guard let fileProperties = self.packageHandler.parseInfoPlist(fileData) else {
-                    ZLogs.shared.error(ZError.FileConversionError.fileReadFailed.localizedDescription)
-                    return
-                }
-                
-                self.packageHandler.loadBundleProperties(with: fileProperties)
-                completion()
-            case .failure(let error):
-                updateLoadingState(for: .detail, to: .error(.detailError))
-                handleError(error.localizedDescription)
-                completion()
+    private func downloadFileTask(url: String, type: DownloadType) async {
+        do {
+            let data = try await downloadFile(from: url)
+            handleDownloadSuccess(data: data, type: type)
+        }catch {
+            handleError(error.localizedDescription)
+        }
+    }
+    
+    private func downloadFile(from url: String) async throws -> Data {
+        return try await DownloadService(url: url).downloadFile()
+    }
+    
+    private func handleDownloadSuccess(data: Data, type: DownloadType) {
+        switch type {
+        case .infoFile:
+            guard let fileProperties = packageHandler.parsePlist(data) else {
+                ZLogs.shared.error(ZError.FileConversionError.fileReadFailed.localizedDescription)
+                return
             }
-        }
-    }
-    
-    // MARK: - Download App Icon
-    @MainActor func downloadAppIconFile(url: String, completion: @escaping () -> Void) {
-        Download(url: url).downloadFile {[weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let iconData):
-                self.packageHandler.fileTypeDataMap[.icon] = iconData
-                completion()
-            case .failure(let error):
-                updateLoadingState(for: .detail, to: .error(.detailError))
-                handleError(error.localizedDescription)
-                completion()
-            }
-        }
-    }
-    
-    // MARK: - Download Mobile Provision
-    @MainActor func downloadProvisionFile(url: String, completion: @escaping () -> Void) {
-        Download(url: url).downloadFile {[weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let provisionFile):
-                guard let extractedData = try? self.packageHandler.plistHandler.extractXMLDataFromMobileProvision(provisionFile) else { return }
-                if let mobileProvisionDic = self.packageHandler.parseInfoPlist(extractedData) {
-                    self.packageHandler.loadMobileProvision(with: mobileProvisionDic)
-                    completion()
-                }
-            case .failure(let error):
-                updateLoadingState(for: .detail, to: .error(.detailError))
-                handleError(error.localizedDescription)
-                completion()
-            }
-        }
-    }
-    
-    func valueFor(_ identifier: PListCellIdentifiers) -> String? {
-        let bundleProperties = packageHandler.bundleProperties
-        
-        switch identifier {
-        case .bundleName:
-            return bundleProperties?.bundleName
-        case .bundleIdentifiers:
-            return bundleProperties?.bundleIdentifier
-        case .bundleVersionShort:
-            return bundleProperties?.bundleVersionShort
-        case .bundleVersion:
-            return bundleProperties?.bundleVersion
-        case .minOSVersion:
-            return bundleProperties?.minimumOSVersion
-        case .requiredDevice:
-            return bundleProperties?.requiredDeviceCompability?.joined(separator: ", ")
-        case .supportedPlatform:
-            return bundleProperties?.supportedPlatform?.joined(separator: ", ")
-        }
-    }
-    
-    func valueFor(provision identifier: ProvisionCellIdentifiers) -> String? {
-        guard let mobileProvision = packageHandler.mobileProvision else { return nil }
-        switch identifier {
-        case .name:
-            return mobileProvision.name
-        case .teamIdentifier:
-            return mobileProvision.teamIdentifier.joined(separator: ", ")
-        case .creationDate:
-            return mobileProvision.creationDate.formatted(date: .abbreviated, time: .shortened)
-        case .expiredDate:
-            return mobileProvision.expirationDate.formatted(date: .abbreviated, time: .shortened)
-        case .teamName:
-            return mobileProvision.teamName
-        case .version:
-            return String(mobileProvision.version)
+            packageHandler.loadBundleProperties(with: fileProperties)
+        case .appIcon:
+            packageHandler.fileTypeDataMap[.icon] = data
+        case .provision:
+            guard let extractedData = try? packageHandler.plistHandler.extractXMLDataFromMobileProvision(data),
+                  let mobileProvisionDic = packageHandler.parsePlist(extractedData) else { return }
+            packageHandler.loadMobileProvision(with: mobileProvisionDic)
         }
     }
 
@@ -303,14 +278,6 @@ class HomeViewModel: ObservableObject {
             case .sidebar: sideBarLoadingState = state
             case .detail: detailViewLoadingState = state
             }
-        }
-    }
-    
-    private func assignUploadProgress() {
-        if let repository = repository as? StratusRepositoryImpl {
-            repository.$uploadProgress
-                .receive(on: DispatchQueue.main)
-                .assign(to: &$uploadProgress)
         }
     }
     

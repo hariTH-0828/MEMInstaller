@@ -15,7 +15,7 @@ struct UserProfileButtonView: View {
             return profileImageData.profileImageData
         }
         
-        return UserDataManager().retriveLoggedUserFromKeychain()!.profileImageData
+        return UserDataManager().retrieveLoggedUserFromKeychain()!.profileImageData
     }
     
     var body: some View {

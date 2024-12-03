@@ -94,3 +94,18 @@ fileprivate struct BundleIcon: Decodable {
         self.primaryIcon = try container.decodeIfPresent(PrimaryIcon.self, forKey: .primaryIcon)
     }
 }
+
+// MARK: - Extensions for BundleProperties
+extension BundleProperties {
+    func value(for identifier: PListCellIdentifiers) -> String? {
+        switch identifier {
+        case .bundleName: return bundleName
+        case .bundleIdentifiers: return bundleIdentifier
+        case .bundleVersionShort: return bundleVersionShort
+        case .bundleVersion: return bundleVersion
+        case .minOSVersion: return minimumOSVersion
+        case .requiredDevice: return requiredDeviceCompability?.joined(separator: ", ")
+        case .supportedPlatform: return supportedPlatform?.joined(separator: ", ")
+        }
+    }
+}
