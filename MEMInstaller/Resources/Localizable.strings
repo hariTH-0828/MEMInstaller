@@ -16,11 +16,23 @@
 "com.learn.meminstaller.home.no-file-description" = "Store and organize your data in Catalyst bucket object, and manage access to your files";
 "com.learn.meminstaller.home.btn_upload" = "Upload file";
 "com.learn.meminstaller.home.refresh" = "Refresh";
+
 "com.learn.meminstaller.setting.title" = "Settings";
 "com.learn.meminstaller.setting.share-log" = "Share logs";
 "com.learn.meminstaller.setting.about" = "About";
-"com.learn.meminstaller.setting.privacy" = "Privacy";
 "com.learn.meminstaller.setting.clear_cache" = "Clear cache";
 "com.learn.meminstaller.setting.about.description" = "Welcome to MEMInstaller, the official in-house application designed exclusively for Zoho Corporation. This app has been developed to enhance productivity and streamline operations, offering a secure platform tailored to meet the specific needs of our team.\n\nDistributed via our enterprise network, MEMInstaller ensures easy access to essential tools and resources anytime, anywhere. Your data privacy and security are our top priorities, with robust encryption and compliance with industry standards.";
 "com.learn.meminstaller.setting.signout" = "Sign out";
 "com.learn.meminstaller.setting.footnote" = "2024, Zoho Corporation Pvt. Ltd., All Rights Reserved.";
+
+"com.learn.meminstaller.setting.privacy" = "Privacy";
+"com.learn.meminstaller.setting.privacy.applock-desc" = "Use your device passcode or biometric to unlock MEMInstaller";
+"com.learn.meminstaller.setting.privacy.applock" = "App lock";
+"com.learn.meminstaller.setting.privacy.usage-stats-desc" = "Share usage status with our developers. This helps us improve the app.";
+"com.learn.meminstaller.setting.privacy.usage-stats" = "Share usage stats";
+"com.learn.meminstaller.setting.privacy.share-email-desc" = "Share your email address along with your usage stats. This will help us if you report specific problem to our support team.";
+"com.learn.meminstaller.setting.privacy.share-email" = "Share your email address";
+"com.learn.meminstaller.setting.privacy.crash-report-desc" = "Share crash data with our developers if the app shuts abruptly. This will help us identify bugs and put out fixes.";
+"com.learn.meminstaller.setting.privacy.crash-report" = "Enable crash reporting";
+"com.learn.meminstaller.setting.privacy.shake-feedback-desc" = "Shake your device to send us feedback or to report a bug with a screenshot";
+"com.learn.meminstaller.setting.privacy.shake-feedback" = "Shake to send feedback";

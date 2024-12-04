@@ -38,13 +38,13 @@ struct SettingsView: View {
             VStack {
                 UserProfileImageView(userProfile: userProfile!)
                 
-                NavigationLink { } label: {
-                    settingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
+                NavigationLink { SettingPrivacyView() } label: {
+                    SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
                 }
                 .settingButtonView()
                 
                 NavigationLink { coordinator.build(forScreen: .about) } label: {
-                    settingLabelView("About", iconName: "i.circle", iconColor: .accentColor)
+                    SettingLabelView("About", iconName: "i.circle", iconColor: .accentColor)
                     Text("version " + (Bundle.appVersion ?? "v1.0"))
                         .font(.system(size: 14))
                         .foregroundStyle(StyleManager.colorStyle.systemGray)
@@ -54,14 +54,14 @@ struct SettingsView: View {
                 Button(action: {
                     coordinator.presentSheet(.activityRepresentable(logFileURL))
                 }, label: {
-                    settingLabelView("com.learn.meminstaller.setting.share-log", iconName: "square.and.arrow.up", iconColor: .cyan)
+                    SettingLabelView("com.learn.meminstaller.setting.share-log", iconName: "square.and.arrow.up", iconColor: .cyan)
                 })
                 .settingButtonView()
                 
                 Button(action: {
                     clearCacheData()
                 }, label: {
-                    settingLabelView("com.learn.meminstaller.setting.clear_cache", iconName: "ico_database", iconColor: .blue)
+                    SettingLabelView("com.learn.meminstaller.setting.clear_cache", iconName: "ico_database", iconColor: .blue)
                     
                     Text(totalCacheSize ?? "0")
                         .font(.system(size: 14))
@@ -73,7 +73,7 @@ struct SettingsView: View {
                     Button(action: {
                         Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
                     }, label: {
-                        settingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
+                        SettingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
                     })
                     .settingButtonView()
                 } footer: {
@@ -107,11 +107,31 @@ struct SettingsView: View {
         )
     }
     
-    @ViewBuilder
-    private func settingLabelView(_ title: LocalizedStringKey,
-                                  color: Color = StyleManager.colorStyle.invertBackground,
-                                  iconName: String,
-                                  iconColor: Color) -> some View {
+    // MARK: - HELPER METHODS
+    private func clearCacheData() {
+        do {
+            try ZFFileManager.shared.clearAllCache()
+            self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
+        }catch {
+            
+        }
+    }
+}
+
+struct SettingLabelView: View {
+    let title: LocalizedStringKey
+    let color: Color
+    let iconName: String
+    let iconColor: Color
+    
+    init(_ title: LocalizedStringKey, color: Color = StyleManager.colorStyle.invertBackground, iconName: String, iconColor: Color) {
+        self.title = title
+        self.iconName = iconName
+        self.color = color
+        self.iconColor = iconColor
+    }
+    
+    var body: some View {
         HStack {
             if UIImage.isAssetAvailable(named: iconName) {
                 Image(iconName)
@@ -132,19 +152,10 @@ struct SettingsView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
-    
-    // MARK: - HELPER METHODS
-    private func clearCacheData() {
-        do {
-            try ZFFileManager.shared.clearAllCache()
-            self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
-        }catch {
-            
-        }
-    }
 }
 
+
+// MARK: - PREVIEW
 struct SettingViewPreviewProvider: PreviewProvider {
     
     static var previews: some View {
@@ -153,12 +164,5 @@ struct SettingViewPreviewProvider: PreviewProvider {
                 .navigationTitle("Settings")
                 .environmentObject(AppCoordinatorImpl())
         }
-    }
-}
-
-
-extension ProcessInfo {
-    var isPreview: Bool {
-        environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
     }
 }

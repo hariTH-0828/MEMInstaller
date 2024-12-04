@@ -10,4 +10,9 @@ import Foundation
 struct UserDefaultsKey {
     static let appFirstLaunch = "appFirstLaunch"
     static let userThemePreference = "user_theme_preference"
+    static let biometricAuthenticate = "appBiometricAuthentication"
+    static let shareUsageStats = "appUsageStatsSharing"
+    static let shareEmailAddress = "appUserEmailAddressSharing"
+    static let enableCrashReport = "appCrashReporting"
+    static let shakeToSendFeedback = "appFeedbackShare"
 }

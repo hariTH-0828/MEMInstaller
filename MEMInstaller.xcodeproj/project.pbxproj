@@ -66,6 +66,8 @@
 		529E6FEA2CFCDA45002AB497 /* Array+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E6FE92CFCDA45002AB497 /* Array+.swift */; };
 		52A77EF52CF9F5830064A063 /* UserProfileButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A77EF42CF9F5830064A063 /* UserProfileButtonView.swift */; };
 		52B095192CEEF46D00D0D383 /* EnvironmentKey+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */; };
+		52B7D08E2D001FFC0095707B /* SettingPrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7D08D2D001FFC0095707B /* SettingPrivacyView.swift */; };
+		52B7D0902D00219A0095707B /* ProcessInfo+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7D08F2D00219A0095707B /* ProcessInfo+.swift */; };
 		52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCAE2CF7884500D49186 /* AboutView.swift */; };
 		52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */; };
 		52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */; };
@@ -181,6 +183,8 @@
 		529E6FE92CFCDA45002AB497 /* Array+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+.swift"; sourceTree = "<group>"; };
 		52A77EF42CF9F5830064A063 /* UserProfileButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileButtonView.swift; sourceTree = "<group>"; };
 		52B095182CEEF46D00D0D383 /* EnvironmentKey+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentKey+.swift"; sourceTree = "<group>"; };
+		52B7D08D2D001FFC0095707B /* SettingPrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingPrivacyView.swift; sourceTree = "<group>"; };
+		52B7D08F2D00219A0095707B /* ProcessInfo+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+.swift"; sourceTree = "<group>"; };
 		52BCCCAE2CF7884500D49186 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
 		52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheetModifier.swift; sourceTree = "<group>"; };
@@ -271,6 +275,7 @@
 				5270C56A2CEDECFB00C051CB /* PresentLogoutView.swift */,
 				52BCCCAE2CF7884500D49186 /* AboutView.swift */,
 				52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */,
+				52B7D08D2D001FFC0095707B /* SettingPrivacyView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				5252A4192CF71DB2005DD9CC /* Decimal+.swift */,
 				529A4D1A2CF9774D00E2EDB7 /* UIScreen+.swift */,
 				529E6FE92CFCDA45002AB497 /* Array+.swift */,
+				52B7D08F2D00219A0095707B /* ProcessInfo+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -926,6 +932,7 @@
 				52F393B92CE5D15F00C9B23C /* NetworkRequestProtocol.swift in Sources */,
 				52E109E72CE70671002D1EDD /* View+.swift in Sources */,
 				52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */,
+				52B7D0902D00219A0095707B /* ProcessInfo+.swift in Sources */,
 				5252A4032CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift in Sources */,
 				52F393BD2CE5D9EE00C9B23C /* TokenProviderProtocol.swift in Sources */,
 				52E109E12CE67994002D1EDD /* EmptyBucketView.swift in Sources */,
@@ -933,6 +940,7 @@
 				52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */,
 				52E109ED2CE75C18002D1EDD /* BucketObjectModel.swift in Sources */,
 				523F71D52CDB323100D564E7 /* ContentView.swift in Sources */,
+				52B7D08E2D001FFC0095707B /* SettingPrivacyView.swift in Sources */,
 				523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */,
 				52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */,
 				520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */,
