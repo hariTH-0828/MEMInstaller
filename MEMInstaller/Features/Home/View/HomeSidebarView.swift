@@ -41,17 +41,29 @@ struct HomeSidebarView: View {
     @ViewBuilder
     private func listAvailableApplications() -> some View {
         List(viewModel.bucketObjectModels, id: \.self, selection: $selectedBucketObject) { bucketObject in
-            // fileURLs
             let packageURL = viewModel.extractFileURLs(from: bucketObject.contents, folderName: bucketObject.folderName)
 
-            Button {
-                handleAppSelection(with: packageURL)
-            } label: {
+            NavigationLink(value: selectedBucketObject) {
                 HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: packageURL.appIconURL)
             }
+//            NavigationLink {
+//                AttachedFileDetailView(viewModel: viewModel, attachmentMode: .install)
+//            } label: {
+//                HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: packageURL.appIconURL)
+//            }
+
+//            Button {
+//                handleAppSelection(with: packageURL)
+//            } label: {
+//                HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: packageURL.appIconURL)
+//            }
         }
         .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
+        .onChange(of: selectedBucketObject) { _, newValue in
+            guard let newValue else { return }
+            handleAppSelection(with: viewModel.extractFileURLs(from: newValue.contents, folderName: newValue.folderName))
+        }
     }
     
     @ViewBuilder
