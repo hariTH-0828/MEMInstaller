@@ -32,6 +32,8 @@ enum AttachmentMode: Hashable {
 }
 
 struct AttachedFileDetailView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @ObservedObject var viewModel: HomeViewModel
     let attachmentMode: AttachmentMode
     
@@ -143,7 +145,7 @@ struct AttachedFileDetailView: View {
             .padding(.bottom, 30)
             
             Button {
-                viewModel.updateLoadingState(for: .detail, to: .idle(.empty))
+                viewModel.updateLoadingState(for: .detail, to: .idle(.available))
             } label: {
                 Text("Cancel")
                     .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.25, 180))
@@ -154,7 +156,7 @@ struct AttachedFileDetailView: View {
     }
     
     private func installApplication() {
-        guard let objectURL = viewModel.packageHandler.objectURL else {
+        guard let objectURL = PackageExtractionHandler.shared.packageURLs?.infoPropertyListURL else {
             ZLogs.shared.error("Error: Installation - objectURL not found")
             viewModel.showToast("Installation failed: URL not found")
             return

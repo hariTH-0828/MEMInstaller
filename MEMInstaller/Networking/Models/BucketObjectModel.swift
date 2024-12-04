@@ -58,7 +58,6 @@ struct ContentModel: Codable, Hashable {
     let contentType: String?
     let lastModified: String
     let url: String
-//    let folderName: String
     let actualKeyType: ContentKeyType
     let actualContentType: ContentType
     
@@ -81,7 +80,6 @@ struct ContentModel: Codable, Hashable {
         self.lastModified = try container.decode(String.self, forKey: .lastModified)
         self.contentType = try container.decodeIfPresent(String.self, forKey: .contentType)
         self.actualContentType = ContentType(rawValue: contentType ?? "application/octet-stream")!
-//        self.folderName = URL(string: url)!.lastPathComponent
     }
     
     init() {
@@ -93,6 +91,5 @@ struct ContentModel: Codable, Hashable {
         self.url = "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
         self.actualKeyType = .file
         self.actualContentType = .document
-//        self.folderName = "Info"
     }
 }

@@ -10,15 +10,21 @@ import Zip
 import SwiftUI
 
 class PackageExtractionHandler {
+    // MARK: - Singleton
+    static let shared: PackageExtractionHandler = PackageExtractionHandler()
+    
+    private init() {}
+    
     // Property Handler
-    let plistHandler = PropertyListHandler()
+    private let plistHandler = PropertyListHandler()
     
     var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     private var sourceURL: URL!
+    
     var bundleProperties: BundleProperties?
     var mobileProvision: MobileProvision?
-    var objectURL: String?
+    private(set) var packageURLs: PackageURL?
     
     // Attachment View
     var shareItem: [URL] = []
@@ -107,6 +113,14 @@ class PackageExtractionHandler {
         }catch {
             ZLogs.shared.warning(error.localizedDescription)
         }
+    }
+    
+    func extractXMLFromProvision(_ data: Data) throws -> Data {
+        try plistHandler.extractXMLDataFromMobileProvision(data)
+    }
+    
+    func updatePackageURL(_ packageURL: PackageURL) {
+        self.packageURLs = packageURL
     }
     
     private func processAppBundleContents(at payLoadPath: URL) throws {

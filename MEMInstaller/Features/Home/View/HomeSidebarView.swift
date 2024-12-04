@@ -42,12 +42,12 @@ struct HomeSidebarView: View {
     private func listAvailableApplications() -> some View {
         List(viewModel.bucketObjectModels, id: \.self, selection: $selectedBucketObject) { bucketObject in
             // fileURLs
-            let fileURLs = viewModel.extractFileURLs(from: bucketObject.contents, folderName: bucketObject.folderName)
+            let packageURL = viewModel.extractFileURLs(from: bucketObject.contents, folderName: bucketObject.folderName)
 
             Button {
-                handleAppSelection(with: fileURLs)
+                handleAppSelection(with: packageURL)
             } label: {
-                HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: fileURLs.iconURL)
+                HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: packageURL.appIconURL)
             }
         }
         .refreshable { viewModel.fetchFolders() }
@@ -85,8 +85,8 @@ struct HomeSidebarView: View {
     // MARK: - HELPER METHODS
     /// Handles the action when a folder is selected, such as downloading necessary files and updating the UI state.
     /// - Parameter fileURLs: A tuple containing the URLs for the app icon, Info.plist, and object plist.
-    private func handleAppSelection(with fileURLs: (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?)) {
-        guard let iconURL = fileURLs.iconURL, let infoPlistURL = fileURLs.infoPlistURL, let provisionURL = fileURLs.provisionURL  else { return }
+    private func handleAppSelection(with packageURL: PackageURL) {
+        guard let iconURL = packageURL.appIconURL, let infoPlistURL = packageURL.infoPropertyListURL, let provisionURL = packageURL.mobileProvisionURL  else { return }
 
         viewModel.updateLoadingState(for: .detail, to: .loading)
         
@@ -97,7 +97,6 @@ struct HomeSidebarView: View {
             
             _ = await (infoPlistData, provisionData, iconData)
             
-            viewModel.packageHandler.objectURL = fileURLs.objectURL
             viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.install)))
         }
     }

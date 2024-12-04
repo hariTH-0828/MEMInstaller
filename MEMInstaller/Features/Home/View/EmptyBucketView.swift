@@ -72,8 +72,7 @@ struct EmptyBucketView: View {
 extension HomeViewModel {
     static var preview: HomeViewModel {
         HomeViewModel(repository: StratusRepositoryImpl(),
-                      userDataManager: UserDataManager(),
-                      packageHandler: PackageExtractionHandler())
+                      userDataManager: UserDataManager())
     }
 }
 

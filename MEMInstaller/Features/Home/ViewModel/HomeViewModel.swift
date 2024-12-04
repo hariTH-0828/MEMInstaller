@@ -51,17 +51,15 @@ class HomeViewModel: HomeViewModelProtocol {
     // Dependencies
     private let userDataManager: UserDataManager
     private let repository: StratusRepository
-    let packageHandler: PackageExtractionHandler
+    let packageHandler: PackageExtractionHandler = PackageExtractionHandler.shared
     private var cancellables = Set<AnyCancellable>()
     
     init(
         repository: StratusRepository,
-        userDataManager: UserDataManager,
-        packageHandler: PackageExtractionHandler
+        userDataManager: UserDataManager
     ) {
         self.repository = repository
         self.userDataManager = userDataManager
-        self.packageHandler = packageHandler
         self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
         
         bindRepositoryProgress()
@@ -237,7 +235,7 @@ class HomeViewModel: HomeViewModelProtocol {
         case .appIcon:
             packageHandler.fileTypeDataMap[.icon] = data
         case .provision:
-            guard let extractedData = try? packageHandler.plistHandler.extractXMLDataFromMobileProvision(data),
+            guard let extractedData = try? packageHandler.extractXMLFromProvision(data),
                   let mobileProvisionDic = packageHandler.parsePlist(extractedData) else { return }
             packageHandler.loadMobileProvision(with: mobileProvisionDic)
         }
@@ -252,12 +250,13 @@ class HomeViewModel: HomeViewModelProtocol {
     ///   - contents: The list of contents in the folder.
     ///   - folderName: The name of the folder being processed.
     /// - Returns: A tuple containing the app icon URL, Info.plist URL, and object plist URL (all optional).
-    func extractFileURLs(from contents: [ContentModel], folderName: String) -> (iconURL: String?, infoPlistURL: String?, provisionURL: String?, objectURL: String?) {
+    func extractFileURLs(from contents: [ContentModel], folderName: String) -> PackageURL {
         let iconURL = contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
         let infoPlistURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
         let provisionURL = contents.first(where: { $0.actualContentType == .mobileProvision && $0.key.contains("embedded.mobileprovision") })?.url
         let objectURL = contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
-        return (iconURL, infoPlistURL, provisionURL, objectURL)
+        let packageURL = PackageURL(infoPropertyListURL: infoPlistURL, appIconURL: iconURL, installerURL: objectURL, mobileProvisionURL: provisionURL)
+        return packageURL
     }
     
     // MARK: - Error and Toast Handling

@@ -21,36 +21,26 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @Published var shouldShowFileImporter: Bool = false
     var fileImportCompletion: ((Result<URL, any Error>) -> Void)?
     var fileExportCompletion: ((Bool, Error?) -> Void)?
-    
-    @inlinable
-    @inline(__always)
+
     func push(_ screen: Screen) {
         navigationPath.append(screen)
     }
     
-    @inlinable
-    @inline(__always)
     func pop() {
         guard !navigationPath.isEmpty else { return }
         navigationPath.removeLast()
     }
-    
-    @inlinable
-    @inline(__always)
+
     func popToRoot() {
         navigationPath.removeLast(navigationPath.count)
     }
     
     // MARK: - Sheet Management
-    @inlinable
-    @inline(__always)
     func presentSheet(_ sheet: Sheet, onDismiss: (() -> Void)? = nil) {
         self.sheet = sheet
         self.onDismiss = onDismiss
     }
     
-    @inlinable
-    @inline(__always)
     func pop(_ pop: Pop) {
         self.popView = pop
     }

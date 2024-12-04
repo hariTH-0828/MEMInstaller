@@ -76,6 +76,9 @@ struct SettingsView: View {
                         SettingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
                     })
                     .settingButtonView()
+                    .popover(item: $coordinator.popView, arrowEdge: .bottom) { pop in
+                        coordinator.build(forPop: pop)
+                    }
                 } footer: {
                     footerView
                 }

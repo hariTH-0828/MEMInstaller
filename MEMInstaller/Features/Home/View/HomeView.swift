@@ -15,8 +15,7 @@ struct HomeView: View {
     
     // Use a default value for `viewModel`
     init(viewModel: HomeViewModel = HomeViewModel(repository: StratusRepositoryImpl(),
-                                                  userDataManager: UserDataManager(),
-                                                  packageHandler: PackageExtractionHandler()))
+                                                  userDataManager: UserDataManager()))
     {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
