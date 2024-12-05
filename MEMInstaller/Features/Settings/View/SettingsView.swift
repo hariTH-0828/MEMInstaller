@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MEMToast
 
 struct SettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
@@ -22,7 +23,7 @@ struct SettingsView: View {
     init(userDataManager: UserDataManager = UserDataManager()) {
         self.userDataManager = userDataManager
         
-        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+        if ProcessInfo.processInfo.isPreview {
             self.userProfile = .preview
         }else {
             self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
@@ -38,7 +39,7 @@ struct SettingsView: View {
             VStack {
                 UserProfileImageView(userProfile: userProfile!)
                 
-                NavigationLink { SettingPrivacyView() } label: {
+                NavigationLink { coordinator.build(forScreen: .privacy) } label: {
                     SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
                 }
                 .settingButtonView()
@@ -165,7 +166,6 @@ struct SettingViewPreviewProvider: PreviewProvider {
         NavigationStack {
             SettingsView()
                 .navigationTitle("Settings")
-                .environmentObject(AppCoordinatorImpl())
         }
     }
 }

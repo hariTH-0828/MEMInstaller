@@ -42,7 +42,6 @@ struct UserProfilePreviewProvider: PreviewProvider {
         NavigationStack {
             SettingsView()
                 .navigationTitle("Settings")
-                .environmentObject(AppCoordinatorImpl())
         }
     }
 }

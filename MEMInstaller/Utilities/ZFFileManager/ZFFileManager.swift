@@ -57,17 +57,21 @@ class ZFFileManager: ZFFileProtocol {
         
         let appSpecificCacheDirectoryURL = cacheDirectoryURL.appendingPathComponent(bundleIdentifier, isDirectory: true)
         
+        return createCacheDirectory(of: appSpecificCacheDirectoryURL)
+    }
+    
+    private func createCacheDirectory(of cacheDirectoryURL: URL) -> URL {
         // Create a directory if it does not exist
-        if !fileManager.fileExists(atPath: appSpecificCacheDirectoryURL.path(percentEncoded: true)) {
+        if !fileManager.fileExists(atPath: cacheDirectoryURL.path(percentEncoded: true)) {
             do {
-                try fileManager.createDirectory(at: appSpecificCacheDirectoryURL, withIntermediateDirectories: true)
-                ZLogs.shared.info("Successfully created cache directory at \(appSpecificCacheDirectoryURL.path)")
+                try fileManager.createDirectory(at: cacheDirectoryURL, withIntermediateDirectories: true)
+                ZLogs.shared.info("Successfully created cache directory at \(cacheDirectoryURL.path)")
             }catch {
-                ZLogs.shared.error("Error creating cache directory at \(appSpecificCacheDirectoryURL.path): \(error.localizedDescription)")
+                ZLogs.shared.error("Error creating cache directory at \(cacheDirectoryURL.path): \(error.localizedDescription)")
             }
         }
         
-        return appSpecificCacheDirectoryURL
+        return cacheDirectoryURL
     }
     
     /// Retrieves the application cache directory.

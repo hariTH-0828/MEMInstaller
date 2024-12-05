@@ -9,7 +9,8 @@ import Foundation
 import Zip
 import SwiftUI
 
-class PackageExtractionHandler {
+@MainActor
+class PackageExtractionHandler: ObservableObject {
     // MARK: - Singleton
     static let shared: PackageExtractionHandler = PackageExtractionHandler()
     
@@ -17,17 +18,12 @@ class PackageExtractionHandler {
     
     // Property Handler
     private let plistHandler = PropertyListHandler()
-    
-    var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
-    
     private var sourceURL: URL!
     
-    var bundleProperties: BundleProperties?
-    var mobileProvision: MobileProvision?
-    private(set) var packageURLs: PackageURL?
+    @Published var bundleProperties: BundleProperties?
+    @Published var mobileProvision: MobileProvision?
     
-    // Attachment View
-    var shareItem: [URL] = []
+    var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     // FileManager
     private let fileManager = FileManager.default
@@ -53,7 +49,7 @@ class PackageExtractionHandler {
     }
     
     // MARK: - Bundle Info
-    func extractIpaFileContents() {
+    private func extractIpaFileContents() {
         guard let zipLocation = convertFileIpaToZip(to: "zip") else {
             ZLogs.shared.warning("File conversion failed")
             return
@@ -83,16 +79,7 @@ class PackageExtractionHandler {
         return appCacheDirectory.appendingPathComponent(fileName, conformingTo: .zip)
     }
     
-    // MARK: - Directory Managerment
-    private func clearDirectory(at directory: URL) {
-        do {
-            try ZFFileManager.shared.clearAllCache()
-        }catch {
-            ZLogs.shared.warning("Failed to clear cache directory: \(error.localizedDescription)")
-        }
-    }
-    
-    func unzip(from sourceURL: URL) {
+    private func unzip(from sourceURL: URL) {
         do {
             try Zip.unzipFile(sourceURL, destination: appCacheDirectory, overwrite: true, password: "")
         }catch {
@@ -119,8 +106,13 @@ class PackageExtractionHandler {
         try plistHandler.extractXMLDataFromMobileProvision(data)
     }
     
-    func updatePackageURL(_ packageURL: PackageURL) {
-        self.packageURLs = packageURL
+    // MARK: - Directory Managerment
+    private func clearDirectory(at directory: URL) {
+        do {
+            try ZFFileManager.shared.clearAllCache()
+        }catch {
+            ZLogs.shared.warning("Failed to clear cache directory: \(error.localizedDescription)")
+        }
     }
     
     private func processAppBundleContents(at payLoadPath: URL) throws {

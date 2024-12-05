@@ -66,14 +66,14 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         switch screen {
         case .home:
             HomeView()
-        case .tabView:
-            TabViewController()
         case .login:
             LoginView()
         case .settings:
             SettingsView()
         case .about:
             AboutView()
+        case .privacy:
+            SettingPrivacyView()
         }
     }
     

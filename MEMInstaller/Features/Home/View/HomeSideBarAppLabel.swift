@@ -23,7 +23,7 @@ struct HomeSideBarAppLabel: View {
                         .foregroundStyle(StyleManager.colorStyle.invertBackground)
                 },
                 icon: {
-                    appIconView(iconURL)
+                    AppIconView(iconURL: iconURL)
                 }
             )
             
@@ -34,22 +34,6 @@ struct HomeSideBarAppLabel: View {
                 .foregroundStyle(StyleManager.colorStyle.systemGray)
         }
         .frame(height: 35)
-    }
-    
-    @ViewBuilder
-    private func appIconView(_ iconURL: String?) -> some View {
-        if let iconURL {
-            AsyncImage(url: URL(string: iconURL)!) { image in
-                image
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
-            } placeholder: {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .foregroundStyle(StyleManager.colorStyle.systemGray)
-            }
-        }
     }
     
     // MARK: - HELPER METHODS
@@ -81,4 +65,24 @@ struct HomeSideBarAppLabel: View {
 
 #Preview {
     HomeSideBarAppLabel(bucketObject: BucketObjectModel(), iconURL: "")
+}
+
+
+struct AppIconView: View {
+    let iconURL: String?
+    
+    var body: some View {
+        if let iconURL {
+            AsyncImage(url: URL(string: iconURL)!) { image in
+                image
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } placeholder: {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .foregroundStyle(StyleManager.colorStyle.systemGray)
+            }
+        }
+    }
 }

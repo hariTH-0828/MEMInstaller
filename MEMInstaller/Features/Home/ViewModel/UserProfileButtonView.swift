@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct UserProfileButtonView: View {
-    @EnvironmentObject private var coordinator: AppCoordinatorImpl
+    @EnvironmentObject var coordinator: AppCoordinatorImpl
     
     private var uiImage: Data {
-        if let profileImageData = UserDataManager().userProfile {
+        if let profileImageData = UserDataManager().retrieveLoggedUserFromKeychain() {
             return profileImageData.profileImageData
         }
         
@@ -20,14 +20,14 @@ struct UserProfileButtonView: View {
     
     var body: some View {
         ZStack {
-            Button(action: {
+            Button {
                 coordinator.push(.settings)
-            }, label: {
+            } label: {
                 Image(uiImage: UIImage(data: uiImage)!)
                     .resizable()
                     .frame(width: 35, height: 35)
                     .clipShape(Circle())
-            })
+            }
         }
     }
 }

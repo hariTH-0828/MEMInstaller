@@ -95,7 +95,6 @@ struct SettingPrivacyView_previewProvider: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             SettingPrivacyView()
-                .environmentObject(AppCoordinatorImpl())
         }
     }
 }

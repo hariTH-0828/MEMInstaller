@@ -16,6 +16,7 @@
 		5216480B2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */; };
 		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
 		521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */; };
+		522C7F632D01942D0032F25E /* AttachedFileDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -52,7 +53,6 @@
 		5252A40B2CF64272005DD9CC /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */; };
 		5252A40E2CF64FCA005DD9CC /* ZSMultiThreading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */; };
 		5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */; };
-		5252A4142CF6E9A6005DD9CC /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4132CF6E9A6005DD9CC /* TabViewController.swift */; };
 		5252A4182CF704A2005DD9CC /* ViewBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4172CF704A2005DD9CC /* ViewBuilders.swift */; };
 		5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4192CF71DB2005DD9CC /* Decimal+.swift */; };
 		525AD98F2CF4424600BF08AF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525AD98E2CF4424600BF08AF /* Device.swift */; };
@@ -70,7 +70,6 @@
 		52B7D0902D00219A0095707B /* ProcessInfo+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7D08F2D00219A0095707B /* ProcessInfo+.swift */; };
 		52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCAE2CF7884500D49186 /* AboutView.swift */; };
 		52BCCCB12CF7886100D49186 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */; };
-		52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */; };
 		52BCCCB92CF8D2E700D49186 /* UploadComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */; };
 		52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BCCCBA2CF8EC8600D49186 /* Constants.swift */; };
 		52CF5B6C2D005D210059A2F6 /* PackageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF5B6B2D005D210059A2F6 /* PackageURL.swift */; };
@@ -130,6 +129,7 @@
 		5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSideBarAppLabel.swift; sourceTree = "<group>"; };
 		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
 		521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLoadingWrapper.swift; sourceTree = "<group>"; };
+		522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailViewModel.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -170,7 +170,6 @@
 		5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		5252A40D2CF64FCA005DD9CC /* ZSMultiThreading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSMultiThreading.swift; sourceTree = "<group>"; };
 		5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationEnums.swift; sourceTree = "<group>"; };
-		5252A4132CF6E9A6005DD9CC /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		5252A4172CF704A2005DD9CC /* ViewBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBuilders.swift; sourceTree = "<group>"; };
 		5252A4192CF71DB2005DD9CC /* Decimal+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decimal+.swift"; sourceTree = "<group>"; };
 		525AD98E2CF4424600BF08AF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -188,7 +187,6 @@
 		52B7D08F2D00219A0095707B /* ProcessInfo+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessInfo+.swift"; sourceTree = "<group>"; };
 		52BCCCAE2CF7884500D49186 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		52BCCCB02CF7886100D49186 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
-		52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheetModifier.swift; sourceTree = "<group>"; };
 		52BCCCB82CF8D2E700D49186 /* UploadComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadComponents.swift; sourceTree = "<group>"; };
 		52BCCCBA2CF8EC8600D49186 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		52CF5B6B2D005D210059A2F6 /* PackageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageURL.swift; sourceTree = "<group>"; };
@@ -296,6 +294,14 @@
 				520732F32CE3851600659A66 /* UserDefaultsKey.swift */,
 			);
 			path = UserDefaults;
+			sourceTree = "<group>";
+		};
+		522C7F612D0194210032F25E /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		523F71C62CDB323100D564E7 = {
@@ -480,7 +486,6 @@
 				521648062CFD6BE800D599E2 /* HomeSidebarView.swift */,
 				521648082CFD6CE700D599E2 /* HomeDetailView.swift */,
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
-				5252A4132CF6E9A6005DD9CC /* TabViewController.swift */,
 				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
 				521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */,
 			);
@@ -558,7 +563,6 @@
 				5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */,
 				5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */,
 				5252A40F2CF6DBD4005DD9CC /* NavigationEnums.swift */,
-				52BCCCB22CF82EE100D49186 /* AdaptiveSheetModifier.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -566,6 +570,7 @@
 		525AD9942CF5B83B00BF08AF /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
+				522C7F612D0194210032F25E /* ViewModel */,
 				525AD9952CF5B85600BF08AF /* View */,
 			);
 			path = Attachment;
@@ -894,7 +899,6 @@
 				5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
 				520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */,
-				5252A4142CF6E9A6005DD9CC /* TabViewController.swift in Sources */,
 				52CF5B6C2D005D210059A2F6 /* PackageURL.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
 				525AD98F2CF4424600BF08AF /* Device.swift in Sources */,
@@ -959,9 +963,9 @@
 				523F723F2CDB915E00D564E7 /* ZError.swift in Sources */,
 				52BCCCAF2CF7884500D49186 /* AboutView.swift in Sources */,
 				523F72372CDB7A9B00D564E7 /* LetterAvatar.swift in Sources */,
-				52BCCCB32CF82EE100D49186 /* AdaptiveSheetModifier.swift in Sources */,
 				52F393CA2CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift in Sources */,
 				521648072CFD6BE800D599E2 /* HomeSidebarView.swift in Sources */,
+				522C7F632D01942D0032F25E /* AttachedFileDetailViewModel.swift in Sources */,
 				52F393A62CE47ABD00C9B23C /* UserManagerProtocol.swift in Sources */,
 				523F721D2CDB3C7C00D564E7 /* ZLogs.swift in Sources */,
 				523F72292CDB68B300D564E7 /* StyleManager.swift in Sources */,
@@ -1251,6 +1255,7 @@
 			baseConfigurationReference = 925B03E647F354E86B8647A5 /* Pods-MEMInstaller-MEMInstallerUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRKA3M5T33;
@@ -1259,6 +1264,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.learn.MEMInstallerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1271,6 +1277,7 @@
 			baseConfigurationReference = 5748362C25EFD1E552A2E6D5 /* Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRKA3M5T33;
@@ -1279,6 +1286,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.learn.MEMInstallerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

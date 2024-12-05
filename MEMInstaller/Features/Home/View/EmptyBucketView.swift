@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject private var viewModel: HomeViewModel
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
     var body: some View {
@@ -36,8 +36,8 @@ struct EmptyBucketView: View {
                         coordinator.openFileImporter { result in
                             switch result {
                             case .success(let filePath):
-                                viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
+                                PackageExtractionHandler.shared.initiateAppExtraction(from: filePath)
+//                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
                                 viewModel.showToast(failure.localizedDescription)
@@ -77,7 +77,7 @@ extension HomeViewModel {
 }
 
 #Preview {
-    EmptyBucketView(viewModel: .preview)
+    EmptyBucketView()
 }
 
 

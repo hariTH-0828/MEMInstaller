@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeDetailView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @EnvironmentObject private var viewModel: HomeViewModel
     
     var body: some View {
         switch viewModel.detailViewLoadingState {
@@ -29,9 +29,10 @@ struct HomeDetailView: View {
         case .available:
             textViewForIdleState("select a app to view details")
         case .empty:
-            EmptyBucketView(viewModel: viewModel)
+            EmptyBucketView()
         case .detail(let attachmentMode):
-            AttachedFileDetailView(viewModel: viewModel, attachmentMode: attachmentMode)
+//            AttachedFileDetailView(bucketObjectModel: <#T##BucketObjectModel#>, attachmentMode: <#T##AttachmentMode#>)
+            EmptyView()
         }
     }
     
@@ -39,7 +40,7 @@ struct HomeDetailView: View {
     private func handleErrorState(_ errorState: ErrorViewState) -> some View {
         switch errorState {
         case .empty:
-            EmptyBucketView(viewModel: viewModel)
+            EmptyBucketView()
         case .detailError:
             Text("Detail Error")
         }
@@ -51,5 +52,5 @@ struct HomeDetailView: View {
 }
 
 #Preview {
-    HomeDetailView(viewModel: .preview)
+    HomeDetailView()
 }

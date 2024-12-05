@@ -9,11 +9,11 @@ import Foundation
 import SwiftUI
 
 enum Screen: Hashable, Identifiable {
-    case tabView
     case login
     case home
     case settings
     case about
+    case privacy
     
     var id: Screen { self }
 }
