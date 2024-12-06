@@ -64,10 +64,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @ViewBuilder
     func build(forScreen screen: Screen) -> some View {
         switch screen {
-        case .home:
-            HomeView()
-        case .login:
-            LoginView()
         case .settings:
             SettingsView()
         case .about:

@@ -101,7 +101,7 @@ struct ContentModel: Codable, Hashable {
 }
 
 extension BucketObjectModel {
-    
+    // MARK: - HELPER METHODS
     static var preview: BucketObjectModel {
         BucketObjectModel()
     }
@@ -125,10 +125,28 @@ extension BucketObjectModel {
     func getObjectURL() -> String? {
         contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
     }
-}
-
-
-extension ContentModel {
     
+    /// Calculates the size of a package based on its contents.
+    ///
+    /// This method filters the provided content list to find the first item with a `.file` key type
+    /// and a key containing `.ipa`, then calculates its size.
+    ///
+    /// - Returns: A `String` representing the calculated size of the package, formatted by `calculatePackageSize`.
+    ///
+    /// - Note: If no `.ipa` file is found in the contents, the size will be determined as `0` and handled by `calculatePackageSize`.
+    ///
+    /// - SeeAlso: `calculatePackageSize(_:)`
+    func getPackageFileSize() -> String {
+        let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
+        return calculatePackageSize(packageSizeAsBytes)
+    }
+    
+    /// Calculates the size of a package in megabytes (MB) and returns a formatted string.
+    /// - Parameter size: The size in bytes (Decimal?). If the value is nil, it returns "0 MB".
+    /// - Returns: A string representing the size in MB, formatted with two decimal places (default behavior).
+    func calculatePackageSize(_ size: Decimal?) -> String {
+        guard let size else { return "0 MB" }
+        let sizeInMB = size / 1048576
+        return sizeInMB.formattedString() + " MB"
+    }
 }
-

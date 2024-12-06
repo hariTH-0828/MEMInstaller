@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
-    @EnvironmentObject private var viewModel: HomeViewModel
+//    @ObservedObject var viewModel: HomeViewModel
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
     var body: some View {
@@ -40,7 +40,7 @@ struct EmptyBucketView: View {
 //                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
-                                viewModel.showToast(failure.localizedDescription)
+//                                viewModel.showToast(failure.localizedDescription)
                             }
                         }
                     } label: {
@@ -62,8 +62,8 @@ struct EmptyBucketView: View {
     
     // MARK: HELPER METHOD
     func refreshView() {
-        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
-        viewModel.fetchFolders()
+//        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
+//        viewModel.fetchFolders()
     }
 }
 
@@ -75,11 +75,6 @@ extension HomeViewModel {
                       userDataManager: UserDataManager())
     }
 }
-
-#Preview {
-    EmptyBucketView()
-}
-
 
 /*
  

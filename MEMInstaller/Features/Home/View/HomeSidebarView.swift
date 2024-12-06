@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeSidebarView: View {
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
-    @EnvironmentObject private var viewModel: HomeViewModel
+    @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
         LoaderView(loadingState: $viewModel.sideBarLoadingState) {
@@ -36,9 +36,9 @@ struct HomeSidebarView: View {
     @ViewBuilder
     private func listAvailableApplications() -> some View {
         List(viewModel.bucketObjectModels, id: \.self, selection: $viewModel.selectedBucketObject) { bucketObject in
-            NavigationLink(value: viewModel.selectedBucketObject) {
-                HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: bucketObject.getAppIcon())
-            }
+            
+            HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: bucketObject.getAppIcon())
+                .tag(bucketObject)
         }
         .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
@@ -74,6 +74,5 @@ struct HomeSidebarView: View {
 }
 
 #Preview {
-    HomeSidebarView()
-        .environmentObject(HomeViewModel.preview)
+    HomeSidebarView(viewModel: .preview)
 }

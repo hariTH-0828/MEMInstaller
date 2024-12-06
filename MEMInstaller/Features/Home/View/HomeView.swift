@@ -15,24 +15,22 @@ enum HomeNavigation: Hashable {
 
 struct HomeView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
-    
-    @StateObject var viewModel: HomeViewModel
     @StateObject private var coordinator: AppCoordinatorImpl = AppCoordinatorImpl()
     
-    @State private var shouldPresentSettings = false
+    @ObservedObject var sideBarViewModel: HomeViewModel
+    @ObservedObject var detailViewModel: AttachedFileDetailViewModel
     
     // Use a default value for `viewModel`
-    init(viewModel: HomeViewModel = HomeViewModel(repository: StratusRepositoryImpl(),
-                                                  userDataManager: UserDataManager()))
-    {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init(sideBarViewModel: HomeViewModel, detailViewModel: AttachedFileDetailViewModel) {
+        self.sideBarViewModel = sideBarViewModel
+        self.detailViewModel = detailViewModel
     }
     
     // MARK: BODY
     var body: some View {
         NavigationSplitView {
             NavigationStack(path: $coordinator.navigationPath) {
-                HomeSidebarView()
+                HomeSidebarView(viewModel: sideBarViewModel)
                     .navigationDestination(for: Screen.self) {
                         coordinator.build(forScreen: $0)
                     }
@@ -44,25 +42,23 @@ struct HomeView: View {
                     }
             }
         } detail: {
-            if let bucketObjectModel = viewModel.selectedBucketObject {
-                AttachedFileDetailView(bucketObjectModel: bucketObjectModel, attachmentMode: .install)
+            if let bucketObjectModel = sideBarViewModel.selectedBucketObject {
+                AttachedFileDetailView(viewModel: detailViewModel,
+                                       bucketObjectModel: bucketObjectModel,
+                                       attachmentMode: .install)
+            }else {
+                Text("Select an app to see details")
+                    .foregroundColor(.gray)
             }
         }
-        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
-        .environmentObject(viewModel)
+        .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)
         .environmentObject(coordinator)
         .onAppear(perform: {
             appViewModel.coordinator = coordinator
         })
+        .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
+            detailViewModel.detailViewState = .loading
+        }
 
     }
-    
-    private func navigateToSettings() {
-        shouldPresentSettings = true
-    }
-}
-
-
-#Preview {
-    HomeView(viewModel: .preview)
 }

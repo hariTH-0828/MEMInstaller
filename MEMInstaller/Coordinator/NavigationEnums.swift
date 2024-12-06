@@ -9,8 +9,6 @@ import Foundation
 import SwiftUI
 
 enum Screen: Hashable, Identifiable {
-    case login
-    case home
     case settings
     case about
     case privacy

@@ -41,6 +41,7 @@ class AttachedFileDetailViewModel: ObservableObject {
     let userDataManager: UserDataManager = UserDataManager()
     
     @Published var detailViewState: LoadingState = .loading
+    @Published var uploadProgress: Double = 0.0
 
     // Toast
     @Published var isShowingToast: Bool = false
@@ -48,6 +49,19 @@ class AttachedFileDetailViewModel: ObservableObject {
 
     var userProfile: ZUserProfile? {
         return userDataManager.retrieveLoggedUserFromKeychain()
+    }
+    
+    init() {
+        bindRepositoryProgress()
+    }
+    
+    /// Binds the repository's uploadProgress to the view model's uploadProgress
+    private func bindRepositoryProgress() {
+        if let repo = repository as? StratusRepositoryImpl {
+            repo.$uploadProgress
+                .receive(on: DispatchQueue.main)
+                .assign(to: &$uploadProgress)
+        }
     }
     
     // MARK: - Download Handling

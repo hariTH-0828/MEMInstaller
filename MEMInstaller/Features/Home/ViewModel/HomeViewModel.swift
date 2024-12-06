@@ -24,7 +24,6 @@ protocol HomeViewModelProtocol: ObservableObject {
     var bucketObjectModels: [BucketObjectModel] { get }
     var sideBarLoadingState: LoadingState { get }
     var detailViewLoadingState: LoadingState { get }
-    var uploadProgress: Double { get }
     var toastMessage: String? { get }
     var isPresentToast: Bool { get }
     var userProfile: ZUserProfile? { get }
@@ -34,7 +33,11 @@ class HomeViewModel: HomeViewModelProtocol {
     // Manage logged user profile
     @Published private(set) var userProfile: ZUserProfile?
     @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
-    @Published var selectedBucketObject: BucketObjectModel? = nil
+    @Published var selectedBucketObject: BucketObjectModel? = nil {
+        didSet {
+            detailViewLoadingState = .loading
+        }
+    }
     
     @Published var sideBarLoadingState: LoadingState = .loading {
         didSet {
@@ -42,7 +45,6 @@ class HomeViewModel: HomeViewModelProtocol {
         }
     }
     @Published var detailViewLoadingState: LoadingState = .idle()
-    @Published var uploadProgress: Double = 0.0
     
     // Toast properties
     @Published private(set) var toastMessage: String?
@@ -59,17 +61,6 @@ class HomeViewModel: HomeViewModelProtocol {
         self.repository = repository
         self.userDataManager = userDataManager
         self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
-        
-        bindRepositoryProgress()
-    }
-    
-    /// Binds the repository's uploadProgress to the view model's uploadProgress
-    private func bindRepositoryProgress() {
-        if let repo = repository as? StratusRepositoryImpl {
-            repo.$uploadProgress
-                .receive(on: DispatchQueue.main)
-                .assign(to: &$uploadProgress)
-        }
     }
     
     func fetchFolders() {
