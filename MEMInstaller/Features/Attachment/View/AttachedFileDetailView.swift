@@ -12,9 +12,9 @@ struct AttachedFileDetailView: View {
     @ObservedObject var viewModel: AttachedFileDetailViewModel
     @StateObject private var packageExtractionHandler: PackageExtractionHandler = PackageExtractionHandler.shared
     
-    private let bucketObjectModel: BucketObjectModel
-    private let attachmentMode: AttachmentMode
-    
+    let bucketObjectModel: BucketObjectModel
+    let attachmentMode: AttachmentMode
+
     init(viewModel: AttachedFileDetailViewModel,
          bucketObjectModel: BucketObjectModel,
          attachmentMode: AttachmentMode)
@@ -40,6 +40,11 @@ struct AttachedFileDetailView: View {
                 iPhoneLayoutBundlePropertyView()
             }
             
+            CopyInstallationLinkView(installationLink: bucketObjectModel.getObjectURL()!, completion: {
+                viewModel.showToast("Link copied")
+            })
+            .padding()
+            
             Spacer()
             
             actionButtonView()
@@ -63,7 +68,7 @@ struct AttachedFileDetailView: View {
                 viewModel.detailViewState = .loaded
             }
         }else if viewModel.detailViewState == .loaded {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading) {
                 Text(bundleName ?? "No Bundle name available")
                     .font(.title2)
                     .bold()
@@ -88,9 +93,11 @@ struct AttachedFileDetailView: View {
                 .frame(maxWidth: .infinity)
             }
             .task {
-                guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
-                await viewModel.downloadFile(url: provisionURL, type: .provision)
-                viewModel.detailViewState = .loaded
+                if !ProcessInfo.processInfo.isPreview {
+                    guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
+                    await viewModel.downloadFile(url: provisionURL, type: .provision)
+                    viewModel.detailViewState = .loaded
+                }
             }
         }else if viewModel.detailViewState == .loaded {
             if let bundleProperties = packageExtractionHandler.bundleProperties {
@@ -176,12 +183,5 @@ struct AttachedFileDetailView: View {
     private func isMobileProvisionValid(_ date: String?) -> Bool {
         guard let expireDate = date?.dateFormat(by: "d MMM yyyy 'at' h:mm a") else { return false }
         return expireDate < Date()
-    }
-}
-
-// MARK: PREVIEW
-struct AttachedFileDatailView_preview: PreviewProvider {
-    static var previews: some View {
-        AttachedFileDetailView(viewModel: .preview, bucketObjectModel: BucketObjectModel(), attachmentMode: .install)
     }
 }

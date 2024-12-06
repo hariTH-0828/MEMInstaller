@@ -48,10 +48,17 @@ struct AppIconView: View {
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
             } placeholder: {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .foregroundStyle(StyleManager.colorStyle.systemGray)
+                Circle()
+                    .fill(.regularMaterial)
+                    .frame(width: 40, height: 40)
+                    .overlay {
+                        ProgressView()
+                    }
             }
         }
     }
+}
+
+#Preview {
+    AppIconView(iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
 }
