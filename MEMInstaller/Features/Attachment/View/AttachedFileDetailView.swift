@@ -12,52 +12,72 @@ struct AttachedFileDetailView: View {
     @ObservedObject var viewModel: AttachedFileDetailViewModel
     @StateObject private var packageExtractionHandler: PackageExtractionHandler = PackageExtractionHandler.shared
     
-    let bucketObjectModel: BucketObjectModel
+    let bucketObjectModel: BucketObjectModel?
+    let packageModel: PackageExtractionModel?
     let attachmentMode: AttachmentMode
 
     init(viewModel: AttachedFileDetailViewModel,
-         bucketObjectModel: BucketObjectModel,
+         bucketObjectModel: BucketObjectModel?,
          attachmentMode: AttachmentMode)
     {
         self.viewModel = viewModel
         self.bucketObjectModel = bucketObjectModel
+        self.packageModel = nil
         self.attachmentMode = attachmentMode
     }
     
+    init(viewModel: AttachedFileDetailViewModel,
+         packageModel: PackageExtractionModel?,
+         attachmentModel: AttachmentMode)
+    {
+        self.viewModel = viewModel
+        self.packageModel = packageModel
+        self.bucketObjectModel = nil
+        self.attachmentMode = attachmentModel
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                AppIconView(iconURL: bucketObjectModel.getAppIcon())
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    if let bucketObjectModel {
+                        AppIconView(iconURL: bucketObjectModel.getAppIcon())
+                    }else if let packageModel {
+                        AppIconView(icon: packageModel.appIcon)
+                    }
+                    
+                    bundleNameWithIdentifierView(bundleName: packageExtractionHandler.bundleProperties?.bundleName,
+                                                 bundleId: packageExtractionHandler.bundleProperties?.bundleIdentifier)
+                }
+                .padding(.horizontal)
                 
-                bundleNameWithIdentifierView(bundleName: packageExtractionHandler.bundleProperties?.bundleName,
-                                             bundleId: packageExtractionHandler.bundleProperties?.bundleIdentifier)
+                if Device.isIpad {
+                    iPadLayoutBundlePropertyView()
+                }else {
+                    iPhoneLayoutBundlePropertyView()
+                }
+                
+                if let bucketObjectModel {
+                    CopyInstallationLinkView(installationLink: (bucketObjectModel.getObjectURL())!, completion: {
+                        viewModel.showToast("Link copied")
+                    })
+                    .padding()
+                }
+                
+                Spacer()
+                
+                actionButtonView()
             }
-            .padding(.horizontal)
-            
-            if Device.isIpad {
-                iPadLayoutBundlePropertyView()
-            }else {
-                iPhoneLayoutBundlePropertyView()
-            }
-            
-            CopyInstallationLinkView(installationLink: bucketObjectModel.getObjectURL()!, completion: {
-                viewModel.showToast("Link copied")
-            })
-            .padding()
-            
-            Spacer()
-            
-            actionButtonView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .navigationTitle(packageExtractionHandler.bundleProperties?.bundleName ?? "Loading")
+            .navigationBarTitleDisplayMode(.inline)
+            .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isShowingToast)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .navigationTitle(packageExtractionHandler.bundleProperties?.bundleName ?? "Loading")
-        .navigationBarTitleDisplayMode(.inline)
-        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isShowingToast)
     }
    
     @ViewBuilder
     private func bundleNameWithIdentifierView(bundleName: String?, bundleId: String?) -> some View {
-        if viewModel.detailViewState == .loading {
+        if let bucketObjectModel, viewModel.detailViewState == .loading {
             VStack(alignment: .leading, spacing: 5) {
                 rectangleShimmerView(width: 100, corner: 4)
                 rectangleShimmerView(width: 200, corner: 4)
@@ -67,7 +87,7 @@ struct AttachedFileDetailView: View {
                 await viewModel.downloadFile(url: infoPlistURL, type: .infoFile)
                 viewModel.detailViewState = .loaded
             }
-        }else if viewModel.detailViewState == .loaded {
+        }else {
             VStack(alignment: .leading) {
                 Text(bundleName ?? "No Bundle name available")
                     .font(.title2)
@@ -84,7 +104,7 @@ struct AttachedFileDetailView: View {
     
     @ViewBuilder
     private func iPhoneLayoutBundlePropertyView() -> some View {
-        if viewModel.detailViewState == .loading {
+        if let bucketObjectModel, viewModel.detailViewState == .loading {
             ForEach(0..<2) { _ in
                 RoundedRectangleOutlineView {
                     ProgressView()
@@ -93,13 +113,11 @@ struct AttachedFileDetailView: View {
                 .frame(maxWidth: .infinity)
             }
             .task {
-                if !ProcessInfo.processInfo.isPreview {
-                    guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
-                    await viewModel.downloadFile(url: provisionURL, type: .provision)
-                    viewModel.detailViewState = .loaded
-                }
+                guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
+                await viewModel.downloadFile(url: provisionURL, type: .provision)
+                viewModel.detailViewState = .loaded
             }
-        }else if viewModel.detailViewState == .loaded {
+        }else {
             if let bundleProperties = packageExtractionHandler.bundleProperties {
                 RoundedRectangleOutlineView {
                     ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
@@ -145,7 +163,7 @@ struct AttachedFileDetailView: View {
     private func actionButtonView() -> some View {
         HStack(spacing: 30) {
             Button {
-                attachmentMode == .install ? viewModel.installApplication(bucketObjectModel.getObjectURL()) : uploadApplication()
+                attachmentMode == .install ? viewModel.installApplication(bucketObjectModel?.getObjectURL()) : uploadApplication()
             } label: {
                 Text(attachmentMode == .install ? "Install" : "Upload")
                     .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))

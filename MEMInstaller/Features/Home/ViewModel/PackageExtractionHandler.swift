@@ -9,6 +9,16 @@ import Foundation
 import Zip
 import SwiftUI
 
+struct PackageExtractionModel: Hashable {
+    let appIcon: Data?
+    let app: Data?
+    let mobileProvision: Data?
+    let infoPropertyList: Data?
+    let installationPList: Data?
+    
+    var id: Self { return self }
+}
+
 @MainActor
 class PackageExtractionHandler: ObservableObject {
     // MARK: - Singleton
@@ -22,8 +32,8 @@ class PackageExtractionHandler: ObservableObject {
     
     @Published var bundleProperties: BundleProperties?
     @Published var mobileProvision: MobileProvision?
-    
-    var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
+    @Published var packageExtractionModel: PackageExtractionModel?
+    private var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     // FileManager
     private let fileManager = FileManager.default
@@ -46,6 +56,14 @@ class PackageExtractionHandler: ObservableObject {
         catch { ZLogs.shared.error(error.localizedDescription) }
         
         return nil
+    }
+    
+    func getPackageExtractionModel() -> PackageExtractionModel? {
+        PackageExtractionModel(appIcon: fileTypeDataMap[.icon],
+                               app: fileTypeDataMap[.app],
+                               mobileProvision: fileTypeDataMap[.mobileprovision],
+                               infoPropertyList: fileTypeDataMap[.infoPlist],
+                               installationPList: fileTypeDataMap[.installationPlist])
     }
     
     // MARK: - Bundle Info

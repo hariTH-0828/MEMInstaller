@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MobileProvision {
+struct MobileProvision: Hashable {
     let name: String
     let teamIdentifier: [String]
     let creationDate: Date

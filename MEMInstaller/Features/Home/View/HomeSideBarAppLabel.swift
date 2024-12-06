@@ -39,6 +39,17 @@ struct HomeSideBarAppLabel: View {
 
 struct AppIconView: View {
     let iconURL: String?
+    let icon: Data?
+    
+    init(iconURL: String?) {
+        self.iconURL = iconURL
+        self.icon = nil
+    }
+    
+    init(icon: Data?) {
+        self.icon = icon
+        self.iconURL = nil
+    }
     
     var body: some View {
         if let iconURL {
@@ -55,6 +66,11 @@ struct AppIconView: View {
                         ProgressView()
                     }
             }
+        }else if let iconData = icon {
+            Image(uiImage: UIImage(data: iconData)!)
+                .resizable()
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
         }
     }
 }

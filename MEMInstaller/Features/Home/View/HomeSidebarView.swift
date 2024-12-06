@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeSidebarView: View {
-    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
+    @EnvironmentObject private var coordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
@@ -53,22 +53,23 @@ struct HomeSidebarView: View {
     
     private func addPackageButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                appCoordinator.openFileImporter { result in
+            Button {
+                coordinator.openFileImporter { result in
                     switch result {
                     case .success(let filePath):
                         PackageExtractionHandler.shared.initiateAppExtraction(from: filePath)
-//                        viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
+                        let packageExtractionModel = PackageExtractionHandler.shared.getPackageExtractionModel()
+                        viewModel.selectedPackageModel = packageExtractionModel
                     case .failure(let failure):
                         ZLogs.shared.error(failure.localizedDescription)
                         viewModel.showToast(failure.localizedDescription)
                     }
                 }
-            }, label: {
+            } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 16, weight: .regular))
                     .foregroundStyle(StyleManager.colorStyle.invertBackground)
-            })
+            }
         }
     }
 }
@@ -76,3 +77,24 @@ struct HomeSidebarView: View {
 #Preview {
     HomeSidebarView(viewModel: .preview)
 }
+
+
+/*
+ 
+ Button(action: {
+     coordinator.openFileImporter { result in
+         switch result {
+         case .success(let filePath):
+             PackageExtractionHandler.shared.initiateAppExtraction(from: filePath)
+             let packageExtractionModel = PackageExtractionHandler.shared.getPackageExtractionModel()
+             viewModel.selectedPackageModel = packageExtractionModel
+         case .failure(let failure):
+             ZLogs.shared.error(failure.localizedDescription)
+             viewModel.showToast(failure.localizedDescription)
+         }
+     }
+ }, label: {
+
+ })
+ 
+ */

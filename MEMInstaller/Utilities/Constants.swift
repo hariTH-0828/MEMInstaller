@@ -12,4 +12,5 @@ struct Constants {
     static let infoPlist: String = "Info.plist"
     static let embeddedProvision: String = "embedded.mobileprovision"
     static let appIconName: String = "AppIcon60x60@2x.png"
+    static let installationPrefix: String = "itms-services://?action=download-manifest&url="
 }

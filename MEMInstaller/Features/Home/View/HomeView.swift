@@ -59,6 +59,12 @@ struct HomeView: View {
         .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
             detailViewModel.detailViewState = .loading
         }
+        .onChange(of: sideBarViewModel.selectedPackageModel) { _, newValue in
+            guard let newValue = newValue else { return }
+            coordinator.presentSheet(.AttachedFileDetail(detailViewModel, newValue, .upload)) {
+                sideBarViewModel.selectedPackageModel = nil
+            }
+        }
 
     }
 }

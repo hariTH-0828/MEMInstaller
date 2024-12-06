@@ -16,14 +16,13 @@ enum SupportedFileTypes {
 }
 
 enum DownloadType {
-    case infoFile, appIcon, provision
+    case infoFile, provision
 }
 
 protocol HomeViewModelProtocol: ObservableObject {
     func fetchFolders()
     var bucketObjectModels: [BucketObjectModel] { get }
     var sideBarLoadingState: LoadingState { get }
-    var detailViewLoadingState: LoadingState { get }
     var toastMessage: String? { get }
     var isPresentToast: Bool { get }
     var userProfile: ZUserProfile? { get }
@@ -33,18 +32,14 @@ class HomeViewModel: HomeViewModelProtocol {
     // Manage logged user profile
     @Published private(set) var userProfile: ZUserProfile?
     @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
-    @Published var selectedBucketObject: BucketObjectModel? = nil {
+    @Published var selectedBucketObject: BucketObjectModel? = nil
+    @Published var selectedPackageModel: PackageExtractionModel? = nil {
         didSet {
-            detailViewLoadingState = .loading
+            selectedBucketObject = nil
         }
     }
     
-    @Published var sideBarLoadingState: LoadingState = .loading {
-        didSet {
-            if sideBarLoadingState == .loading { detailViewLoadingState = .idle() }
-        }
-    }
-    @Published var detailViewLoadingState: LoadingState = .idle()
+    @Published var sideBarLoadingState: LoadingState = .loading
     
     // Toast properties
     @Published private(set) var toastMessage: String?
@@ -117,10 +112,7 @@ class HomeViewModel: HomeViewModelProtocol {
     
     func updateLoadingState(for view: ViewType, to state: LoadingState) {
         withAnimation {
-            switch view {
-            case .sidebar: sideBarLoadingState = state
-            case .detail: detailViewLoadingState = state
-            }
+            sideBarLoadingState = state
         }
     }
 }

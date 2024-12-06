@@ -90,8 +90,6 @@ class AttachedFileDetailViewModel: ObservableObject {
                 return
             }
             packageHandler.loadBundleProperties(with: fileProperties)
-        case .appIcon:
-            packageHandler.fileTypeDataMap[.icon] = data
         case .provision:
             guard let extractedData = try? packageHandler.extractXMLFromProvision(data),
                   let mobileProvisionDic = packageHandler.parsePlist(extractedData) else { return }
@@ -142,11 +140,11 @@ class AttachedFileDetailViewModel: ObservableObject {
     @MainActor
     private func fetchData(for type: UploadComponentType) throws -> Data? {
         switch type {
-        case .application: return packageHandler.fileTypeDataMap[.app]!
-        case .icon: return packageHandler.fileTypeDataMap[.icon] ?? generateDefaultAppIcon()
-        case .infoPlist: return packageHandler.fileTypeDataMap[.infoPlist]!
-        case .provision: return packageHandler.fileTypeDataMap[.mobileprovision]!
-        case .installerPlist: return packageHandler.fileTypeDataMap[.installationPlist]!
+        case .application: return packageHandler.packageExtractionModel?.app
+        case .icon: return packageHandler.packageExtractionModel?.appIcon ?? generateDefaultAppIcon()
+        case .infoPlist: return packageHandler.packageExtractionModel?.infoPropertyList
+        case .provision: return packageHandler.packageExtractionModel?.mobileProvision
+        case .installerPlist: return packageHandler.packageExtractionModel?.installationPList
         }
     }
 
@@ -198,7 +196,7 @@ class AttachedFileDetailViewModel: ObservableObject {
             return
         }
 
-        let itmsServicesURLString: String = "itms-services://?action=download-manifest&url="+objectURL
+        let itmsServicesURLString: String = Constants.installationPrefix + objectURL
 
         if let itmsServiceURL = URL(string: itmsServicesURLString) {
             UIApplication.shared.open(itmsServiceURL)
