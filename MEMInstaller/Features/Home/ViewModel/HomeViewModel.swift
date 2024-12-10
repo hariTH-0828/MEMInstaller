@@ -42,6 +42,9 @@ class HomeViewModel: ObservableObject {
     private let repository: StratusRepository = StratusRepositoryImpl()
     
     init() {
+        NotificationCenter.default.addObserver(forName: .refreshData, object: nil, queue: .main) { _ in
+            self.fetchFolders()
+        }
         self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
     }
     

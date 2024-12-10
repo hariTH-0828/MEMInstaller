@@ -88,7 +88,9 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
             .ignoresSafeArea()
             .presentationDetents([.medium, .large])
         case .AttachedFileDetail(let viewModel, let packageExtractionModel, let attachedMode):
-            AttachedFileDetailView(viewModel: viewModel, packageModel: packageExtractionModel, attachmentModel: attachedMode)
+            AttachedFileDetailView(viewModel: viewModel,
+                                   packageModel: packageExtractionModel,
+                                   attachmentMode: attachedMode).interactiveDismissDisabled(true)
         }
     }
     

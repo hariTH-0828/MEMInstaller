@@ -96,6 +96,7 @@
 		52F393C72CE5DEE700C9B23C /* StratusRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393C62CE5DEE700C9B23C /* StratusRepositoryImpl.swift */; };
 		52F393CA2CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */; };
 		52F6EA612D0721C300ACA676 /* AppPackageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA602D0721C300ACA676 /* AppPackageProcessor.swift */; };
+		52F6EA632D081AC300ACA676 /* PackageExtractionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */; };
 		6E3D27AADF1F079DA4CBBB12 /* Pods_MEMInstallerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB9327342D097D191A35EF33 /* Pods_MEMInstallerTests.framework */; };
 		D274DE099541BB3B55AE12EB /* Pods_MEMInstaller_MEMInstallerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0424D3F1459B5F266A470349 /* Pods_MEMInstaller_MEMInstallerUITests.framework */; };
 		DECBCDD5C8E53368D8C4DCCC /* Pods_MEMInstaller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E33D6725BADDB39D37423CA /* Pods_MEMInstaller.framework */; };
@@ -213,6 +214,7 @@
 		52F393C62CE5DEE700C9B23C /* StratusRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StratusRepositoryImpl.swift; sourceTree = "<group>"; };
 		52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalCircularViewStyle.swift; sourceTree = "<group>"; };
 		52F6EA602D0721C300ACA676 /* AppPackageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPackageProcessor.swift; sourceTree = "<group>"; };
+		52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageExtractionModel.swift; sourceTree = "<group>"; };
 		5748362C25EFD1E552A2E6D5 /* Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig"; path = "Target Support Files/Pods-MEMInstaller-MEMInstallerUITests/Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig"; sourceTree = "<group>"; };
 		5C6B37B5A17A963E0B94C925 /* Pods-MEMInstallerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MEMInstallerTests.release.xcconfig"; path = "Target Support Files/Pods-MEMInstallerTests/Pods-MEMInstallerTests.release.xcconfig"; sourceTree = "<group>"; };
 		7E33D6725BADDB39D37423CA /* Pods_MEMInstaller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MEMInstaller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -551,6 +553,7 @@
 			children = (
 				523F72412CDB9EE400D564E7 /* BundleProperties.swift */,
 				525AD9922CF5784900BF08AF /* MobileProvision.swift */,
+				52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -903,6 +906,7 @@
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,
 				525AD98F2CF4424600BF08AF /* Device.swift in Sources */,
 				525AD9972CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift in Sources */,
+				52F6EA632D081AC300ACA676 /* PackageExtractionModel.swift in Sources */,
 				523F722D2CDB690000D564E7 /* UIColor+.swift in Sources */,
 				52F393A82CE47AFF00C9B23C /* UserDataManager.swift in Sources */,
 				5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */,

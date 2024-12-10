@@ -9,30 +9,12 @@ import Foundation
 import Zip
 import SwiftUI
 
-struct PackageExtractionModel: Hashable {
-    let appIcon: Data?
-    let app: Data?
-    let mobileProvision: Data?
-    let infoPropertyList: Data?
-    var installationPList: Data?
-    
-    var id: Self { return self }
-}
-
 @MainActor
 class PackageExtractionHandler: ObservableObject {
-//    // MARK: - Singleton
-//    static let shared: PackageExtractionHandler = PackageExtractionHandler()
-    
-//    private init() {}
-    
     // Property Handler
     private let plistHandler = PropertyListHandler()
     private var sourceURL: URL!
     
-    private var bundleProperties: BundleProperties?
-    private var mobileProvision: MobileProvision?
-//    @Published var packageExtractionModel: PackageExtractionModel?
     private var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     // FileManager
@@ -51,14 +33,6 @@ class PackageExtractionHandler: ObservableObject {
         extractAppBundle()
     }
     
-    // MARK: - Convert source as data
-    func fileToData(from url: URL) -> Data? {
-        do { return try Data(contentsOf: url) }
-        catch { ZLogs.shared.error(error.localizedDescription) }
-        
-        return nil
-    }
-    
     func getPackageExtractionModel() -> PackageExtractionModel? {
         PackageExtractionModel(appIcon: fileTypeDataMap[.icon],
                                app: fileTypeDataMap[.app],
@@ -67,7 +41,11 @@ class PackageExtractionHandler: ObservableObject {
                                installationPList: fileTypeDataMap[.installationPlist])
     }
     
-    func extractAppBundle() {
+    func extractXMLFromProvision(_ data: Data) throws -> Data {
+        try plistHandler.extractXMLDataFromMobileProvision(data)
+    }
+    
+    private func extractAppBundle() {
         let payLoadPath = appCacheDirectory.appending(path: Constants.payload)
         
         guard fileManager.fileExists(atPath: payLoadPath.path()) else {
@@ -82,55 +60,31 @@ class PackageExtractionHandler: ObservableObject {
         }
     }
     
-    func extractXMLFromProvision(_ data: Data) throws -> Data {
-        try plistHandler.extractXMLDataFromMobileProvision(data)
-    }
-    
     private func processAppBundleContents(at payLoadPath: URL) throws {
         let contents = try fileManager.subpathsOfDirectory(atPath: payLoadPath.path())
         
-        guard let appName = contents.first, contents.contains("\(appName)/\(Constants.infoPlist)") else {
+        guard let appName = contents.first, contents.contains(Constants.FilePath.infoPlist(appName).path) else {
             ZLogs.shared.warning("Info.plist does not exist at path: \(payLoadPath.appending(path: contents[0]))")
             return
         }
         
-        let infoPlistPath = payLoadPath.path() + "/\(appName)/\(Constants.infoPlist)"
+        let infoPlistPath = payLoadPath.path().appending("/") + Constants.FilePath.infoPlist(appName).path
         fileTypeDataMap[.infoPlist] = fileToData(from: URL(fileURLWithPath: infoPlistPath))
         
         try extractAppProperties(from: payLoadPath, appName: appName)
     }
     
     private func extractAppProperties(from payLoadPath: URL, appName: String) throws {
-        // Info.plist
-        if let propertyListObject = try readInfoPlistFile(from: payLoadPath, appName: appName) {
-            self.bundleProperties = loadBundleProperties(with: propertyListObject)
-        }
-        
         // embedded.plist
-        if let mobileProvisionObj = try readMobileProvisionFile(from: payLoadPath, appName: appName) {
-            self.mobileProvision = loadMobileProvision(with: mobileProvisionObj)
-        }
+        try readMobileProvisionFile(from: payLoadPath, appName: appName)
         
         // AppIcon
-        let appIconData = try readApplicationIcon(from: payLoadPath, appName: appName)
-        fileTypeDataMap[.icon] = appIconData
+        try readApplicationIcon(from: payLoadPath, appName: appName)
     }
     
-    private func readInfoPlistFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
-        // Read Info.plist
-        let infoPlistPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.infoPlist)")
-        
-        // Check file exist in path and convert file into data
-        guard fileManager.fileExists(atPath: infoPlistPath), let fileData = fileToData(from: URL(filePath: infoPlistPath)) else {
-            throw ZError.FileConversionError.invalidFilePath
-        }
-        
-        return parsePlist(fileData)
-    }
-    
-    private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
+    private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws {
         // Read embedded.mobileprovision
-        let provisionPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.embeddedProvision)")
+        let provisionPath = (payLoadPath.path() as NSString).appendingPathComponent(Constants.FilePath.embeddedProvision(appName).path)
         
         // Check file exist in path and convert file into data
         guard fileManager.fileExists(atPath: provisionPath) else {
@@ -140,22 +94,18 @@ class PackageExtractionHandler: ObservableObject {
         // Read the file content
         let provisionData = try Data(contentsOf: URL(fileURLWithPath: provisionPath))
         fileTypeDataMap[.mobileprovision] = provisionData
-        
-        let fileData = try plistHandler.extractXMLDataFromMobileProvision(provisionData)
-        
-        return parsePlist(fileData)
     }
     
-    private func readApplicationIcon(from payLoadPath: URL, appName: String) throws -> Data {
+    private func readApplicationIcon(from payLoadPath: URL, appName: String) throws {
         // Read App Icon
-        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.appIconName)")
+        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent(Constants.FilePath.appIcon(appName).path)
         
         // Check file exist in path and convert file into data
         guard fileManager.fileExists(atPath: appIconPath), let fileData = fileToData(from: URL(filePath: appIconPath)) else {
             throw ZError.FileConversionError.invalidFilePath
         }
         
-        return fileData
+        fileTypeDataMap[.icon] = fileData
     }
     
     func parsePlist(_ plistData: Data) -> [String: Any]? {
@@ -194,4 +144,13 @@ class PackageExtractionHandler: ObservableObject {
             return nil
         }
     }
+    
+    // MARK: - Convert source as data
+    private func fileToData(from url: URL) -> Data? {
+        do { return try Data(contentsOf: url) }
+        catch { ZLogs.shared.error(error.localizedDescription) }
+        
+        return nil
+    }
+    
 }

@@ -10,6 +10,9 @@ import SwiftUI
 struct HomeSidebarView: View {
     let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
     
+    @State private var shouldNavigate: Bool = false
+    @State private var tempPackageModel: PackageExtractionModel? = nil
+    
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
     
@@ -38,7 +41,6 @@ struct HomeSidebarView: View {
     @ViewBuilder
     private func listAvailableApplications() -> some View {
         List(viewModel.bucketObjectModels, id: \.self, selection: $viewModel.selectedBucketObject) { bucketObject in
-            
             HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: bucketObject.getAppIcon())
                 .tag(bucketObject)
         }

@@ -44,11 +44,11 @@ struct AttachedFileDetailView: View {
     // MARK: Initialise view with PackageExtractionModel
     init(viewModel: AttachedFileDetailViewModel,
          packageModel: PackageExtractionModel?,
-         attachmentModel: AttachmentMode)
+         attachmentMode: AttachmentMode)
     {
         self.viewModel = viewModel
         self.packageModel = packageModel
-        self.attachmentMode = attachmentModel
+        self.attachmentMode = attachmentMode
         
         self.bucketObjectModel = nil
         
@@ -96,6 +96,7 @@ struct AttachedFileDetailView: View {
                 switch viewModel.detailLoadingState {
                 case .uploading(let uploadingMessage):
                     HorizontalLoadingWrapper(title: uploadingMessage, value: viewModel.uploadProgress)
+                        .allowsHitTesting(true)
                 default:
                     Color.clear
                 }
@@ -197,6 +198,14 @@ struct AttachedFileDetailView: View {
                     .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
             }
             .padding(.bottom, 30)
+            
+            Button {
+                dismiss()
+            } label: {
+                Text("Cancel")
+                    .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
+            }
+            .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -214,6 +223,7 @@ struct AttachedFileDetailView: View {
         Task {
             await viewModel.uploadPackage(endpoint: endpoint, packageExtractionModel: packageModel) {
                 dismiss()
+                NotificationCenter.default.post(name: .refreshData, object: nil)
             }
         }
     }
