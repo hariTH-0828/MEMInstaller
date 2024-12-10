@@ -35,13 +35,18 @@ enum AttachmentMode: Hashable {
 
 @MainActor
 class AttachedFileDetailViewModel: ObservableObject {
-    let packageHandler: PackageExtractionHandler = PackageExtractionHandler.shared
-
-    let repository: StratusRepository = StratusRepositoryImpl()
-    let userDataManager: UserDataManager = UserDataManager()
+    private let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
     
-    @Published var detailViewState: LoadingState = .loading
+    @Published var detailLoadingState: LoadingState = .loaded
     @Published var uploadProgress: Double = 0.0
+    
+    @Published var bundleProperties: BundleProperties?
+    @Published var mobileProvision: MobileProvision?
+    
+    private var packageExtractionModel: PackageExtractionModel?
+
+    private let repository: StratusRepository = StratusRepositoryImpl()
+    private let userDataManager: UserManagerProtocol = UserDataManager()
 
     // Toast
     @Published var isShowingToast: Bool = false
@@ -89,26 +94,35 @@ class AttachedFileDetailViewModel: ObservableObject {
                 ZLogs.shared.error(ZError.FileConversionError.fileReadFailed.localizedDescription)
                 return
             }
-            packageHandler.loadBundleProperties(with: fileProperties)
+            self.bundleProperties = packageHandler.loadBundleProperties(with: fileProperties)
         case .provision:
             guard let extractedData = try? packageHandler.extractXMLFromProvision(data),
                   let mobileProvisionDic = packageHandler.parsePlist(extractedData) else { return }
-            packageHandler.loadMobileProvision(with: mobileProvisionDic)
+            self.mobileProvision = packageHandler.loadMobileProvision(with: mobileProvisionDic)
         }
+    }
+    
+    // MARK: - File Data to properties
+    func readFileDataToProperites(infoProperties: Data?, mobileProvision: Data?) {
+        guard let infoProperties, let mobileProvision else { return }
+        handleDownloadSuccess(data: infoProperties, type: .infoFile)
+        handleDownloadSuccess(data: mobileProvision, type: .provision)
     }
 
     // MARK: - Upload Handling
     @MainActor
-    func uploadPackage(endpoint: String?, _ callBack: @escaping () async -> Void) async {
+    func uploadPackage(endpoint: String?, packageExtractionModel model: PackageExtractionModel?, _ callBack: @escaping () async -> Void) async {
         guard let endpoint else {
             showToast("Invalid upload endpoint.")
             return
         }
 
-        guard let appName = packageHandler.bundleProperties?.bundleName else {
+        guard let appName = bundleProperties?.bundleName else {
             showToast("Bundle name is missing")
             return
         }
+        
+        self.packageExtractionModel = model
 
         do {
             try await uploadPackageComponents(endpoint: endpoint, appName: appName)
@@ -131,7 +145,7 @@ class AttachedFileDetailViewModel: ObservableObject {
 
     @MainActor
     private func uploadComponent(type: UploadComponentType, endpoint: String, message: String) async throws {
-//        updateLoadingState(for: .detail, to: .uploading(message))
+        self.detailLoadingState = .uploading(message)
         guard let data = try fetchData(for: type) else { throw ZError.NetworkError.missingData }
         let apiEndpoint = type.endpoint(for: endpoint)
         try await upload(data: data, to: apiEndpoint, contentType: type.contentType)
@@ -140,22 +154,36 @@ class AttachedFileDetailViewModel: ObservableObject {
     @MainActor
     private func fetchData(for type: UploadComponentType) throws -> Data? {
         switch type {
-        case .application: return packageHandler.packageExtractionModel?.app
-        case .icon: return packageHandler.packageExtractionModel?.appIcon ?? generateDefaultAppIcon()
-        case .infoPlist: return packageHandler.packageExtractionModel?.infoPropertyList
-        case .provision: return packageHandler.packageExtractionModel?.mobileProvision
-        case .installerPlist: return packageHandler.packageExtractionModel?.installationPList
+        case .application: return packageExtractionModel?.app
+        case .icon: return packageExtractionModel?.appIcon ?? generateDefaultAppIcon()
+        case .infoPlist: return packageExtractionModel?.infoPropertyList
+        case .provision: return packageExtractionModel?.mobileProvision
+        case .installerPlist: return packageExtractionModel?.installationPList
         }
     }
 
     @MainActor
     private func generateInstallerPropertyList(_ endpoint: String) async throws {
-//        updateLoadingState(for: .detail, to: .uploading("Generating .plist"))
+        self.detailLoadingState = .uploading("Generating .plist")
+        
         if let objectURL = await fetchPackageURL(endpoint) {
-            packageHandler.generatePropertyList(fileURL: objectURL)
+            generatePropertyList(objectURL)
         }else {
             throw ZError.LocalError.custom("Failed to generate installation property", nil)
         }
+    }
+    
+    private func generatePropertyList(_ objectURL: String) {
+        guard let bundleId = bundleProperties?.bundleIdentifier,
+              let bundleVersion = bundleProperties?.bundleVersion,
+              let fileName = bundleProperties?.bundleName else { return }
+        
+        let installationProperty = packageHandler.generatePropertyList(fileURL: objectURL,
+                                            bundleId: bundleId,
+                                            bundleVersion: bundleVersion,
+                                            fileName: fileName)
+        
+        self.packageExtractionModel?.installationPList = installationProperty
     }
 
     // MARK: - Fetch Application download link
@@ -168,14 +196,12 @@ class AttachedFileDetailViewModel: ObservableObject {
             let bucketData = try await repository.getFoldersFromBucket(params)
 
             if bucketData.contents.isEmpty {
-//                updateLoadingState(for: .sidebar, to: .idle())
                 return nil
             }
 
-//            updateLoadingState(for: .sidebar, to: .idle())
             return bucketData.getPackageURL()
         } catch {
-//            handleError(error.localizedDescription)
+            handleError(error.localizedDescription)
         }
 
         return nil
@@ -204,7 +230,7 @@ class AttachedFileDetailViewModel: ObservableObject {
     }
 
     private func generateDefaultAppIcon() -> Data? {
-        imageWith(name: packageHandler.bundleProperties?.bundleName)?.pngData()
+        imageWith(name: bundleProperties?.bundleName)?.pngData()
     }
     
     func handleError(_ error: String) {
@@ -215,12 +241,5 @@ class AttachedFileDetailViewModel: ObservableObject {
     func showToast(_ message: String?) {
         self.toastMessage = message
         self.isShowingToast = true
-    }
-}
-
-
-extension AttachedFileDetailViewModel {
-    static var preview: AttachedFileDetailViewModel {
-        AttachedFileDetailViewModel()
     }
 }

@@ -20,7 +20,6 @@ struct HomeSideBarAppLabel: View {
                 title: {
                     Text(bucketObject.folderName)
                         .font(.system(size: 16, weight: .regular))
-                        .foregroundStyle(StyleManager.colorStyle.invertBackground)
                 },
                 icon: {
                     AppIconView(iconURL: iconURL)

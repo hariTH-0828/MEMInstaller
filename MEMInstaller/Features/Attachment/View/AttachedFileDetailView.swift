@@ -9,13 +9,28 @@ import SwiftUI
 import MEMToast
 
 struct AttachedFileDetailView: View {
-    @ObservedObject var viewModel: AttachedFileDetailViewModel
-    @StateObject private var packageExtractionHandler: PackageExtractionHandler = PackageExtractionHandler.shared
+    @Environment(\.dismiss) private var dismiss
     
-    let bucketObjectModel: BucketObjectModel?
-    let packageModel: PackageExtractionModel?
+    // Initializer properties
+    @ObservedObject var viewModel: AttachedFileDetailViewModel
+    
+    private var bucketObjectModel: BucketObjectModel? {
+        didSet {
+            viewModel.bundleProperties = nil
+            viewModel.mobileProvision = nil
+        }
+    }
+    
+    private var packageModel: PackageExtractionModel? {
+        didSet {
+            viewModel.bundleProperties = nil
+            viewModel.mobileProvision = nil
+        }
+    }
+    
     let attachmentMode: AttachmentMode
 
+    // MARK: Initialize view with BucketObjectModel
     init(viewModel: AttachedFileDetailViewModel,
          bucketObjectModel: BucketObjectModel?,
          attachmentMode: AttachmentMode)
@@ -26,14 +41,20 @@ struct AttachedFileDetailView: View {
         self.attachmentMode = attachmentMode
     }
     
+    // MARK: Initialise view with PackageExtractionModel
     init(viewModel: AttachedFileDetailViewModel,
          packageModel: PackageExtractionModel?,
          attachmentModel: AttachmentMode)
     {
         self.viewModel = viewModel
         self.packageModel = packageModel
-        self.bucketObjectModel = nil
         self.attachmentMode = attachmentModel
+        
+        self.bucketObjectModel = nil
+        
+        mainQueue {
+            viewModel.readFileDataToProperites(infoProperties: packageModel?.infoPropertyList, mobileProvision: packageModel?.mobileProvision)
+        }
     }
     
     var body: some View {
@@ -46,8 +67,7 @@ struct AttachedFileDetailView: View {
                         AppIconView(icon: packageModel.appIcon)
                     }
                     
-                    bundleNameWithIdentifierView(bundleName: packageExtractionHandler.bundleProperties?.bundleName,
-                                                 bundleId: packageExtractionHandler.bundleProperties?.bundleIdentifier)
+                    bundleNameWithIdentifierView()
                 }
                 .padding(.horizontal)
                 
@@ -69,15 +89,23 @@ struct AttachedFileDetailView: View {
                 actionButtonView()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .navigationTitle(packageExtractionHandler.bundleProperties?.bundleName ?? "Loading")
+            .navigationTitle(viewModel.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isShowingToast)
+            .overlay {
+                switch viewModel.detailLoadingState {
+                case .uploading(let uploadingMessage):
+                    HorizontalLoadingWrapper(title: uploadingMessage, value: viewModel.uploadProgress)
+                default:
+                    Color.clear
+                }
+            }
         }
     }
    
     @ViewBuilder
-    private func bundleNameWithIdentifierView(bundleName: String?, bundleId: String?) -> some View {
-        if let bucketObjectModel, viewModel.detailViewState == .loading {
+    private func bundleNameWithIdentifierView() -> some View {
+        if let bucketObjectModel, viewModel.detailLoadingState == .loading {
             VStack(alignment: .leading, spacing: 5) {
                 rectangleShimmerView(width: 100, corner: 4)
                 rectangleShimmerView(width: 200, corner: 4)
@@ -85,16 +113,16 @@ struct AttachedFileDetailView: View {
             .task {
                 guard let infoPlistURL = bucketObjectModel.getInfoPropertyListURL() else { return }
                 await viewModel.downloadFile(url: infoPlistURL, type: .infoFile)
-                viewModel.detailViewState = .loaded
+                viewModel.detailLoadingState = .loaded
             }
         }else {
             VStack(alignment: .leading) {
-                Text(bundleName ?? "No Bundle name available")
+                Text(viewModel.bundleProperties?.bundleName ?? "No Bundle name available")
                     .font(.title2)
                     .bold()
                     .lineLimit(1)
                 
-                Text(bundleId ?? "Bundle Id not available")
+                Text(viewModel.bundleProperties?.bundleIdentifier ?? "Bundle Id not available")
                     .font(.footnote)
                     .foregroundStyle(Color(.secondaryLabel))
                     .lineLimit(1)
@@ -104,7 +132,7 @@ struct AttachedFileDetailView: View {
     
     @ViewBuilder
     private func iPhoneLayoutBundlePropertyView() -> some View {
-        if let bucketObjectModel, viewModel.detailViewState == .loading {
+        if let bucketObjectModel, viewModel.detailLoadingState == .loading {
             ForEach(0..<2) { _ in
                 RoundedRectangleOutlineView {
                     ProgressView()
@@ -115,10 +143,10 @@ struct AttachedFileDetailView: View {
             .task {
                 guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
                 await viewModel.downloadFile(url: provisionURL, type: .provision)
-                viewModel.detailViewState = .loaded
+                viewModel.detailLoadingState = .loaded
             }
         }else {
-            if let bundleProperties = packageExtractionHandler.bundleProperties {
+            if let bundleProperties = viewModel.bundleProperties {
                 RoundedRectangleOutlineView {
                     ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
                         HorizontalKeyValueContainer(key: identifier.rawValue, value: bundleProperties.value(for: identifier))
@@ -126,7 +154,7 @@ struct AttachedFileDetailView: View {
                 }
             }
             
-            if let mobileProvision = packageExtractionHandler.mobileProvision {
+            if let mobileProvision = viewModel.mobileProvision {
                 RoundedRectangleOutlineView {
                     ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
                         mobileProvisionCellView(provision: mobileProvision, identifier)
@@ -183,17 +211,16 @@ struct AttachedFileDetailView: View {
     
     private func uploadApplication() {
         guard let endpoint = generateUploadBodyParams() else { return }
-        
         Task {
-            await viewModel.uploadPackage(endpoint: endpoint) {
-                // Change Loading state and refresh the app list
+            await viewModel.uploadPackage(endpoint: endpoint, packageExtractionModel: packageModel) {
+                dismiss()
             }
         }
     }
     
     private func generateUploadBodyParams() -> String? {
         guard let userEmail = viewModel.userProfile?.email else { return nil }
-        guard let bundleName = packageExtractionHandler.bundleProperties?.value(for: .bundleName) else { return nil }
+        guard let bundleName = viewModel.bundleProperties?.value(for: .bundleName) else { return nil }
 
         return "\(userEmail)/\(bundleName)"
     }

@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
-//    @ObservedObject var viewModel: HomeViewModel
+    private let packageHandler = PackageExtractionHandler()
     @EnvironmentObject private var coordinator: AppCoordinatorImpl
     
     var body: some View {
@@ -36,7 +36,8 @@ struct EmptyBucketView: View {
                         coordinator.openFileImporter { result in
                             switch result {
                             case .success(let filePath):
-                                PackageExtractionHandler.shared.initiateAppExtraction(from: filePath)
+                                packageHandler.initiateAppExtraction(from: filePath)
+                                let packageExtractionModel = packageHandler.getPackageExtractionModel()
 //                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
@@ -64,15 +65,6 @@ struct EmptyBucketView: View {
     func refreshView() {
 //        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
 //        viewModel.fetchFolders()
-    }
-}
-
-
-// MARK: Preview helper
-extension HomeViewModel {
-    static var preview: HomeViewModel {
-        HomeViewModel(repository: StratusRepositoryImpl(),
-                      userDataManager: UserDataManager())
     }
 }
 

@@ -13,18 +13,12 @@ enum LoadingState: Hashable {
     case loading
     case loaded
     case uploading(String)
-    case error(ErrorViewState = .empty)
 }
 
 enum IdleViewState: Hashable {
     case empty
     case available
     case detail
-}
-
-enum ErrorViewState: Hashable {
-    case empty
-    case detailError
 }
 
 // MARK: - View Type

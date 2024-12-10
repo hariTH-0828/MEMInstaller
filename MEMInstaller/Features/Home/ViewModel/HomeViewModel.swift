@@ -19,19 +19,11 @@ enum DownloadType {
     case infoFile, provision
 }
 
-protocol HomeViewModelProtocol: ObservableObject {
-    func fetchFolders()
-    var bucketObjectModels: [BucketObjectModel] { get }
-    var sideBarLoadingState: LoadingState { get }
-    var toastMessage: String? { get }
-    var isPresentToast: Bool { get }
-    var userProfile: ZUserProfile? { get }
-}
-
-class HomeViewModel: HomeViewModelProtocol {
+class HomeViewModel: ObservableObject {
     // Manage logged user profile
     @Published private(set) var userProfile: ZUserProfile?
     @Published private(set) var bucketObjectModels: [BucketObjectModel] = []
+    
     @Published var selectedBucketObject: BucketObjectModel? = nil
     @Published var selectedPackageModel: PackageExtractionModel? = nil {
         didSet {
@@ -39,22 +31,17 @@ class HomeViewModel: HomeViewModelProtocol {
         }
     }
     
-    @Published var sideBarLoadingState: LoadingState = .loading
-    
     // Toast properties
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
-    // Dependencies
-    private let userDataManager: UserDataManager
-    private let repository: StratusRepository
+    @Published var sideBarLoadingState: LoadingState = .loading
     
-    init(
-        repository: StratusRepository,
-        userDataManager: UserDataManager
-    ) {
-        self.repository = repository
-        self.userDataManager = userDataManager
+    // Dependencies
+    private let userDataManager: UserManagerProtocol = UserDataManager()
+    private let repository: StratusRepository = StratusRepositoryImpl()
+    
+    init() {
         self.userProfile = userDataManager.retrieveLoggedUserFromKeychain()
     }
     
@@ -67,15 +54,16 @@ class HomeViewModel: HomeViewModelProtocol {
     // MARK: Fetch bucket information
     @MainActor
     private func fetchFoldersFromBucket() async {
-        updateLoadingState(for: .sidebar, to: .loading)
+        // Initiate Loading ViewState in SideBar
+        self.sideBarLoadingState = .loading
         
         let params: Parameters = ZAPIStrings.Parameter.folders(userProfile!.email).value
         
         do {
             let bucketObject = try await repository.getFoldersFromBucket(params)
             self.bucketObjectModels = try await processBucketContents(bucketObject)
-            updateLoadingState(for: .sidebar, to: .idle())
-            if bucketObjectModels.isEmpty { updateLoadingState(for: .detail, to: .idle(.empty)) }
+            self.sideBarLoadingState = .loaded
+            // TODO: Handle bucketObject if empty
         } catch {
             handleError(error.localizedDescription)
         }
@@ -102,17 +90,10 @@ class HomeViewModel: HomeViewModelProtocol {
     func handleError(_ error: String) {
         ZLogs.shared.error(error)
         showToast(error)
-        updateLoadingState(for: .detail, to: .error(.detailError))
     }
     
     func showToast(_ message: String) {
         toastMessage = message
         isPresentToast = true
-    }
-    
-    func updateLoadingState(for view: ViewType, to state: LoadingState) {
-        withAnimation {
-            sideBarLoadingState = state
-        }
     }
 }

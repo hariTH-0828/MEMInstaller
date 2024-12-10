@@ -10,19 +10,21 @@ import MEMToast
 
 struct ContentView: View {
     @StateObject var appViewModel: AppViewModel = AppViewModel()
-    
-    @StateObject var sideBarViewModel: HomeViewModel = HomeViewModel(repository: StratusRepositoryImpl(), userDataManager: UserDataManager())
-    @StateObject var detailViewModel: AttachedFileDetailViewModel = AttachedFileDetailViewModel()
+    @StateObject var appCoordinator: AppCoordinatorImpl = AppCoordinatorImpl()
 
     var body: some View {
         ZStack {
             if appViewModel.isUserLoggedIn {
-                HomeView(sideBarViewModel: sideBarViewModel, detailViewModel: detailViewModel)
+                HomeView(appCoordinator: appCoordinator)
             }else {
                 LoginView()
             }
         }
         .environmentObject(appViewModel)
+        .onAppear(perform: {
+            // Handled when logout / login make the view as top view
+            appViewModel.coordinator = appCoordinator
+        })
     }
 }
 

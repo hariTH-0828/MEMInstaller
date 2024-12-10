@@ -15,30 +15,24 @@ enum HomeNavigation: Hashable {
 
 struct HomeView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
-    @StateObject private var coordinator: AppCoordinatorImpl = AppCoordinatorImpl()
+    @ObservedObject var appCoordinator: AppCoordinatorImpl
     
-    @ObservedObject var sideBarViewModel: HomeViewModel
-    @ObservedObject var detailViewModel: AttachedFileDetailViewModel
-    
-    // Use a default value for `viewModel`
-    init(sideBarViewModel: HomeViewModel, detailViewModel: AttachedFileDetailViewModel) {
-        self.sideBarViewModel = sideBarViewModel
-        self.detailViewModel = detailViewModel
-    }
+    @StateObject var sideBarViewModel: HomeViewModel = HomeViewModel()
+    @StateObject var detailViewModel: AttachedFileDetailViewModel = AttachedFileDetailViewModel()
     
     // MARK: BODY
     var body: some View {
         NavigationSplitView {
-            NavigationStack(path: $coordinator.navigationPath) {
+            NavigationStack(path: $appCoordinator.navigationPath) {
                 HomeSidebarView(viewModel: sideBarViewModel)
                     .navigationDestination(for: Screen.self) {
-                        coordinator.build(forScreen: $0)
+                        appCoordinator.build(forScreen: $0)
                     }
-                    .sheet(item: $coordinator.sheet, onDismiss: coordinator.onDismiss, content: { sheet in
-                        coordinator.build(forSheet: sheet)
+                    .sheet(item: $appCoordinator.sheet, onDismiss: appCoordinator.onDismiss, content: { sheet in
+                        appCoordinator.build(forSheet: sheet)
                     })
-                    .fileImporter(isPresented: $coordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
-                        coordinator.fileImportCompletion?(result)
+                    .fileImporter(isPresented: $appCoordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
+                        appCoordinator.fileImportCompletion?(result)
                     }
             }
         } detail: {
@@ -52,16 +46,13 @@ struct HomeView: View {
             }
         }
         .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)
-        .environmentObject(coordinator)
-        .onAppear(perform: {
-            appViewModel.coordinator = coordinator
-        })
+        .environmentObject(appCoordinator)
         .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
-            detailViewModel.detailViewState = .loading
+            detailViewModel.detailLoadingState = .loading
         }
         .onChange(of: sideBarViewModel.selectedPackageModel) { _, newValue in
             guard let newValue = newValue else { return }
-            coordinator.presentSheet(.AttachedFileDetail(detailViewModel, newValue, .upload)) {
+            appCoordinator.presentSheet(.AttachedFileDetail(detailViewModel, newValue, .upload)) {
                 sideBarViewModel.selectedPackageModel = nil
             }
         }
