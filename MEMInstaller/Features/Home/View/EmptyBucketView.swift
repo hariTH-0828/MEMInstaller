@@ -10,7 +10,15 @@ import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
     private let packageHandler = PackageExtractionHandler()
-    @EnvironmentObject private var coordinator: AppCoordinatorImpl
+
+    @EnvironmentObject var coordinator: AppCoordinatorImpl
+    @State private var isDropTarget = false
+    
+    @ObservedObject var viewModel: HomeViewModel
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         GeometryReader(content: { geometry in
@@ -38,10 +46,9 @@ struct EmptyBucketView: View {
                             case .success(let filePath):
                                 packageHandler.initiateAppExtraction(from: filePath)
                                 let packageExtractionModel = packageHandler.getPackageExtractionModel()
-//                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
+                                viewModel.selectedPackageModel = packageExtractionModel
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
-//                                viewModel.showToast(failure.localizedDescription)
                             }
                         }
                     } label: {
@@ -58,13 +65,39 @@ struct EmptyBucketView: View {
                 }
                 .padding(.bottom, 30)
             }
+            .onDrop(of: [UTType.fileURL], isTargeted: $isDropTarget) { providers in
+                guard let provider = providers.first else { return false }
+                return handleDrop(provider: provider)
+            }
         })
     }
     
     // MARK: HELPER METHOD
     func refreshView() {
-//        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
-//        viewModel.fetchFolders()
+        viewModel.fetchFolders()
+    }
+    
+    private func handleDrop(provider: NSItemProvider) -> Bool {
+        var didHandleDrop = false
+        if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
+                guard let data = item as? Data,
+                      let url = URL(dataRepresentation: data, relativeTo: nil),
+                      url.pathExtension == "ipa" else {
+                    // Handle invalid file type
+                    viewModel.handleError("Invalid file type")
+                    return
+                }
+
+//                DispatchQueue.main.async {
+//                    viewModel.packageHandler.initiateAppExtraction(from: url)
+//                    viewModel.shouldShowDetailView = .upload
+//                }
+            }
+            didHandleDrop = true
+        }
+
+        return didHandleDrop
     }
 }
 

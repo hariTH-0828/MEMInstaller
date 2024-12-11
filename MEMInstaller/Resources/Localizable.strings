@@ -36,3 +36,6 @@
 "com.learn.meminstaller.setting.privacy.crash-report" = "Enable crash reporting";
 "com.learn.meminstaller.setting.privacy.shake-feedback-desc" = "Shake your device to send us feedback or to report a bug with a screenshot";
 "com.learn.meminstaller.setting.privacy.shake-feedback" = "Shake to send feedback";
+
+"com.learn.meminstaller.upload.provision.error.title" = "Expired";
+"com.learn.meminstaller.upload.provision.error.message" = "This application's mobile provision has expired. Please renew it to proceed.";

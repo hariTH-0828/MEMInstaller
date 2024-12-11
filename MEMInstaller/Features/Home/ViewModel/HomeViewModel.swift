@@ -35,7 +35,13 @@ class HomeViewModel: ObservableObject {
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
     
-    @Published var sideBarLoadingState: LoadingState = .loading
+    @Published var sideBarLoadingState: LoadingState = .loading {
+        didSet {
+            if case .loading = sideBarLoadingState {
+                selectedBucketObject = nil
+            }
+        }
+    }
     
     // Dependencies
     private let userDataManager: UserManagerProtocol = UserDataManager()
@@ -66,7 +72,6 @@ class HomeViewModel: ObservableObject {
             let bucketObject = try await repository.getFoldersFromBucket(params)
             self.bucketObjectModels = try await processBucketContents(bucketObject)
             self.sideBarLoadingState = .loaded
-            // TODO: Handle bucketObject if empty
         } catch {
             handleError(error.localizedDescription)
         }

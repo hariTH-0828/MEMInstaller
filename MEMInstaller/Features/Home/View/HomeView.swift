@@ -40,6 +40,8 @@ struct HomeView: View {
                 AttachedFileDetailView(viewModel: detailViewModel,
                                        bucketObjectModel: bucketObjectModel,
                                        attachmentMode: .install)
+            }else if sideBarViewModel.bucketObjectModels.isEmpty && sideBarViewModel.sideBarLoadingState == .loaded {
+                EmptyBucketView(viewModel: sideBarViewModel)
             }else {
                 Text("Select an app to see details")
                     .foregroundColor(.gray)

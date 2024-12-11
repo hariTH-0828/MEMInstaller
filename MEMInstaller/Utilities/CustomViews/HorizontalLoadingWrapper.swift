@@ -15,7 +15,7 @@ struct HorizontalLoadingWrapper: View {
         ZStack {
             Color.black
                 .ignoresSafeArea()
-                .opacity(0.3)
+                .opacity(0.6)
             
             if let value {
                 ProgressView(title, value: value)

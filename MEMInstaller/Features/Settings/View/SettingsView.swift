@@ -14,7 +14,7 @@ struct SettingsView: View {
     let userProfile: ZUserProfile?
     
     // Cache size
-    @State var totalCacheSize: String?
+    @State private var totalCacheSize: String?
     
     // Toast
     @State var toastMessage: String?
@@ -113,48 +113,8 @@ struct SettingsView: View {
     
     // MARK: - HELPER METHODS
     private func clearCacheData() {
-        do {
-            try ZFFileManager.shared.clearAllCache()
-            self.totalCacheSize = try ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
-        }catch {
-            
-        }
-    }
-}
-
-struct SettingLabelView: View {
-    let title: LocalizedStringKey
-    let color: Color
-    let iconName: String
-    let iconColor: Color
-    
-    init(_ title: LocalizedStringKey, color: Color = StyleManager.colorStyle.invertBackground, iconName: String, iconColor: Color) {
-        self.title = title
-        self.iconName = iconName
-        self.color = color
-        self.iconColor = iconColor
-    }
-    
-    var body: some View {
-        HStack {
-            if UIImage.isAssetAvailable(named: iconName) {
-                Image(iconName)
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(iconColor)
-            }else {
-                Image(systemName: iconName)
-                    .font(.system(size: 18, weight: .regular))
-                    .foregroundStyle(iconColor)
-            }
-            
-            Text(title)
-                .lineLimit(1)
-                .font(.system(size: 18, weight: .regular))
-                .foregroundStyle(color)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        try? ZFFileManager.shared.clearAllCache()
+        self.totalCacheSize = try? ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
     }
 }
 

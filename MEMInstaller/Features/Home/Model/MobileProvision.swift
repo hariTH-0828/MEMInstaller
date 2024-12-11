@@ -14,6 +14,9 @@ struct MobileProvision: Hashable {
     let expirationDate: Date
     let teamName: String
     let version: Int
+    var isExpired: Bool {
+        isMobileProvisionValid(expirationDate.formatted(date: .abbreviated, time: .shortened))
+    }
     
     enum CodingKeys: String, CodingKey {
         case name = "Name"
@@ -40,6 +43,11 @@ struct MobileProvision: Hashable {
         self.expirationDate = expirationDate
         self.teamName = teamName
         self.version = version
+    }
+    
+    private func isMobileProvisionValid(_ date: String?) -> Bool {
+        guard let expireDate = date?.dateFormat(by: "d MMM yyyy 'at' h:mm a") else { return false }
+        return expireDate < Date()
     }
 }
 

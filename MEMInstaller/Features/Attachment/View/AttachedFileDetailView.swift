@@ -13,44 +13,26 @@ struct AttachedFileDetailView: View {
     
     // Initializer properties
     @ObservedObject var viewModel: AttachedFileDetailViewModel
-    
     private var bucketObjectModel: BucketObjectModel? {
-        didSet {
-            viewModel.bundleProperties = nil
-            viewModel.mobileProvision = nil
-        }
+        didSet { resetViewModel() }
     }
-    
     private var packageModel: PackageExtractionModel? {
-        didSet {
-            viewModel.bundleProperties = nil
-            viewModel.mobileProvision = nil
-        }
+        didSet { resetViewModel() }
     }
-    
     let attachmentMode: AttachmentMode
+    
+    @State private var showExpiredAlert = false
 
     // MARK: Initialize view with BucketObjectModel
     init(viewModel: AttachedFileDetailViewModel,
-         bucketObjectModel: BucketObjectModel?,
+         bucketObjectModel: BucketObjectModel? = nil,
+         packageModel: PackageExtractionModel? = nil,
          attachmentMode: AttachmentMode)
     {
         self.viewModel = viewModel
         self.bucketObjectModel = bucketObjectModel
-        self.packageModel = nil
-        self.attachmentMode = attachmentMode
-    }
-    
-    // MARK: Initialise view with PackageExtractionModel
-    init(viewModel: AttachedFileDetailViewModel,
-         packageModel: PackageExtractionModel?,
-         attachmentMode: AttachmentMode)
-    {
-        self.viewModel = viewModel
         self.packageModel = packageModel
         self.attachmentMode = attachmentMode
-        
-        self.bucketObjectModel = nil
         
         mainQueue {
             viewModel.readFileDataToProperites(infoProperties: packageModel?.infoPropertyList, mobileProvision: packageModel?.mobileProvision)
@@ -91,6 +73,11 @@ struct AttachedFileDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationTitle(viewModel.bundleProperties?.bundleName ?? "Loading")
             .navigationBarTitleDisplayMode(.inline)
+            .alert("com.learn.meminstaller.upload.provision.error.title", isPresented: $showExpiredAlert, actions: {
+                Button("OK", role: .cancel) { }
+            }, message: {
+                Text("com.learn.meminstaller.upload.provision.error.message")
+            })
             .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isShowingToast)
             .overlay {
                 switch viewModel.detailLoadingState {
@@ -103,9 +90,39 @@ struct AttachedFileDetailView: View {
             }
         }
     }
-   
+    
+    private func uploadApplication() {
+        // Validate the mobile provision before uploading the application
+        viewModel.mobileProvision?.isExpired == true ? showExpiredAlert.toggle() : uploadApplicationToServer()
+    }
+    
+    private func uploadApplicationToServer() {
+        guard let endpoint = generateUploadBodyParams() else { return }
+        Task {
+            await viewModel.uploadPackage(endpoint: endpoint, packageExtractionModel: packageModel) {
+                dismiss()
+                NotificationCenter.default.post(name: .refreshData, object: nil)
+            }
+        }
+    }
+    
+    private func generateUploadBodyParams() -> String? {
+        guard let userEmail = viewModel.userProfile?.email else { return nil }
+        guard let bundleName = viewModel.bundleProperties?.value(for: .bundleName) else { return nil }
+
+        return "\(userEmail)/\(bundleName)"
+    }
+    
+    private func resetViewModel() {
+        viewModel.bundleProperties = nil
+        viewModel.mobileProvision = nil
+    }
+}
+
+// MARK: - Private Extension
+private extension AttachedFileDetailView {
     @ViewBuilder
-    private func bundleNameWithIdentifierView() -> some View {
+    func bundleNameWithIdentifierView() -> some View {
         if let bucketObjectModel, viewModel.detailLoadingState == .loading {
             VStack(alignment: .leading, spacing: 5) {
                 rectangleShimmerView(width: 100, corner: 4)
@@ -132,7 +149,7 @@ struct AttachedFileDetailView: View {
     }
     
     @ViewBuilder
-    private func iPhoneLayoutBundlePropertyView() -> some View {
+    func iPhoneLayoutBundlePropertyView() -> some View {
         if let bucketObjectModel, viewModel.detailLoadingState == .loading {
             ForEach(0..<2) { _ in
                 RoundedRectangleOutlineView {
@@ -166,7 +183,7 @@ struct AttachedFileDetailView: View {
     }
     
     @ViewBuilder
-    private func iPadLayoutBundlePropertyView() -> some View {
+    func iPadLayoutBundlePropertyView() -> some View {
         HStack(spacing: 0) {
             iPhoneLayoutBundlePropertyView()
         }
@@ -174,22 +191,20 @@ struct AttachedFileDetailView: View {
     }
     
     @ViewBuilder
-    private func mobileProvisionCellView(provision: MobileProvision, _ identifier: ProvisionCellIdentifiers) -> some View {
+    func mobileProvisionCellView(provision: MobileProvision, _ identifier: ProvisionCellIdentifiers) -> some View {
         if identifier != .expiredDate {
             HorizontalKeyValueContainer(key: identifier.rawValue, value: provision.value(for: identifier))
         }else {
             HorizontalKeyValueContainer(key: identifier.rawValue) {
-                let isExpired: Bool = isMobileProvisionValid(provision.value(for: identifier))
-
                 Text(provision.value(for: identifier) ?? "No Expiration Date")
                     .font(.system(.footnote))
-                    .foregroundStyle(isExpired ? Color.red : Color(uiColor: .secondaryLabel))
+                    .foregroundStyle(provision.isExpired ? Color.red : Color(uiColor: .secondaryLabel))
             }
         }
     }
     
     @ViewBuilder
-    private func actionButtonView() -> some View {
+    func actionButtonView() -> some View {
         HStack(spacing: 30) {
             Button {
                 attachmentMode == .install ? viewModel.installApplication(bucketObjectModel?.getObjectURL()) : uploadApplication()
@@ -199,44 +214,29 @@ struct AttachedFileDetailView: View {
             }
             .padding(.bottom, 30)
             
-            Button {
-                dismiss()
-            } label: {
-                Text("Cancel")
-                    .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
+            if attachmentMode == .upload {
+                dismissButtonView()
             }
-            .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
     
     @ViewBuilder
-    private func rectangleShimmerView(width: CGFloat, corner: CGFloat) -> some View {
+    func dismissButtonView() -> some View {
+        Button {
+            dismiss()
+        } label: {
+            Text("Cancel")
+                .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
+        }
+        .padding(.bottom, 30)
+    }
+    
+    @ViewBuilder
+    func rectangleShimmerView(width: CGFloat, corner: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: corner)
             .fill(StyleManager.colorStyle.systemGray)
             .frame(width: width, height: 15)
             .shimmer(enable: .constant(true))
-    }
-    
-    private func uploadApplication() {
-        guard let endpoint = generateUploadBodyParams() else { return }
-        Task {
-            await viewModel.uploadPackage(endpoint: endpoint, packageExtractionModel: packageModel) {
-                dismiss()
-                NotificationCenter.default.post(name: .refreshData, object: nil)
-            }
-        }
-    }
-    
-    private func generateUploadBodyParams() -> String? {
-        guard let userEmail = viewModel.userProfile?.email else { return nil }
-        guard let bundleName = viewModel.bundleProperties?.value(for: .bundleName) else { return nil }
-
-        return "\(userEmail)/\(bundleName)"
-    }
-    
-    private func isMobileProvisionValid(_ date: String?) -> Bool {
-        guard let expireDate = date?.dateFormat(by: "d MMM yyyy 'at' h:mm a") else { return false }
-        return expireDate < Date()
     }
 }

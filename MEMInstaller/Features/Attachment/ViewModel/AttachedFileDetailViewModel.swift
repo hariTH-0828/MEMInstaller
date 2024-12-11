@@ -9,25 +9,6 @@ import Foundation
 import SwiftUI
 import Alamofire
 
-enum PListCellIdentifiers: String, CaseIterable {
-    case bundleName = "Bundle name"
-    case bundleIdentifiers = "Bundle identifiers"
-    case bundleVersionShort = "Bundle version (short)"
-    case bundleVersion = "Bundle version"
-    case minOSVersion = "Minimum OS version"
-    case requiredDevice = "Required device compability"
-    case supportedPlatform = "Suppported platform"
-}
-
-enum ProvisionCellIdentifiers: String, CaseIterable {
-    case name = "Name"
-    case teamIdentifier = "Team identifier"
-    case creationDate = "Creation date"
-    case expiredDate = "Expired date"
-    case teamName = "Team name"
-    case version = "Version"
-}
-
 enum AttachmentMode: Hashable {
     case install
     case upload
@@ -130,7 +111,8 @@ class AttachedFileDetailViewModel: ObservableObject {
             try await uploadComponent(type: .installerPlist(appName), endpoint: endpoint, message: "Uploading Installer")
             await callBack()
         }catch {
-            showToast(error.localizedDescription)
+            // MARK: Handle Deletion
+            handleError(error.localizedDescription)
         }
     }
 
@@ -236,6 +218,7 @@ class AttachedFileDetailViewModel: ObservableObject {
     func handleError(_ error: String) {
         ZLogs.shared.error(error)
         showToast(error)
+        self.detailLoadingState = .loaded
     }
 
     func showToast(_ message: String?) {

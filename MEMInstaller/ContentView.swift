@@ -17,7 +17,7 @@ struct ContentView: View {
             if appViewModel.isUserLoggedIn {
                 HomeView(appCoordinator: appCoordinator)
             }else {
-                LoginView()
+                LoginView(appCoordinator: appCoordinator)
             }
         }
         .environmentObject(appViewModel)

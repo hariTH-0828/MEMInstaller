@@ -57,7 +57,7 @@ final class AppViewModel: ObservableObject {
     func IAMLogin() {
         Task {
             // Safe: Delete existing user keychain
-            try? KeychainService.delete(forKey: KCKeys.loggedUserProfile)
+//            try? KeychainService.delete(forKey: KCKeys.loggedUserProfile)
             
             do {
                 let userLoggedInStatus = try await ZIAMManager.presentIAMLoginViewController()
@@ -80,7 +80,6 @@ final class AppViewModel: ObservableObject {
             // Login success: Navigate to Login view to Home View
             withAnimation(.easeInOut) {
                 self.isUserLoggedIn = status
-                coordinator?.popToRoot()
             }
         }
     }

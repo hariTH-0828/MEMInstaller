@@ -15,7 +15,7 @@ struct UserProfileButtonView: View {
             return profileImageData.profileImageData
         }
         
-        return UserDataManager().retrieveLoggedUserFromKeychain()!.profileImageData
+        return UserDataManager().retrieveLoggedUserFromKeychain()?.profileImageData ?? imageWith(name: "unknown")!.pngData()!
     }
     
     var body: some View {

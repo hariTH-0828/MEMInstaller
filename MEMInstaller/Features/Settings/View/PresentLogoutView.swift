@@ -10,6 +10,8 @@ import SwiftUI
 // MARK: Logout View
 struct PresentLogoutView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
+    @EnvironmentObject private var appViewModel: AppViewModel
     
     var body: some View {
         VStack(spacing: 20, content: {

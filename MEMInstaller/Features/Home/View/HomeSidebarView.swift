@@ -21,13 +21,16 @@ struct HomeSidebarView: View {
             ProgressView()
                 .progressViewStyle(.horizontalCircular)
         } loadedContent: {
-            if viewModel.bucketObjectModels.isEmpty {
-                textViewForIdleState("No apps available")
-            }else {
-                listAvailableApplications()
+            Group {
+                if viewModel.bucketObjectModels.isEmpty {
+                    Device.isIphone ? AnyView(EmptyBucketView(viewModel: viewModel)) : AnyView(textViewForIdleState("No apps available").navigationTitle("Apps"))
+                } else {
+                    AnyView(listAvailableApplications())
+                        .navigationTitle("Apps")
+                }
             }
         }
-        .navigationTitle("Apps")
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) { UserProfileButtonView() }
         }
