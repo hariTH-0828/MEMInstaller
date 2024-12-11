@@ -13,6 +13,9 @@
 		520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F32CE3851600659A66 /* UserDefaultsKey.swift */; };
 		520839D12D095E9200BF35EC /* PListCellIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839D02D095E9200BF35EC /* PListCellIdentifiers.swift */; };
 		520839D32D095EC100BF35EC /* ProvisionCellIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839D22D095EC100BF35EC /* ProvisionCellIdentifiers.swift */; };
+		520839DD2D09848700BF35EC /* QRGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839DC2D09848700BF35EC /* QRGenerator.swift */; };
+		520839DF2D099A7900BF35EC /* QRCodeProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839DE2D099A7900BF35EC /* QRCodeProviderView.swift */; };
+		520839E12D09A95700BF35EC /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839E02D09A95700BF35EC /* QRCodeView.swift */; };
 		521648072CFD6BE800D599E2 /* HomeSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648062CFD6BE800D599E2 /* HomeSidebarView.swift */; };
 		5216480B2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */; };
 		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
@@ -131,6 +134,9 @@
 		520732F32CE3851600659A66 /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
 		520839D02D095E9200BF35EC /* PListCellIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PListCellIdentifiers.swift; sourceTree = "<group>"; };
 		520839D22D095EC100BF35EC /* ProvisionCellIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionCellIdentifiers.swift; sourceTree = "<group>"; };
+		520839DC2D09848700BF35EC /* QRGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRGenerator.swift; sourceTree = "<group>"; };
+		520839DE2D099A7900BF35EC /* QRCodeProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeProviderView.swift; sourceTree = "<group>"; };
+		520839E02D09A95700BF35EC /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		521648062CFD6BE800D599E2 /* HomeSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSidebarView.swift; sourceTree = "<group>"; };
 		5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSideBarAppLabel.swift; sourceTree = "<group>"; };
 		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
@@ -316,6 +322,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		520839DB2D09847F00BF35EC /* QRGenerator */ = {
+			isa = PBXGroup;
+			children = (
+				520839DC2D09848700BF35EC /* QRGenerator.swift */,
+			);
+			path = QRGenerator;
+			sourceTree = "<group>";
+		};
 		522C7F612D0194210032F25E /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -417,6 +431,7 @@
 		523F71FE2CDB33C800D564E7 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				520839DB2D09847F00BF35EC /* QRGenerator */,
 				5200722E2CF72BA70080D8E8 /* ZFFileManager */,
 				52F393C82CE5EA2900C9B23C /* CustomViews */,
 				523F722E2CDB77E100D564E7 /* ViewModifiers */,
@@ -603,6 +618,8 @@
 				523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */,
 				525AD9962CF5B86E00BF08AF /* RoundedRectangleOutlineView.swift */,
 				5252A4022CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift */,
+				520839DE2D099A7900BF35EC /* QRCodeProviderView.swift */,
+				520839E02D09A95700BF35EC /* QRCodeView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -916,11 +933,13 @@
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
 				52A77EF52CF9F5830064A063 /* UserProfileButtonView.swift in Sources */,
+				520839DD2D09848700BF35EC /* QRGenerator.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,
 				52F393C32CE5DC6C00C9B23C /* BucketModel.swift in Sources */,
 				5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
+				520839E12D09A95700BF35EC /* QRCodeView.swift in Sources */,
 				522C7F652D02E6620032F25E /* CopyInstallationLinkView.swift in Sources */,
 				520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */,
 				52F6EA672D084F1200ACA676 /* SettingLabelView.swift in Sources */,
@@ -955,6 +974,7 @@
 				52BCCCBB2CF8EC8600D49186 /* Constants.swift in Sources */,
 				521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */,
 				52E109E92CE70725002D1EDD /* Color+.swift in Sources */,
+				520839DF2D099A7900BF35EC /* QRCodeProviderView.swift in Sources */,
 				523F723D2CDB912A00D564E7 /* ZFFileManager.swift in Sources */,
 				523F72152CDB368500D564E7 /* AppViewModel.swift in Sources */,
 				523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */,
@@ -1169,6 +1189,7 @@
 				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
 				INFOPLIST_KEY_NSFileProviderPresenceUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save the QR code image.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1210,6 +1231,7 @@
 				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
 				INFOPLIST_KEY_NSFileProviderPresenceUsageDescription = "This app needs access to your files to help you view, organize, and manage them easily.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save the QR code image.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

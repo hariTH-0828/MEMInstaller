@@ -10,6 +10,7 @@ import MEMToast
 
 struct AttachedFileDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     
     // Initializer properties
     @ObservedObject var viewModel: AttachedFileDetailViewModel
@@ -57,13 +58,6 @@ struct AttachedFileDetailView: View {
                     iPadLayoutBundlePropertyView()
                 }else {
                     iPhoneLayoutBundlePropertyView()
-                }
-                
-                if let bucketObjectModel {
-                    CopyInstallationLinkView(installationLink: (bucketObjectModel.getObjectURL())!, completion: {
-                        viewModel.showToast("Link copied")
-                    })
-                    .padding()
                 }
                 
                 Spacer()
@@ -123,63 +117,30 @@ struct AttachedFileDetailView: View {
 private extension AttachedFileDetailView {
     @ViewBuilder
     func bundleNameWithIdentifierView() -> some View {
-        if let bucketObjectModel, viewModel.detailLoadingState == .loading {
-            VStack(alignment: .leading, spacing: 5) {
-                rectangleShimmerView(width: 100, corner: 4)
-                rectangleShimmerView(width: 200, corner: 4)
-            }
-            .task {
-                guard let infoPlistURL = bucketObjectModel.getInfoPropertyListURL() else { return }
-                await viewModel.downloadFile(url: infoPlistURL, type: .infoFile)
-                viewModel.detailLoadingState = .loaded
-            }
-        }else {
+        if let bundleProperties = viewModel.bundleProperties {
             VStack(alignment: .leading) {
-                Text(viewModel.bundleProperties?.bundleName ?? "No Bundle name available")
+                Text(bundleProperties.bundleName ?? "No Bundle name available")
                     .font(.title2)
                     .bold()
                     .lineLimit(1)
                 
-                Text(viewModel.bundleProperties?.bundleIdentifier ?? "Bundle Id not available")
+                Text(bundleProperties.bundleIdentifier ?? "Bundle Id not available")
                     .font(.footnote)
                     .foregroundStyle(Color(.secondaryLabel))
                     .lineLimit(1)
+            }
+        }else {
+            VStack(alignment: .leading, spacing: 5) {
+                rectangleShimmerView(width: 100, corner: 4)
+                rectangleShimmerView(width: 200, corner: 4)
             }
         }
     }
     
     @ViewBuilder
     func iPhoneLayoutBundlePropertyView() -> some View {
-        if let bucketObjectModel, viewModel.detailLoadingState == .loading {
-            ForEach(0..<2) { _ in
-                RoundedRectangleOutlineView {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .task {
-                guard let provisionURL = bucketObjectModel.getMobileProvisionURL() else { return }
-                await viewModel.downloadFile(url: provisionURL, type: .provision)
-                viewModel.detailLoadingState = .loaded
-            }
-        }else {
-            if let bundleProperties = viewModel.bundleProperties {
-                RoundedRectangleOutlineView {
-                    ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
-                        HorizontalKeyValueContainer(key: identifier.rawValue, value: bundleProperties.value(for: identifier))
-                    }
-                }
-            }
-            
-            if let mobileProvision = viewModel.mobileProvision {
-                RoundedRectangleOutlineView {
-                    ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
-                        mobileProvisionCellView(provision: mobileProvision, identifier)
-                    }
-                }
-            }
-        }
+        bundlePropertyView()
+        mobileProvisionView()
     }
     
     @ViewBuilder
@@ -188,6 +149,36 @@ private extension AttachedFileDetailView {
             iPhoneLayoutBundlePropertyView()
         }
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+    
+    @ViewBuilder
+    func bundlePropertyView() -> some View {
+        if let bundleProperties = viewModel.bundleProperties {
+            RoundedRectangleOutlineView {
+                ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
+                    HorizontalKeyValueContainer(key: identifier.rawValue, value: bundleProperties.value(for: identifier))
+                }
+            }
+        }else {
+            loadingRoundedRectangleView(taskType: .infoFile) {
+                self.bucketObjectModel?.getInfoPropertyListURL()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func mobileProvisionView() -> some View {
+        if let mobileProvision = viewModel.mobileProvision {
+            RoundedRectangleOutlineView {
+                ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
+                    mobileProvisionCellView(provision: mobileProvision, identifier)
+                }
+            }
+        }else {
+            loadingRoundedRectangleView(taskType: .provision) {
+                self.bucketObjectModel?.getMobileProvisionURL()
+            }
+        }
     }
     
     @ViewBuilder
@@ -200,6 +191,19 @@ private extension AttachedFileDetailView {
                     .font(.system(.footnote))
                     .foregroundStyle(provision.isExpired ? Color.red : Color(uiColor: .secondaryLabel))
             }
+        }
+    }
+    
+    @ViewBuilder
+    func loadingRoundedRectangleView(taskType: DownloadType, urlProvider: @escaping () -> String?) -> some View {
+        RoundedRectangleOutlineView {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }
+        .frame(maxWidth: .infinity)
+        .task {
+            guard let url = urlProvider() else { return }
+            await viewModel.downloadFile(url: url, type: taskType)
         }
     }
     
@@ -217,6 +221,10 @@ private extension AttachedFileDetailView {
             if attachmentMode == .upload {
                 dismissButtonView()
             }
+            
+            if attachmentMode == .install {
+                showQRCodeView()
+            }
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -230,6 +238,22 @@ private extension AttachedFileDetailView {
                 .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
         }
         .padding(.bottom, 30)
+    }
+    
+    @ViewBuilder
+    func showQRCodeView() -> some View {
+        Button(action: {
+            guard let appIcon = bucketObjectModel?.getAppIcon(), let appName = bucketObjectModel?.folderName, let url = bucketObjectModel?.getObjectURL() else { return }
+            let qrProvider = QRProvider(appIconURL: appIcon, appName: appName, url: url)
+            appCoordinator.pop(.QRCodeProvider(qrProvider))
+        }, label: {
+            Text("QR Code")
+                .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
+        })
+        .padding(.bottom, 30)
+        .popover(item: $appCoordinator.popView) { pop in
+            appCoordinator.build(forPop: pop)
+        }
     }
     
     @ViewBuilder

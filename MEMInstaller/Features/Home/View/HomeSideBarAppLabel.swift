@@ -39,14 +39,20 @@ struct HomeSideBarAppLabel: View {
 struct AppIconView: View {
     let iconURL: String?
     let icon: Data?
+    private var width: CGFloat
+    private var height: CGFloat
     
-    init(iconURL: String?) {
+    init(iconURL: String?, width: CGFloat = 40, height: CGFloat = 40) {
         self.iconURL = iconURL
+        self.width = width
+        self.height = height
         self.icon = nil
     }
     
-    init(icon: Data?) {
+    init(icon: Data?, width: CGFloat = 40, height: CGFloat = 40) {
         self.icon = icon
+        self.width = width
+        self.height = height
         self.iconURL = nil
     }
     
@@ -55,12 +61,12 @@ struct AppIconView: View {
             AsyncImage(url: URL(string: iconURL)!) { image in
                 image
                     .resizable()
-                    .frame(width: 40, height: 40)
+                    .frame(width: width, height: height)
                     .clipShape(Circle())
             } placeholder: {
                 Circle()
                     .fill(.regularMaterial)
-                    .frame(width: 40, height: 40)
+                    .frame(width: width, height: height)
                     .overlay {
                         ProgressView()
                     }

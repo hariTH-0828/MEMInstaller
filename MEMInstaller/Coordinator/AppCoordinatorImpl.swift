@@ -91,6 +91,8 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
             AttachedFileDetailView(viewModel: viewModel,
                                    packageModel: packageExtractionModel,
                                    attachmentMode: attachedMode).interactiveDismissDisabled(true)
+        case .QRCodeProvider(let qrprovider):
+            QRCodeProviderView(qrProvider: qrprovider)
         }
     }
     
@@ -100,6 +102,8 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         case .logout:
             PresentLogoutView()
                 .padding()
+        case .QRCodeProvider(let qrprovider):
+            QRCodeProviderView(qrProvider: qrprovider)
         }
     }
 }
