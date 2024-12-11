@@ -24,14 +24,10 @@ struct QRCodeView: View {
         VStack {
             qrCodeImage()
                 .contextMenu(menuItems: {
-                    Button(action: {
-                        saveImageToPhotos()
-                    }, label: {
-                        Label("Save QR Code", systemImage: "square.and.arrow.down")
-                    })
+                   saveQRCodeButtonView()
                 })
             
-            Text("Scan the QR code to install the app")
+            Text("com.learn.meminstaller.qrcode.description")
                 .font(.footnote)
                 .foregroundStyle(StyleManager.colorStyle.secondary)
         }
@@ -44,7 +40,7 @@ struct QRCodeView: View {
     private func qrCodeImage() -> some View {
         Image(uiImage: UIImage(data: data)!)
             .resizable()
-            .frame(width: 200, height: 200)
+            .frame(width: 180, height: 180)
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 8)
@@ -52,9 +48,24 @@ struct QRCodeView: View {
                     .stroke(.thinMaterial, lineWidth: 2)
             )
             .overlay {
-                AppIconView(icon: appIcon)
-                .background(Circle().fill(.background))
+                if let appIcon {
+                    AppIconView(icon: appIcon)
+                        .background(Circle().fill(.background))
+                }else {
+                    ProgressView()
+                        .padding(8)
+                        .background(Circle().fill(.background))
+                }
             }
+    }
+    
+    @ViewBuilder
+    private func saveQRCodeButtonView() -> some View {
+        Button(action: {
+            saveImageToPhotos()
+        }, label: {
+            Label("Save QR Code", systemImage: "square.and.arrow.down")
+        })
     }
     
     private func saveImageToPhotos() {

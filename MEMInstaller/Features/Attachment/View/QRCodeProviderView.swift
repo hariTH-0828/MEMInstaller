@@ -27,28 +27,53 @@ struct QRCodeProviderView: View {
             appIconWithTitle()
             
             QRCodeView(url: qrProvider.url, appIconURL: qrProvider.appIconURL)
+                .padding()
             
-            urlView()
+            StyledButton(title: "Copy URL", systemImage: "doc.on.doc") {
+                UIPasteboard.general.string = Constants.installationPrefix + qrProvider.url
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(hex: "F3F6FD"))
-        )
     }
     
     @ViewBuilder
     private func appIconWithTitle() -> some View {
         HStack {
-            AppIconView(iconURL: qrProvider.appIconURL, width: 55, height: 55)
+            AppIconView(iconURL: qrProvider.appIconURL, width: 45, height: 45)
+            
             Text(qrProvider.appName)
                 .font(.system(size: 16, weight: .semibold))
         }
     }
     
     @ViewBuilder
-    private func urlView() -> some View {
-        CopyInstallationLinkView(installationLink: qrProvider.url)
+    private var noteTextView: Text {
+        Text("Note: Long press the QR Code to save and copy the file installation url")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+    }
+}
+
+
+struct StyledButton: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .foregroundStyle(StyleManager.colorStyle.tintColor)
+                .font(.callout)
+                .padding(.horizontal)
+                .frame(height: 50)
+                .background(
+                    Capsule()
+                        .fill(.clear)
+                        .stroke(StyleManager.colorStyle.tintColor, lineWidth: 1)
+                )
+        }
     }
 }
 

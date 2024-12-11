@@ -39,3 +39,4 @@
 
 "com.learn.meminstaller.upload.provision.error.title" = "Expired";
 "com.learn.meminstaller.upload.provision.error.message" = "This application's mobile provision has expired. Please renew it to proceed.";
+"com.learn.meminstaller.qrcode.description" = "Scan the QR code to install the app";

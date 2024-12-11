@@ -93,6 +93,9 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                                    attachmentMode: attachedMode).interactiveDismissDisabled(true)
         case .QRCodeProvider(let qrprovider):
             QRCodeProviderView(qrProvider: qrprovider)
+                .presentationDetents([.medium])
+                .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
+                .presentationDragIndicator(.visible)
         }
     }
     

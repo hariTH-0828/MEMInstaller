@@ -21,7 +21,6 @@
 		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
 		521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */; };
 		522C7F632D01942D0032F25E /* AttachedFileDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */; };
-		522C7F652D02E6620032F25E /* CopyInstallationLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C7F642D02E6620032F25E /* CopyInstallationLinkView.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -142,7 +141,6 @@
 		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
 		521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLoadingWrapper.swift; sourceTree = "<group>"; };
 		522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailViewModel.swift; sourceTree = "<group>"; };
-		522C7F642D02E6620032F25E /* CopyInstallationLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyInstallationLinkView.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -659,7 +657,6 @@
 			children = (
 				52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */,
 				521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */,
-				522C7F642D02E6620032F25E /* CopyInstallationLinkView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -940,7 +937,6 @@
 				5252A4102CF6DBD5005DD9CC /* NavigationEnums.swift in Sources */,
 				52F393C52CE5DCAD00C9B23C /* DataModel.swift in Sources */,
 				520839E12D09A95700BF35EC /* QRCodeView.swift in Sources */,
-				522C7F652D02E6620032F25E /* CopyInstallationLinkView.swift in Sources */,
 				520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */,
 				52F6EA672D084F1200ACA676 /* SettingLabelView.swift in Sources */,
 				52E109D82CE6287C002D1EDD /* WindowAccessor.swift in Sources */,

@@ -107,6 +107,11 @@ struct AttachedFileDetailView: View {
         return "\(userEmail)/\(bundleName)"
     }
     
+    private var getQRProvider: QRProvider? {
+        guard let appIcon = bucketObjectModel?.getAppIcon(), let appName = bucketObjectModel?.folderName, let url = bucketObjectModel?.getObjectURL() else { return nil }
+        return QRProvider(appIconURL: appIcon, appName: appName, url: url)
+    }
+    
     private func resetViewModel() {
         viewModel.bundleProperties = nil
         viewModel.mobileProvision = nil
@@ -222,8 +227,8 @@ private extension AttachedFileDetailView {
                 dismissButtonView()
             }
             
-            if attachmentMode == .install {
-                showQRCodeView()
+            if attachmentMode == .install, let qrProvider = getQRProvider {
+                showQRCodeView(qrProvider)
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -241,11 +246,13 @@ private extension AttachedFileDetailView {
     }
     
     @ViewBuilder
-    func showQRCodeView() -> some View {
+    func showQRCodeView(_ provider: QRProvider) -> some View {
         Button(action: {
-            guard let appIcon = bucketObjectModel?.getAppIcon(), let appName = bucketObjectModel?.folderName, let url = bucketObjectModel?.getObjectURL() else { return }
-            let qrProvider = QRProvider(appIconURL: appIcon, appName: appName, url: url)
-            appCoordinator.pop(.QRCodeProvider(qrProvider))
+            if Device.isIphone {
+                appCoordinator.presentSheet(.QRCodeProvider(provider))
+            }else {
+                appCoordinator.pop(.QRCodeProvider(provider))
+            }
         }, label: {
             Text("QR Code")
                 .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
