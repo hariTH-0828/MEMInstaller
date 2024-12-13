@@ -11,6 +11,7 @@ import Alamofire
 class PUT: ObservableObject {
     private var request: NetworkRequest
     private let tokenProvider: TokenProvider
+    private var uploadRequest: UploadRequest?
     
     @Published var uploadProgress: Double = 0.0
     
@@ -34,7 +35,7 @@ class PUT: ObservableObject {
         guard let fileData = request.data else { throw ZError.LocalError.noFileFound }
         
         return try await withCheckedThrowingContinuation { continuation in
-            AF.upload(fileData, to: url, method: .put, headers: request.headers)
+            self.uploadRequest = AF.upload(fileData, to: url, method: .put, headers: request.headers)
                 .uploadProgress(closure: { progress in
                     DispatchQueue.main.async {
                         self.uploadProgress = progress.fractionCompleted
@@ -50,5 +51,9 @@ class PUT: ObservableObject {
                     }
                 }
         }
+    }
+    
+    func cancelUpload() {
+        uploadRequest?.cancel()
     }
 }

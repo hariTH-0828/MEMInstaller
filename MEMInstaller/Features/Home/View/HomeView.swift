@@ -43,8 +43,7 @@ struct HomeView: View {
             }else if sideBarViewModel.bucketObjectModels.isEmpty && sideBarViewModel.sideBarLoadingState == .loaded {
                 EmptyBucketView(viewModel: sideBarViewModel)
             }else {
-                Text("Select an app to see details")
-                    .foregroundColor(.gray)
+                IdleStateView(viewModel: sideBarViewModel)
             }
         }
         .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)

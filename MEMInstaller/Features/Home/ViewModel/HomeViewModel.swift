@@ -8,7 +8,7 @@
 import SwiftUI
 import Zip
 import Alamofire
-import Combine
+import UniformTypeIdentifiers
 
 // MARK: - File Types
 enum SupportedFileTypes {
@@ -46,6 +46,7 @@ class HomeViewModel: ObservableObject {
     // Dependencies
     private let userDataManager: UserManagerProtocol = UserDataManager()
     private let repository: StratusRepository = StratusRepositoryImpl()
+    private let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
     
     init() {
         NotificationCenter.default.addObserver(forName: .refreshData, object: nil, queue: .main) { _ in
@@ -73,7 +74,7 @@ class HomeViewModel: ObservableObject {
             self.bucketObjectModels = try await processBucketContents(bucketObject)
             self.sideBarLoadingState = .loaded
         } catch {
-            handleError(error.localizedDescription)
+            handleError(with: .error, error: error.localizedDescription)
         }
     }
     
@@ -94,9 +95,45 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    /// Manage on-drop
+    func handleDrop(provider: NSItemProvider) -> Bool {
+        if provider.hasItemConformingToTypeIdentifier(UTType.ipa.identifier) {
+            provider.loadItem(forTypeIdentifier: UTType.ipa.identifier, options: nil) { item, error in
+                if let error {
+                    self.handleError(with: .error, error: error.localizedDescription)
+                    return
+                }
+                
+                guard let fileURL = item as? URL else { return }
+                self.handleDroppedIpaFile(at: fileURL)
+            }
+        }
+        return true
+    }
+    
+    private func handleDroppedIpaFile(at url: URL) {
+        guard url.pathExtension == "ipa" else {
+            handleError(with: .warning, error: ZError.FileConversionError.unsupportedFile.localizedDescription)
+            return
+        }
+        
+        mainQueue {
+            self.packageHandler.initiateAppExtraction(from: url)
+            self.selectedPackageModel = self.packageHandler.getPackageExtractionModel()
+        }
+    }
+    
     // MARK: - Error and Toast Handling
-    func handleError(_ error: String) {
-        ZLogs.shared.error(error)
+    func handleError(with type: LogLevel, error: String) {
+        switch type {
+        case .info:
+            ZLogs.shared.info(error)
+        case .warning:
+            ZLogs.shared.warning(error)
+        case .error:
+            ZLogs.shared.error(error)
+        }
+        
         showToast(error)
     }
     

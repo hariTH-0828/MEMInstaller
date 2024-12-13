@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		520072302CF72BB80080D8E8 /* ZFFileProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */; };
 		520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520072332CF77ED40080D8E8 /* SettingsView.swift */; };
+		5204A3C92D0CB82D003FBDF0 /* IdleStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5204A3C82D0CB82D003FBDF0 /* IdleStateView.swift */; };
 		520732F12CE383C100659A66 /* ZIAMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F02CE383C100659A66 /* ZIAMManager.swift */; };
 		520732F42CE3851600659A66 /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520732F32CE3851600659A66 /* UserDefaultsKey.swift */; };
 		520839D12D095E9200BF35EC /* PListCellIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520839D02D095E9200BF35EC /* PListCellIdentifiers.swift */; };
@@ -129,6 +130,7 @@
 		0424D3F1459B5F266A470349 /* Pods_MEMInstaller_MEMInstallerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MEMInstaller_MEMInstallerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5200722F2CF72BB80080D8E8 /* ZFFileProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFFileProtocol.swift; sourceTree = "<group>"; };
 		520072332CF77ED40080D8E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5204A3C82D0CB82D003FBDF0 /* IdleStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleStateView.swift; sourceTree = "<group>"; };
 		520732F02CE383C100659A66 /* ZIAMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIAMManager.swift; sourceTree = "<group>"; };
 		520732F32CE3851600659A66 /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
 		520839D02D095E9200BF35EC /* PListCellIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PListCellIdentifiers.swift; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 				52A77EF42CF9F5830064A063 /* UserProfileButtonView.swift */,
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
 				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
+				5204A3C82D0CB82D003FBDF0 /* IdleStateView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -930,6 +933,7 @@
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
 				52A77EF52CF9F5830064A063 /* UserProfileButtonView.swift in Sources */,
+				5204A3C92D0CB82D003FBDF0 /* IdleStateView.swift in Sources */,
 				520839DD2D09848700BF35EC /* QRGenerator.swift in Sources */,
 				523F721B2CDB37D000D564E7 /* HomeView.swift in Sources */,
 				52E109F22CE7BCE0002D1EDD /* PackageExtractionHandler.swift in Sources */,

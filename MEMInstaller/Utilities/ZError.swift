@@ -13,6 +13,7 @@ struct ZError {
         case invalidFilePath
         case fileToDataConversionError
         case fileReadFailed
+        case unsupportedFile
         
         var errorDescription: String? {
             switch self {
@@ -22,6 +23,8 @@ struct ZError {
                 return NSLocalizedString("The specified file path is invalid or does not exist.", comment: "Displayed when the provided file URL is invalid or the file is missing.")
             case .fileReadFailed:
                 return NSLocalizedString("Failed to read the file at the specified path.", comment: "Displayed when the file cannot be read, either due to an invalid path or a missing file.")
+            case .unsupportedFile:
+                return NSLocalizedString("The specified file format is not supported.", comment: "Displayed when the file type is unsupported by the application.")
             }
         }
     }
@@ -53,7 +56,7 @@ struct ZError {
             case .noFileFound:
                 return NSLocalizedString("No file has been found", comment: "Displayed when there is not file exist in the provided url.")
             case .custom(let description, let comments):
-                return NSLocalizedString("description", comment: comments ?? "")
+                return NSLocalizedString(description, comment: comments ?? "")
             }
         }
     }

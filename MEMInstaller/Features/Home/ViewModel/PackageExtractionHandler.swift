@@ -9,8 +9,7 @@ import Foundation
 import Zip
 import SwiftUI
 
-@MainActor
-class PackageExtractionHandler: ObservableObject {
+class PackageExtractionHandler {
     // Property Handler
     private let plistHandler = PropertyListHandler()
     private var sourceURL: URL!
