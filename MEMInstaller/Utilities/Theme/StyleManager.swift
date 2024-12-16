@@ -22,6 +22,7 @@ protocol ColorStyleProtocol {
     var alert: Color { get }
     var settingUserProfileBackground: Color { get }
     var settingUserProfileTextColor: Color { get }
+    var qrcodeBackgroundStyle: Color { get }
 }
 
 struct StyleManager {

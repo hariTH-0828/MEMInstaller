@@ -29,6 +29,7 @@ final class StratusRepositoryImpl: StratusRepository, ObservableObject {
         uploader.$uploadProgress
             .receive(on: DispatchQueue.main)
             .assign(to: &$uploadProgress)
+        
         do {
             return try await uploader.execute()
         }catch {

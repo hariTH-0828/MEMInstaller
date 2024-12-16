@@ -84,5 +84,10 @@ struct Colors: ColorStyleProtocol {
         let uiColor = UIColor.setColor(dark: UIColor.systemGray5, light: .systemGray)
         return Color(uiColor: uiColor)
     }
+    
+    var qrcodeBackgroundStyle: Color {
+        let uiColor = UIColor.setColor(dark: .secondarySystemBackground, light: UIColor(Color(hex: "F4F6FC")))
+        return Color(uiColor: uiColor)
+    }
 }
 

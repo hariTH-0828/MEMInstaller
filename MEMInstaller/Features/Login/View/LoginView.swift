@@ -9,10 +9,11 @@ import SwiftUI
 import MEMToast
 
 struct LoginView: View {
+    @ObservedObject var appCoordinator: AppCoordinatorImpl
     @EnvironmentObject private var appViewModel: AppViewModel
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $appCoordinator.navigationPath) {
             GeometryReader(content: { geometry in
                 welcomeTextView()
                     .padding(.top, 50)
@@ -88,9 +89,4 @@ struct LoginView: View {
                 .padding()
         })
     }
-}
-
-#Preview {
-    LoginView()
-        .environmentObject(AppViewModel())
 }

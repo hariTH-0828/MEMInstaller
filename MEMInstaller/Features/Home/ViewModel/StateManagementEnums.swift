@@ -11,19 +11,14 @@ import Foundation
 enum LoadingState: Hashable {
     case idle(IdleViewState = .available)
     case loading
+    case loaded
     case uploading(String)
-    case error(ErrorViewState = .empty)
 }
 
 enum IdleViewState: Hashable {
     case empty
     case available
-    case detail(AttachmentMode = .install)
-}
-
-enum ErrorViewState: Hashable {
-    case empty
-    case detailError
+    case detail
 }
 
 // MARK: - View Type

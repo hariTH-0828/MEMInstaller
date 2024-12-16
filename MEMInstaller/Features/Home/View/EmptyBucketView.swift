@@ -9,8 +9,16 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct EmptyBucketView: View {
+    private let packageHandler = PackageExtractionHandler()
+
+    @EnvironmentObject var coordinator: AppCoordinatorImpl
+    @State private var isDropTarget = false
+    
     @ObservedObject var viewModel: HomeViewModel
-    @EnvironmentObject private var coordinator: AppCoordinatorImpl
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         GeometryReader(content: { geometry in
@@ -24,7 +32,7 @@ struct EmptyBucketView: View {
                            Image("no-file-found")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: min(geometry.size.width * 0.7, 500), height: 500)
+                                .frame(height: geometry.size.height * 0.4)
                         }
                     )
                 }, description: {
@@ -36,11 +44,11 @@ struct EmptyBucketView: View {
                         coordinator.openFileImporter { result in
                             switch result {
                             case .success(let filePath):
-                                viewModel.packageHandler.initiateAppExtraction(from: filePath)
-                                viewModel.updateLoadingState(for: .detail, to: .idle(.detail(.upload)))
+                                packageHandler.initiateAppExtraction(from: filePath)
+                                let packageExtractionModel = packageHandler.getPackageExtractionModel()
+                                viewModel.selectedPackageModel = packageExtractionModel
                             case .failure(let failure):
                                 ZLogs.shared.error(failure.localizedDescription)
-                                viewModel.showToast(failure.localizedDescription)
                             }
                         }
                     } label: {
@@ -57,53 +65,16 @@ struct EmptyBucketView: View {
                 }
                 .padding(.bottom, 30)
             }
+            .onDrop(of: [UTType.ipa], isTargeted: $isDropTarget) { providers in
+                guard let provider = providers.first else { return false }
+                return viewModel.handleDrop(provider: provider)
+            }
         })
     }
     
     // MARK: HELPER METHOD
+    /// Refresh SideBar
     func refreshView() {
-        withAnimation { viewModel.updateLoadingState(for: .sidebar, to: .loading) }
         viewModel.fetchFolders()
     }
 }
-
-
-// MARK: Preview helper
-extension HomeViewModel {
-    static var preview: HomeViewModel {
-        HomeViewModel(repository: StratusRepositoryImpl(),
-                      userDataManager: UserDataManager())
-    }
-}
-
-#Preview {
-    EmptyBucketView(viewModel: .preview)
-}
-
-
-/*
- 
- func handleDrop(provider: NSItemProvider) -> Bool {
-     var didHandleDrop = false
-     if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-         provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
-             guard let data = item as? Data,
-                   let url = URL(dataRepresentation: data, relativeTo: nil),
-                   url.pathExtension == "ipa" else {
-                 // Handle invalid file type
-                 viewModel.handleError("Invalid file type")
-                 return
-             }
-
-             DispatchQueue.main.async {
-                 viewModel.packageHandler.initiateAppExtraction(from: url)
-                 viewModel.shouldShowDetailView = .upload
-             }
-         }
-         didHandleDrop = true
-     }
-
-     return didHandleDrop
- }
- 
- */

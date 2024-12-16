@@ -46,7 +46,13 @@ struct BucketObjectModel: Codable, Hashable {
     init() {
         self.prefix = "hariharan.rs@zohocorp.com/SDP/"
         self.keyCount = 2
-        self.contents = []
+        self.contents = [
+            ContentModel(keyType: .file, key: "hariharan.rs@zohocorp.com/SDP/embedded.mobileprovision", size: 12732, contentType: .mobileProvision, lastModified: "", url: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/embedded.mobileprovision"),
+            ContentModel(keyType: .file, key: "hariharan.rs@zohocorp.com/SDP/SDP.plist", size: 775, contentType: .document, lastModified: "", url: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/SDP.plist"),
+            ContentModel(keyType: .file, key: "hariharan.rs@zohocorp.com/SDP/Info.plist", size: 3823, contentType: .document, lastModified: "", url: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/Info.plist"),
+            ContentModel(keyType: .file, key: "hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png", size: 25390, contentType: .png, lastModified: "", url: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png"),
+            ContentModel(keyType: .file, key: "hariharan.rs@zohocorp.com/SDP/SDP.ipa", size: 24059477, contentType: .document, lastModified: "", url: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/SDP.ipa"),
+        ]
         self.folderName = "SDP"
     }
 }
@@ -82,14 +88,65 @@ struct ContentModel: Codable, Hashable {
         self.actualContentType = ContentType(rawValue: contentType ?? "application/octet-stream")!
     }
     
-    init() {
-        self.keyType = "file"
-        self.key = "hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
-        self.size = 6095
-        self.contentType = "application/octet-stream"
-        self.lastModified = "Nov 16, 2024 11:08 PM"
-        self.url = "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/ZohoFaciMap/Info.plist"
-        self.actualKeyType = .file
-        self.actualContentType = .document
+    init(keyType: ContentKeyType, key: String, size: Decimal, contentType: ContentType, lastModified: String, url: String) {
+        self.keyType = keyType.rawValue
+        self.key = key
+        self.size = size
+        self.contentType = contentType.rawValue
+        self.lastModified = lastModified
+        self.url = url
+        self.actualKeyType = keyType
+        self.actualContentType = contentType
+    }
+}
+
+extension BucketObjectModel {
+    // MARK: - HELPER METHODS
+    static var preview: BucketObjectModel {
+        BucketObjectModel()
+    }
+    
+    func getAppIcon() -> String? {
+        self.contents.first(where: { $0.actualContentType == .png && $0.key.contains("AppIcon60x60@") })?.url
+    }
+    
+    func getPackageURL() -> String? {
+        contents.filter({ $0.actualContentType == .document && $0.key.contains(".ipa")}).first?.url
+    }
+    
+    func getInfoPropertyListURL() -> String? {
+        contents.first(where: { $0.actualContentType == .document && $0.key.contains("Info.plist") })?.url
+    }
+    
+    func getMobileProvisionURL() -> String? {
+        contents.first(where: { $0.actualContentType == .mobileProvision && $0.key.contains("embedded.mobileprovision") })?.url
+    }
+    
+    func getObjectURL() -> String? {
+        contents.first(where: { $0.actualContentType == .document && $0.key.contains("\(folderName).plist") })?.url
+    }
+    
+    /// Calculates the size of a package based on its contents.
+    ///
+    /// This method filters the provided content list to find the first item with a `.file` key type
+    /// and a key containing `.ipa`, then calculates its size.
+    ///
+    /// - Returns: A `String` representing the calculated size of the package, formatted by `calculatePackageSize`.
+    ///
+    /// - Note: If no `.ipa` file is found in the contents, the size will be determined as `0` and handled by `calculatePackageSize`.
+    ///
+    /// - SeeAlso: `calculatePackageSize(_:)`
+    func getPackageFileSize() -> String {
+        let packageSizeAsBytes = contents.filter({ $0.actualKeyType == .file && $0.key.contains(".ipa") }).first?.size
+        return calculatePackageSize(packageSizeAsBytes)
+    }
+    
+    /// Calculates the size of a package in megabytes (MB) and returns a formatted string.
+    /// - Parameter size: The size in bytes (Decimal?). If the value is nil, it returns "0 MB".
+    /// - Returns: A string representing the size in MB, formatted with two decimal places (default behavior).
+    func calculatePackageSize(_ size: Decimal?) -> String {
+        guard let size else { return "0 MB" }
+        let sizeInMB = size / 1048576
+        return sizeInMB.formattedString() + " MB"
     }
 }

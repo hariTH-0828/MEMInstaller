@@ -10,24 +10,11 @@ import Zip
 import SwiftUI
 
 class PackageExtractionHandler {
-    // MARK: - Singleton
-    static let shared: PackageExtractionHandler = PackageExtractionHandler()
-    
-    private init() {}
-    
     // Property Handler
     private let plistHandler = PropertyListHandler()
-    
-    var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
-    
     private var sourceURL: URL!
     
-    var bundleProperties: BundleProperties?
-    var mobileProvision: MobileProvision?
-    private(set) var packageURLs: PackageURL?
-    
-    // Attachment View
-    var shareItem: [URL] = []
+    private var fileTypeDataMap: [SupportedFileTypes: Data] = [:]
     
     // FileManager
     private let fileManager = FileManager.default
@@ -40,67 +27,24 @@ class PackageExtractionHandler {
             fileTypeDataMap[.app] = fileToData(from: sourceURL)
             sourceURL.stopAccessingSecurityScopedResource()
         }
-        extractIpaFileContents()
+
+        AppPackageProcessor(sourceURL: url).extractIpaFileContents()
         extractAppBundle()
     }
     
-    // MARK: - Convert source as data
-    func fileToData(from url: URL) -> Data? {
-        do { return try Data(contentsOf: url) }
-        catch { ZLogs.shared.error(error.localizedDescription) }
-        
-        return nil
+    func getPackageExtractionModel() -> PackageExtractionModel? {
+        PackageExtractionModel(appIcon: fileTypeDataMap[.icon],
+                               app: fileTypeDataMap[.app],
+                               mobileProvision: fileTypeDataMap[.mobileprovision],
+                               infoPropertyList: fileTypeDataMap[.infoPlist],
+                               installationPList: fileTypeDataMap[.installationPlist])
     }
     
-    // MARK: - Bundle Info
-    func extractIpaFileContents() {
-        guard let zipLocation = convertFileIpaToZip(to: "zip") else {
-            ZLogs.shared.warning("File conversion failed")
-            return
-        }
-        
-        ZLogs.shared.info("ZIP Location: \(zipLocation)")
-        unzip(from: zipLocation)
+    func extractXMLFromProvision(_ data: Data) throws -> Data {
+        try plistHandler.extractXMLDataFromMobileProvision(data)
     }
     
-    // MARK: - File Conversion
-    private func convertFileIpaToZip(to newExtension: String) -> URL? {
-        do {
-            // clear the old data
-            clearDirectory(at: appCacheDirectory)
-            
-            let newFileURL = createZipFileURL(from: sourceURL)
-            try ZFFileManager.shared.copyFileToCache(from: sourceURL, to: newFileURL)
-            return newFileURL
-        }catch {
-            ZLogs.shared.error(error.localizedDescription)
-            return nil
-        }
-    }
-    
-    private func createZipFileURL(from sourceURL: URL) -> URL {
-        let fileName = sourceURL.deletingPathExtension().lastPathComponent
-        return appCacheDirectory.appendingPathComponent(fileName, conformingTo: .zip)
-    }
-    
-    // MARK: - Directory Managerment
-    private func clearDirectory(at directory: URL) {
-        do {
-            try ZFFileManager.shared.clearAllCache()
-        }catch {
-            ZLogs.shared.warning("Failed to clear cache directory: \(error.localizedDescription)")
-        }
-    }
-    
-    func unzip(from sourceURL: URL) {
-        do {
-            try Zip.unzipFile(sourceURL, destination: appCacheDirectory, overwrite: true, password: "")
-        }catch {
-            ZLogs.shared.warning("Failed to unzip: \(error.localizedDescription)")
-        }
-    }
-    
-    func extractAppBundle() {
+    private func extractAppBundle() {
         let payLoadPath = appCacheDirectory.appending(path: Constants.payload)
         
         guard fileManager.fileExists(atPath: payLoadPath.path()) else {
@@ -115,59 +59,31 @@ class PackageExtractionHandler {
         }
     }
     
-    func extractXMLFromProvision(_ data: Data) throws -> Data {
-        try plistHandler.extractXMLDataFromMobileProvision(data)
-    }
-    
-    func updatePackageURL(_ packageURL: PackageURL) {
-        self.packageURLs = packageURL
-    }
-    
     private func processAppBundleContents(at payLoadPath: URL) throws {
         let contents = try fileManager.subpathsOfDirectory(atPath: payLoadPath.path())
         
-        guard let appName = contents.first, contents.contains("\(appName)/\(Constants.infoPlist)") else {
+        guard let appName = contents.first, contents.contains(Constants.FilePath.infoPlist(appName).path) else {
             ZLogs.shared.warning("Info.plist does not exist at path: \(payLoadPath.appending(path: contents[0]))")
             return
         }
         
-        let infoPlistPath = payLoadPath.path() + "/\(appName)/\(Constants.infoPlist)"
+        let infoPlistPath = payLoadPath.path().appending("/") + Constants.FilePath.infoPlist(appName).path
         fileTypeDataMap[.infoPlist] = fileToData(from: URL(fileURLWithPath: infoPlistPath))
         
         try extractAppProperties(from: payLoadPath, appName: appName)
     }
     
     private func extractAppProperties(from payLoadPath: URL, appName: String) throws {
-        // Info.plist
-        if let propertyListObject = try readInfoPlistFile(from: payLoadPath, appName: appName) {
-            loadBundleProperties(with: propertyListObject)
-        }
-        
         // embedded.plist
-        if let mobileProvisionObj = try readMobileProvisionFile(from: payLoadPath, appName: appName) {
-            loadMobileProvision(with: mobileProvisionObj)
-        }
+        try readMobileProvisionFile(from: payLoadPath, appName: appName)
         
         // AppIcon
-        let appIconData = try readApplicationIcon(from: payLoadPath, appName: appName)
-        fileTypeDataMap[.icon] = appIconData
+        try readApplicationIcon(from: payLoadPath, appName: appName)
     }
     
-    private func readInfoPlistFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
-        // Read Info.plist
-        let infoPlistPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.infoPlist)")
-        
-        // Check file exist in path and convert file into data
-        guard fileManager.fileExists(atPath: infoPlistPath), let fileData = fileToData(from: URL(filePath: infoPlistPath)) else {
-            throw ZError.FileConversionError.invalidFilePath
-        }
-        
-        return parsePlist(fileData)
-    }
-    
-    private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws -> [String: Any]? {
+    private func readMobileProvisionFile(from payLoadPath: URL, appName: String) throws {
         // Read embedded.mobileprovision
-        let provisionPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.embeddedProvision)")
+        let provisionPath = (payLoadPath.path() as NSString).appendingPathComponent(Constants.FilePath.embeddedProvision(appName).path)
         
         // Check file exist in path and convert file into data
         guard fileManager.fileExists(atPath: provisionPath) else {
@@ -177,22 +93,18 @@ class PackageExtractionHandler {
         // Read the file content
         let provisionData = try Data(contentsOf: URL(fileURLWithPath: provisionPath))
         fileTypeDataMap[.mobileprovision] = provisionData
-        
-        let fileData = try plistHandler.extractXMLDataFromMobileProvision(provisionData)
-        
-        return parsePlist(fileData)
     }
     
-    private func readApplicationIcon(from payLoadPath: URL, appName: String) throws -> Data {
+    private func readApplicationIcon(from payLoadPath: URL, appName: String) throws {
         // Read App Icon
-        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent("\(appName)/\(Constants.appIconName)")
+        let appIconPath = (payLoadPath.path() as NSString).appendingPathComponent(Constants.FilePath.appIcon(appName).path)
         
         // Check file exist in path and convert file into data
         guard fileManager.fileExists(atPath: appIconPath), let fileData = fileToData(from: URL(filePath: appIconPath)) else {
             throw ZError.FileConversionError.invalidFilePath
         }
         
-        return fileData
+        fileTypeDataMap[.icon] = fileData
     }
     
     func parsePlist(_ plistData: Data) -> [String: Any]? {
@@ -205,28 +117,39 @@ class PackageExtractionHandler {
     }
     
     // MARK: - Bundle property manage
-    func loadBundleProperties(with plistDictionary: [String: Any]) {
+    func loadBundleProperties(with plistDictionary: [String: Any]) -> BundleProperties? {
         let decoder = JSONDecoder()
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: plistDictionary)
-            self.bundleProperties = try decoder.decode(BundleProperties.self, from: jsonData)
+            return try decoder.decode(BundleProperties.self, from: jsonData)
         }catch {
             ZLogs.shared.error(error.localizedDescription)
+            return nil
         }
     }
     
-    func loadMobileProvision(with plist: [String: Any]) {
-        guard let provision = MobileProvision(from: plist) else { return }
-        mobileProvision = provision
+    func loadMobileProvision(with plist: [String: Any]) -> MobileProvision? {
+        guard let provision = MobileProvision(from: plist) else { return nil }
+        return provision
     }
     
-    func generatePropertyList(fileURL: String) {
-        switch plistHandler.createPlistFile(url: fileURL, bundleIdentifier: bundleProperties?.bundleIdentifier, bundleVersion: bundleProperties?.bundleVersion, fileName: bundleProperties?.bundleName) {
+    func generatePropertyList(fileURL: String, bundleId: String, bundleVersion: String, fileName: String) -> Data? {
+        switch plistHandler.createPlistFile(url: fileURL, bundleIdentifier: bundleId, bundleVersion: bundleVersion, fileName: fileName) {
         case .success(let url):
-            fileTypeDataMap[.installationPlist] = try? Data(contentsOf: url)
+            return try? Data(contentsOf: url)
         case .failure(let error):
             ZLogs.shared.error(error.localizedDescription)
+            return nil
         }
     }
+    
+    // MARK: - Convert source as data
+    private func fileToData(from url: URL) -> Data? {
+        do { return try Data(contentsOf: url) }
+        catch { ZLogs.shared.error(error.localizedDescription) }
+        
+        return nil
+    }
+    
 }

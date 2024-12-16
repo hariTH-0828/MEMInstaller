@@ -64,16 +64,12 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @ViewBuilder
     func build(forScreen screen: Screen) -> some View {
         switch screen {
-        case .home:
-            HomeView()
-        case .tabView:
-            TabViewController()
-        case .login:
-            LoginView()
         case .settings:
             SettingsView()
         case .about:
             AboutView()
+        case .privacy:
+            SettingPrivacyView()
         }
     }
     
@@ -91,6 +87,15 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
             }
             .ignoresSafeArea()
             .presentationDetents([.medium, .large])
+        case .AttachedFileDetail(let viewModel, let packageExtractionModel, let attachedMode):
+            AttachedFileDetailView(viewModel: viewModel,
+                                   packageModel: packageExtractionModel,
+                                   attachmentMode: attachedMode).interactiveDismissDisabled(true)
+        case .QRCodeProvider(let qrprovider):
+            QRCodeProviderView(qrProvider: qrprovider)
+                .presentationDetents([.medium])
+                .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
+                .presentationDragIndicator(.visible)
         }
     }
     
@@ -100,6 +105,8 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         case .logout:
             PresentLogoutView()
                 .padding()
+        case .QRCodeProvider(let qrprovider):
+            QRCodeProviderView(qrProvider: qrprovider)
         }
     }
 }

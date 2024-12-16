@@ -9,31 +9,54 @@ import SwiftUI
 import MEMToast
 import Alamofire
 
+enum HomeNavigation: Hashable {
+    case settings
+}
+
 struct HomeView: View {
-    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
-    @StateObject var viewModel: HomeViewModel
+    @EnvironmentObject private var appViewModel: AppViewModel
+    @ObservedObject var appCoordinator: AppCoordinatorImpl
     
-    // Use a default value for `viewModel`
-    init(viewModel: HomeViewModel = HomeViewModel(repository: StratusRepositoryImpl(),
-                                                  userDataManager: UserDataManager()))
-    {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @StateObject var sideBarViewModel: HomeViewModel = HomeViewModel()
+    @StateObject var detailViewModel: AttachedFileDetailViewModel = AttachedFileDetailViewModel()
     
     // MARK: BODY
     var body: some View {
         NavigationSplitView {
-            HomeSidebarView(viewModel: viewModel)
+            NavigationStack(path: $appCoordinator.navigationPath) {
+                HomeSidebarView(viewModel: sideBarViewModel)
+                    .navigationDestination(for: Screen.self) {
+                        appCoordinator.build(forScreen: $0)
+                    }
+                    .sheet(item: $appCoordinator.sheet, onDismiss: appCoordinator.onDismiss, content: { sheet in
+                        appCoordinator.build(forSheet: sheet)
+                    })
+                    .fileImporter(isPresented: $appCoordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
+                        appCoordinator.fileImportCompletion?(result)
+                    }
+            }
         } detail: {
-            HomeDetailView(viewModel: viewModel)
+            if let bucketObjectModel = sideBarViewModel.selectedBucketObject {
+                AttachedFileDetailView(viewModel: detailViewModel,
+                                       bucketObjectModel: bucketObjectModel,
+                                       attachmentMode: .install)
+            }else if sideBarViewModel.bucketObjectModels.isEmpty && sideBarViewModel.sideBarLoadingState == .loaded {
+                EmptyBucketView(viewModel: sideBarViewModel)
+            }else {
+                IdleStateView(viewModel: sideBarViewModel)
+            }
         }
-        .navigationSplitViewStyle(.balanced)
-        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentToast)
+        .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)
+        .environmentObject(appCoordinator)
+        .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
+            detailViewModel.detailLoadingState = .loading
+        }
+        .onChange(of: sideBarViewModel.selectedPackageModel) { _, newValue in
+            guard let newValue = newValue else { return }
+            appCoordinator.presentSheet(.AttachedFileDetail(detailViewModel, newValue, .upload)) {
+                sideBarViewModel.selectedPackageModel = nil
+            }
+        }
+
     }
-}
-
-
-#Preview {
-    HomeView(viewModel: .preview)
-        .environmentObject(AppCoordinatorImpl())
 }

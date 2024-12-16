@@ -10,4 +10,5 @@ import Foundation
 public extension Notification.Name {
     static let loginSuccess = Notification.Name("kNotificationLogin")
     static let performLogout = Notification.Name("kNotificationLogout")
+    static let refreshData = Notification.Name("kNotificationRefreshData")
 }

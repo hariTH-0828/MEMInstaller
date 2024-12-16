@@ -6,78 +6,145 @@
 //
 
 import SwiftUI
-
-enum PListCellIdentifiers: String, CaseIterable {
-    case bundleName = "Bundle name"
-    case bundleIdentifiers = "Bundle identifiers"
-    case bundleVersionShort = "Bundle version (short)"
-    case bundleVersion = "Bundle version"
-    case minOSVersion = "Minimum OS version"
-    case requiredDevice = "Required device compability"
-    case supportedPlatform = "Suppported platform"
-}
-
-enum ProvisionCellIdentifiers: String, CaseIterable {
-    case name = "Name"
-    case teamIdentifier = "Team identifier"
-    case creationDate = "Creation date"
-    case expiredDate = "Expired date"
-    case teamName = "Team name"
-    case version = "Version"
-}
-
-enum AttachmentMode: Hashable {
-    case install
-    case upload
-}
+import MEMToast
 
 struct AttachedFileDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     
-    @ObservedObject var viewModel: HomeViewModel
+    // Initializer properties
+    @ObservedObject var viewModel: AttachedFileDetailViewModel
+    private var bucketObjectModel: BucketObjectModel? {
+        didSet { viewModel.resetViewModel() }
+    }
+    private var packageModel: PackageExtractionModel? {
+        didSet { viewModel.resetViewModel() }
+    }
     let attachmentMode: AttachmentMode
     
-    var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                appIconView(viewModel.packageHandler.fileTypeDataMap[.icon])
-                bundleNameWithIdentifierView(bundleName: viewModel.packageHandler.bundleProperties?.bundleName,
-                                             bundleId: viewModel.packageHandler.bundleProperties?.bundleIdentifier!)
-            }
-            .padding(.horizontal)
-            
-            if Device.isIpad {
-                iPadLayoutBundlePropertyView()
-            }else {
-                iPhoneLayoutBundlePropertyView()
-            }
-            
-            Spacer()
-            
-            actionButtonView()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .navigationTitle(viewModel.packageHandler.bundleProperties?.bundleName ?? "Loading")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    @ViewBuilder
-    private func iPhoneLayoutBundlePropertyView() -> some View {
-        RoundedRectangleOutlineView {
-            ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
-                HorizontalKeyValueContainer(key: identifier.rawValue, value: viewModel.packageHandler.bundleProperties?.value(for: identifier))
-            }
-        }
+    @State private var showExpiredAlert = false
+
+    // MARK: Initialize view with BucketObjectModel
+    init(viewModel: AttachedFileDetailViewModel,
+         bucketObjectModel: BucketObjectModel? = nil,
+         packageModel: PackageExtractionModel? = nil,
+         attachmentMode: AttachmentMode)
+    {
+        self.viewModel = viewModel
+        self.bucketObjectModel = bucketObjectModel
+        self.packageModel = packageModel
+        self.attachmentMode = attachmentMode
         
-        RoundedRectangleOutlineView {
-            ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
-                mobileProvisionCellView(identifier)
+        mainQueue {
+            viewModel.readFileDataToProperites(infoProperties: packageModel?.infoPropertyList, mobileProvision: packageModel?.mobileProvision)
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    if let bucketObjectModel {
+                        AppIconView(iconURL: bucketObjectModel.getAppIcon())
+                    }else if let packageModel {
+                        AppIconView(icon: packageModel.appIcon)
+                    }
+                    
+                    bundleNameWithIdentifierView()
+                }
+                .padding(.horizontal)
+                
+                if Device.isIpad {
+                    iPadLayoutBundlePropertyView()
+                }else {
+                    iPhoneLayoutBundlePropertyView()
+                }
+                
+                Spacer()
+                
+                actionButtonView()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .navigationTitle(viewModel.bundleProperties?.bundleName ?? "Loading")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("com.learn.meminstaller.upload.provision.error.title", isPresented: $showExpiredAlert, actions: {
+                Button("OK", role: .cancel) { }
+            }, message: {
+                Text("com.learn.meminstaller.upload.provision.error.message")
+            })
+            .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isShowingToast)
+            .overlay {
+                switch viewModel.detailLoadingState {
+                case .uploading(let uploadingMessage):
+                    HorizontalLoadingWrapper(title: uploadingMessage, value: viewModel.uploadProgress)
+                        .allowsHitTesting(true)
+                default:
+                    Color.clear
+                }
+            }
+        }
+    }
+    
+    private func uploadApplication() {
+        // Validate the mobile provision before uploading the application
+        viewModel.mobileProvision?.isExpired == true ? showExpiredAlert.toggle() : uploadApplicationToServer()
+    }
+    
+    private func uploadApplicationToServer() {
+        guard let endpoint = generateUploadBodyParams() else { return }
+        Task {
+            await viewModel.uploadPackage(endpoint: endpoint, packageExtractionModel: packageModel) {
+                dismiss()
+                NotificationCenter.default.post(name: .refreshData, object: nil)
+            }
+        }
+    }
+    
+    private func generateUploadBodyParams() -> String? {
+        guard let userEmail = viewModel.userProfile?.email else { return nil }
+        guard let bundleName = viewModel.bundleProperties?.value(for: .bundleName) else { return nil }
+
+        return "\(userEmail)/\(bundleName)"
+    }
+    
+    private var getQRProvider: QRProvider? {
+        guard let appIcon = bucketObjectModel?.getAppIcon(), let appName = bucketObjectModel?.folderName, let url = bucketObjectModel?.getObjectURL() else { return nil }
+        return QRProvider(appIconURL: appIcon, appName: appName, url: url)
+    }
+}
+
+// MARK: - Private Extension
+private extension AttachedFileDetailView {
+    @ViewBuilder
+    func bundleNameWithIdentifierView() -> some View {
+        if let bundleProperties = viewModel.bundleProperties {
+            VStack(alignment: .leading) {
+                Text(bundleProperties.bundleName ?? "No Bundle name available")
+                    .font(.title2)
+                    .bold()
+                    .lineLimit(1)
+                
+                Text(bundleProperties.bundleIdentifier ?? "Bundle Id not available")
+                    .font(.footnote)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .lineLimit(1)
+            }
+        }else {
+            VStack(alignment: .leading, spacing: 5) {
+                rectangleShimmerView(width: 100, corner: 4)
+                rectangleShimmerView(width: 200, corner: 4)
             }
         }
     }
     
     @ViewBuilder
-    private func iPadLayoutBundlePropertyView() -> some View {
+    func iPhoneLayoutBundlePropertyView() -> some View {
+        bundlePropertyView()
+        mobileProvisionView()
+    }
+    
+    @ViewBuilder
+    func iPadLayoutBundlePropertyView() -> some View {
         HStack(spacing: 0) {
             iPhoneLayoutBundlePropertyView()
         }
@@ -85,116 +152,117 @@ struct AttachedFileDetailView: View {
     }
     
     @ViewBuilder
-    private func bundleNameWithIdentifierView(bundleName: String?, bundleId: String?) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            /// App Name
-            Text(bundleName ?? "")
-                .font(.title2)
-                .bold()
-                .lineLimit(1)
-            
-            /// App Bundle Identifier
-            Text(bundleId ?? "")
-                .font(.footnote)
-                .foregroundStyle(Color(.secondaryLabel))
-                .lineLimit(1)
-        }
-    }
-    
-    @ViewBuilder
-    private func appIconView(_ data: Data?) -> some View {
-        var uiImage: UIImage {
-            if let appIcon = data, let uiImage = UIImage(data: appIcon) {
-                return uiImage
-            }else {
-                return imageWith(name: "unknown")!
+    func bundlePropertyView() -> some View {
+        if let bundleProperties = viewModel.bundleProperties {
+            RoundedRectangleOutlineView {
+                ForEach(PListCellIdentifiers.allCases, id: \.self) { identifier in
+                    HorizontalKeyValueContainer(key: identifier.rawValue, value: bundleProperties.value(for: identifier))
+                }
+            }
+        }else {
+            loadingRoundedRectangleView(taskType: .infoFile) {
+                self.bucketObjectModel?.getInfoPropertyListURL()
             }
         }
-        
-        Image(uiImage: uiImage)
-            .resizable()
-            .scaledToFill()
-            .frame(width: 50, height: 50)
-            .clipShape(.circle)
     }
     
     @ViewBuilder
-    private func mobileProvisionCellView(_ identifier: ProvisionCellIdentifiers) -> some View {
+    func mobileProvisionView() -> some View {
+        if let mobileProvision = viewModel.mobileProvision {
+            RoundedRectangleOutlineView {
+                ForEach(ProvisionCellIdentifiers.allCases, id: \.self) { identifier in
+                    mobileProvisionCellView(provision: mobileProvision, identifier)
+                }
+            }
+        }else {
+            loadingRoundedRectangleView(taskType: .provision) {
+                self.bucketObjectModel?.getMobileProvisionURL()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func mobileProvisionCellView(provision: MobileProvision, _ identifier: ProvisionCellIdentifiers) -> some View {
         if identifier != .expiredDate {
-            HorizontalKeyValueContainer(key: identifier.rawValue, value: viewModel.packageHandler.mobileProvision?.value(for: identifier))
+            HorizontalKeyValueContainer(key: identifier.rawValue, value: provision.value(for: identifier))
         }else {
             HorizontalKeyValueContainer(key: identifier.rawValue) {
-                let isExpired: Bool = isMobileProvisionValid(viewModel.packageHandler.mobileProvision?.value(for: identifier))
-                
-                Text(viewModel.packageHandler.mobileProvision?.value(for: identifier) ?? "No Expiration Date")
+                Text(provision.value(for: identifier) ?? "No Expiration Date")
                     .font(.system(.footnote))
-                    .foregroundStyle(isExpired ? Color.red : Color(uiColor: .secondaryLabel))
+                    .foregroundStyle(provision.isExpired ? Color.red : Color(uiColor: .secondaryLabel))
             }
         }
     }
     
     @ViewBuilder
-    private func actionButtonView() -> some View {
-        HStack(spacing: 50) {
+    func loadingRoundedRectangleView(taskType: DownloadType, urlProvider: @escaping () -> String?) -> some View {
+        RoundedRectangleOutlineView {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }
+        .frame(maxWidth: .infinity)
+        .task {
+            guard let url = urlProvider() else { return }
+            await viewModel.downloadFile(url: url, type: taskType)
+        }
+    }
+    
+    @ViewBuilder
+    func actionButtonView() -> some View {
+        HStack(spacing: 30) {
             Button {
-                attachmentMode == .install ? installApplication() : uploadApplication()
+                attachmentMode == .install ? viewModel.installApplication(bucketObjectModel?.getObjectURL()) : uploadApplication()
             } label: {
                 Text(attachmentMode == .install ? "Install" : "Upload")
-                    .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.25, 180))
+                    .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
             }
             .padding(.bottom, 30)
             
-            Button {
-                viewModel.updateLoadingState(for: .detail, to: .idle(.available))
-            } label: {
-                Text("Cancel")
-                    .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.25, 180))
+            if attachmentMode == .upload {
+                dismissButtonView()
             }
-            .padding(.bottom, 30)
+            
+            if attachmentMode == .install, let qrProvider = getQRProvider {
+                showQRCodeView(qrProvider)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
     
-    private func installApplication() {
-        guard let objectURL = PackageExtractionHandler.shared.packageURLs?.infoPropertyListURL else {
-            ZLogs.shared.error("Error: Installation - objectURL not found")
-            viewModel.showToast("Installation failed: URL not found")
-            return
+    @ViewBuilder
+    func dismissButtonView() -> some View {
+        Button {
+            dismiss()
+        } label: {
+            Text("Cancel")
+                .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
         }
-        
-        let itmsServicesURLString = "itms-services://?action=download-manifest&url="+objectURL
-
-        if let itmsServiceURL = URL(string: itmsServicesURLString) {
-            UIApplication.shared.open(itmsServiceURL)
-        }
+        .padding(.bottom, 30)
     }
     
-    private func uploadApplication() {
-        guard let endpoint = generateUploadBodyParams() else { return }
-        
-        Task {
-            await viewModel.uploadPackage(endpoint: endpoint) {
-                viewModel.updateLoadingState(for: .detail, to: .loading)
-                viewModel.fetchFolders()
-                viewModel.updateLoadingState(for: .detail, to: .idle())
+    @ViewBuilder
+    func showQRCodeView(_ provider: QRProvider) -> some View {
+        Button(action: {
+            if Device.isIphone {
+                appCoordinator.presentSheet(.QRCodeProvider(provider))
+            }else {
+                appCoordinator.pop(.QRCodeProvider(provider))
             }
+        }, label: {
+            Text("QR Code")
+                .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
+        })
+        .padding(.bottom, 30)
+        .popover(item: $appCoordinator.popView) { pop in
+            appCoordinator.build(forPop: pop)
         }
     }
     
-    private func generateUploadBodyParams() -> String? {
-        guard let userEmail = viewModel.userProfile?.email else { return nil }
-        guard let bundleName = viewModel.packageHandler.bundleProperties?.value(for: .bundleName) else { return nil }
-        
-        return "\(userEmail)/\(bundleName)"
+    @ViewBuilder
+    func rectangleShimmerView(width: CGFloat, corner: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: corner)
+            .fill(StyleManager.colorStyle.systemGray)
+            .frame(width: width, height: 15)
+            .shimmer(enable: .constant(true))
     }
-    
-    private func isMobileProvisionValid(_ date: String?) -> Bool {
-        guard let expireDate = date?.dateFormat(by: "d MMM yyyy 'at' h:mm a") else { return false }
-        return expireDate < Date()
-    }
-}
-
-#Preview {
-    AttachedFileDetailView(viewModel: .preview, attachmentMode: .install)
-        .environmentObject(HomeViewModel.preview)
 }
