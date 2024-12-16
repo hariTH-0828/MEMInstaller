@@ -15,10 +15,10 @@ struct AttachedFileDetailView: View {
     // Initializer properties
     @ObservedObject var viewModel: AttachedFileDetailViewModel
     private var bucketObjectModel: BucketObjectModel? {
-        didSet { resetViewModel() }
+        didSet { viewModel.resetViewModel() }
     }
     private var packageModel: PackageExtractionModel? {
-        didSet { resetViewModel() }
+        didSet { viewModel.resetViewModel() }
     }
     let attachmentMode: AttachmentMode
     
@@ -110,11 +110,6 @@ struct AttachedFileDetailView: View {
     private var getQRProvider: QRProvider? {
         guard let appIcon = bucketObjectModel?.getAppIcon(), let appName = bucketObjectModel?.folderName, let url = bucketObjectModel?.getObjectURL() else { return nil }
         return QRProvider(appIconURL: appIcon, appName: appName, url: url)
-    }
-    
-    private func resetViewModel() {
-        viewModel.bundleProperties = nil
-        viewModel.mobileProvision = nil
     }
 }
 

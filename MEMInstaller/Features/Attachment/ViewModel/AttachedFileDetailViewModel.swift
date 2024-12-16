@@ -18,7 +18,13 @@ enum AttachmentMode: Hashable {
 class AttachedFileDetailViewModel: ObservableObject {
     private let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
     
-    @Published var detailLoadingState: LoadingState = .loaded
+    @Published var detailLoadingState: LoadingState = .loaded {
+        didSet {
+            if case .loading = detailLoadingState {
+                resetViewModel()
+            }
+        }
+    }
     @Published var uploadProgress: Double = 0.0
     
     @Published var bundleProperties: BundleProperties?
@@ -224,5 +230,10 @@ class AttachedFileDetailViewModel: ObservableObject {
     func showToast(_ message: String?) {
         self.toastMessage = message
         self.isShowingToast = true
+    }
+    
+    func resetViewModel() {
+        bundleProperties = nil
+        mobileProvision = nil
     }
 }
