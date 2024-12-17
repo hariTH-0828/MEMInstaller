@@ -95,6 +95,15 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
+    func deleteContentFromBucket(_ prefix: String) {
+        Task {
+            let bucketDeletionModel = try await repository.deletePathObject(endpoint: .delete, parameters: ZAPIStrings.Parameter.delete(prefix).value)
+            ZLogs.shared.info("This path \(bucketDeletionModel.path) is scheduled for deletion")
+            self.showToast(bucketDeletionModel.message)
+        }
+    }
+    
     /// Manage on-drop
     func handleDrop(provider: NSItemProvider) -> Bool {
         if provider.hasItemConformingToTypeIdentifier(UTType.ipa.identifier) {

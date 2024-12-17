@@ -216,6 +216,11 @@ class AttachedFileDetailViewModel: ObservableObject {
             UIApplication.shared.open(itmsServiceURL)
         }
     }
+    
+    func checkApplicationCanOpen() -> Bool {
+        guard let url = bundleProperties?.redirectURL else { return false }
+        return UIApplication.shared.canOpenURL(URL(string: "\(url)://")!)
+    }
 
     private func generateDefaultAppIcon() -> Data? {
         imageWith(name: bundleProperties?.bundleName)?.pngData()

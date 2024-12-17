@@ -45,8 +45,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         self.popView = pop
     }
     
-    @inlinable
-    @inline(__always)
     func dismissSheet() {
         let onDismissHandler = onDismiss // Capture the closure to avoid race condition
         self.sheet = nil
@@ -95,6 +93,10 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
             QRCodeProviderView(qrProvider: qrprovider)
                 .presentationDetents([.medium])
                 .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
+                .presentationDragIndicator(.visible)
+        case .presentDeleteAlert(let action):
+            PresentContentDeletionView(action: action)
+                .presentationDetents([.height(140)])
                 .presentationDragIndicator(.visible)
         }
     }

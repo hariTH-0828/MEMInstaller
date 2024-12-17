@@ -14,6 +14,14 @@ struct QRCodeView: View {
     private let data: Data // QR Code Data
     @State private var appIcon: Data? // App Icon Data
     
+    private var qrcodeWidth: CGFloat {
+        return Device.isIphone ? 200 : 280
+    }
+    
+    private var qrcodeHeight: CGFloat {
+        return Device.isIphone ? 200: 280
+    }
+    
     init(url: String, appIconURL: String?) {
         self.url = Constants.installationPrefix + url
         self.appIconURL = appIconURL
@@ -40,7 +48,7 @@ struct QRCodeView: View {
     private func qrCodeImage() -> some View {
         Image(uiImage: UIImage(data: data)!)
             .resizable()
-            .frame(width: 180, height: 180)
+            .frame(width: qrcodeWidth, height: qrcodeHeight)
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 8)
@@ -49,7 +57,7 @@ struct QRCodeView: View {
             )
             .overlay {
                 if let appIcon {
-                    AppIconView(icon: appIcon)
+                    AppIconView(icon: appIcon, width: 55, height: 55)
                         .background(Circle().fill(.background))
                 }else {
                     ProgressView()

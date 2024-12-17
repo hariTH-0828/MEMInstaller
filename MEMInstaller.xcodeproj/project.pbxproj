@@ -22,6 +22,8 @@
 		5216480F2CFD976500D599E2 /* StateManagementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5216480E2CFD976500D599E2 /* StateManagementEnums.swift */; };
 		521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */; };
 		522C7F632D01942D0032F25E /* AttachedFileDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */; };
+		5234A0E62D11804E00AFF3A0 /* DeletionToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234A0E52D11804E00AFF3A0 /* DeletionToastStyle.swift */; };
+		5234A0E82D11868E00AFF3A0 /* PresentContentDeletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -53,6 +55,8 @@
 		523F72452CDBAD0400D564E7 /* AttachedFileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */; };
 		523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */; };
 		523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F72482CDBAD9D00D564E7 /* UIImage+.swift */; };
+		524450C72D0FF06C00437D2C /* DELETE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524450C62D0FF06C00437D2C /* DELETE.swift */; };
+		524450C92D0FF1A000437D2C /* BucketDeletionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524450C82D0FF1A000437D2C /* BucketDeletionModel.swift */; };
 		5252A4032CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4022CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift */; };
 		5252A4092CF641CF005DD9CC /* NavigationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */; };
 		5252A40B2CF64272005DD9CC /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */; };
@@ -143,6 +147,8 @@
 		5216480E2CFD976500D599E2 /* StateManagementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagementEnums.swift; sourceTree = "<group>"; };
 		521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLoadingWrapper.swift; sourceTree = "<group>"; };
 		522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailViewModel.swift; sourceTree = "<group>"; };
+		5234A0E52D11804E00AFF3A0 /* DeletionToastStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletionToastStyle.swift; sourceTree = "<group>"; };
+		5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentContentDeletionView.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -178,6 +184,8 @@
 		523F72442CDBAD0400D564E7 /* AttachedFileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailView.swift; sourceTree = "<group>"; };
 		523F72462CDBAD3000D564E7 /* ActivityViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewRepresentable.swift; sourceTree = "<group>"; };
 		523F72482CDBAD9D00D564E7 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		524450C62D0FF06C00437D2C /* DELETE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DELETE.swift; sourceTree = "<group>"; };
+		524450C82D0FF1A000437D2C /* BucketDeletionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketDeletionModel.swift; sourceTree = "<group>"; };
 		5252A4022CF5FE28005DD9CC /* HorizontalKeyValueContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalKeyValueContainer.swift; sourceTree = "<group>"; };
 		5252A4082CF641CF005DD9CC /* NavigationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProtocol.swift; sourceTree = "<group>"; };
 		5252A40A2CF64272005DD9CC /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
@@ -524,6 +532,7 @@
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
 				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
 				5204A3C82D0CB82D003FBDF0 /* IdleStateView.swift */,
+				5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -589,6 +598,7 @@
 				523F72412CDB9EE400D564E7 /* BundleProperties.swift */,
 				525AD9922CF5784900BF08AF /* MobileProvision.swift */,
 				52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */,
+				524450C82D0FF1A000437D2C /* BucketDeletionModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -630,8 +640,9 @@
 			children = (
 				52F393B62CE5D0AA00C9B23C /* GET.swift */,
 				52F393BA2CE5D9D000C9B23C /* PATCH.swift */,
-				52D0B5572CEB730400214F41 /* DownloadService.swift */,
 				5270C5612CEC64C300C051CB /* PUT.swift */,
+				524450C62D0FF06C00437D2C /* DELETE.swift */,
+				52D0B5572CEB730400214F41 /* DownloadService.swift */,
 			);
 			path = CRUD;
 			sourceTree = "<group>";
@@ -660,6 +671,7 @@
 			children = (
 				52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */,
 				521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */,
+				5234A0E52D11804E00AFF3A0 /* DeletionToastStyle.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -930,6 +942,7 @@
 				525AD9912CF446F500BF08AF /* Notification+.swift in Sources */,
 				529A4D1B2CF9774D00E2EDB7 /* UIScreen+.swift in Sources */,
 				523F72352CDB794700D564E7 /* HomeViewModel.swift in Sources */,
+				524450C72D0FF06C00437D2C /* DELETE.swift in Sources */,
 				523F72492CDBAD9D00D564E7 /* UIImage+.swift in Sources */,
 				52F393B32CE5202D00C9B23C /* ConnectionStatus.swift in Sources */,
 				52A77EF52CF9F5830064A063 /* UserProfileButtonView.swift in Sources */,
@@ -960,11 +973,13 @@
 				5252A40E2CF64FCA005DD9CC /* ZSMultiThreading.swift in Sources */,
 				52F6EA612D0721C300ACA676 /* AppPackageProcessor.swift in Sources */,
 				5252A4092CF641CF005DD9CC /* NavigationProtocol.swift in Sources */,
+				5234A0E62D11804E00AFF3A0 /* DeletionToastStyle.swift in Sources */,
 				523F72392CDB8DDB00D564E7 /* UTType+.swift in Sources */,
 				523F72262CDB4EFC00D564E7 /* ZUserProfile.swift in Sources */,
 				5252A40B2CF64272005DD9CC /* AppCoordinatorImpl.swift in Sources */,
 				5270C5622CEC64C300C051CB /* PUT.swift in Sources */,
 				5252A41A2CF71DB2005DD9CC /* Decimal+.swift in Sources */,
+				524450C92D0FF1A000437D2C /* BucketDeletionModel.swift in Sources */,
 				523F72302CDB77EE00D564E7 /* ViewModifiers.swift in Sources */,
 				52D0B5582CEB730400214F41 /* DownloadService.swift in Sources */,
 				529E6FEA2CFCDA45002AB497 /* Array+.swift in Sources */,
@@ -1004,6 +1019,7 @@
 				52F393B72CE5D0AA00C9B23C /* GET.swift in Sources */,
 				523F72232CDB4AB800D564E7 /* KeyChainKeys.swift in Sources */,
 				523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */,
+				5234A0E82D11868E00AFF3A0 /* PresentContentDeletionView.swift in Sources */,
 				52F393C02CE5DBF000C9B23C /* StratusRepository.swift in Sources */,
 				525AD9932CF5784900BF08AF /* MobileProvision.swift in Sources */,
 				52E109EB2CE70A7F002D1EDD /* UIViewController+.swift in Sources */,

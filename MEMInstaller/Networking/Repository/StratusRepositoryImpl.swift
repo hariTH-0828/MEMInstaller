@@ -37,4 +37,16 @@ final class StratusRepositoryImpl: StratusRepository, ObservableObject {
             throw error
         }
     }
+    
+    func deletePathObject(endpoint: ZAPIStrings.Endpoint, parameters: Alamofire.Parameters?) async throws -> BucketDeletionModel {
+        let networkRequest = NetworkRequest(endpoint: endpoint, parameters: parameters)
+        let deleteRequest = DELETE<DataModel<BucketDeletionModel>>(request: networkRequest)
+        
+        do {
+            return try await deleteRequest.execute().data
+        }catch {
+            ZLogs.shared.error(error.localizedDescription)
+            throw error
+        }
+    }
 }

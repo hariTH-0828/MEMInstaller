@@ -17,4 +17,5 @@ enum ViewState {
 protocol StratusRepository {
     func getFoldersFromBucket(_ params: Parameters?) async throws -> BucketObjectModel
     func uploadObjects(endpoint: ZAPIStrings.Endpoint, headers: HTTPHeaders, data: Data) async throws -> Result<String, Error>
+    func deletePathObject(endpoint: ZAPIStrings.Endpoint, parameters: Alamofire.Parameters?) async throws -> BucketDeletionModel
 }

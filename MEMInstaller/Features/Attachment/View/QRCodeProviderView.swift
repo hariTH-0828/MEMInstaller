@@ -18,10 +18,6 @@ struct QRProvider: Hashable, Identifiable {
 struct QRCodeProviderView: View {
     let qrProvider: QRProvider
     
-    init(qrProvider: QRProvider) {
-        self.qrProvider = qrProvider
-    }
-    
     var body: some View {
         VStack {
             appIconWithTitle()
@@ -48,7 +44,7 @@ struct QRCodeProviderView: View {
     }
     
     @ViewBuilder
-    private var noteTextView: Text {
+    private var noteTextView: some View {
         Text("Note: Long press the QR Code to save and copy the file installation url")
             .font(.footnote)
             .foregroundStyle(.secondary)

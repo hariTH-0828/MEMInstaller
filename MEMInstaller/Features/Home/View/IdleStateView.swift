@@ -9,10 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct IdleStateView: View {
-    @ObservedObject var viewModel: HomeViewModel
-    
-    @State private var dragOver: Bool = false
-    
+
     var body: some View {
         ZStack {
             // Drop area view
@@ -23,9 +20,5 @@ struct IdleStateView: View {
             Text("Select an app to see details")
                 .foregroundColor(.gray)
         }
-        .onDrop(of: [UTType.ipa], isTargeted: $dragOver, perform: { providers in
-            guard let provider = providers.first else { return false }
-            return viewModel.handleDrop(provider: provider)
-        })
     }
 }

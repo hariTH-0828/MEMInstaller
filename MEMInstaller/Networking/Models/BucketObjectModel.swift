@@ -18,7 +18,7 @@ enum ContentType: String {
     case png = "image/png"
 }
 
-struct BucketObjectModel: Codable, Hashable {
+struct BucketObjectModel: Codable, Hashable, Identifiable {
     let prefix: String
     let keyCount: Int
     let contents: [ContentModel]

@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct HomeSidebarView: View {
     let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
     
-    @State private var shouldNavigate: Bool = false
-    @State private var tempPackageModel: PackageExtractionModel? = nil
-    
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
+    
+    @State private var dragOver: Bool = false
     
     var body: some View {
         LoaderView(loadingState: $viewModel.sideBarLoadingState) {
@@ -31,8 +31,10 @@ struct HomeSidebarView: View {
             }
         }
         .navigationBarTitleDisplayMode(.large)
+        .navigationSplitViewColumnWidth(250)
+        .toolbar(removing: .sidebarToggle)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { UserProfileButtonView() }
+            ToolbarItem(placement: .topBarLeading) { UserProfileButtonView() }
         }
         .task {
             if viewModel.sideBarLoadingState == .loading {
@@ -46,9 +48,19 @@ struct HomeSidebarView: View {
         List(viewModel.bucketObjectModels, id: \.self, selection: $viewModel.selectedBucketObject) { bucketObject in
             HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: bucketObject.getAppIcon())
                 .tag(bucketObject)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
+                    Button("Delete", systemImage: "trash", role: .destructive) {
+                        viewModel.deleteContentFromBucket(bucketObject.prefix)
+                    }
+                    .tint(Color.red)
+                })
         }
         .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
+        .onDrop(of: [UTType.ipa], isTargeted: $dragOver, perform: { providers in
+            guard let provider = providers.first else { return false }
+            return viewModel.handleDrop(provider: provider)
+        })
     }
     
     @ViewBuilder

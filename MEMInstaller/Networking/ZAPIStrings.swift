@@ -16,16 +16,15 @@ struct ZAPIStrings {
     enum Endpoint {
         case bucket
         case objects
+        case delete
         case custom(String)
         
         var path: String {
             switch self {
-            case .bucket:
-                return "/bucket"
-            case .objects:
-                return "/bucket/objects"
-            case .custom(let customPath):
-                return customPath
+            case .bucket: return "/bucket"
+            case .objects: return "/bucket/objects"
+            case .delete: return "/bucket/object/prefix"
+            case .custom(let customPath): return customPath
             }
         }
     }
@@ -33,6 +32,7 @@ struct ZAPIStrings {
     enum Parameter {
         case folders(String)
         case packageURL(String)
+        case delete(String)
         
         var value: Alamofire.Parameters {
             switch self {
@@ -40,6 +40,8 @@ struct ZAPIStrings {
                 return ["bucket_name": "packages", "prefix": "\(path)/"]
             case .packageURL(let packageURL):
                 return ["bucket_name": "packages", "prefix": "\(packageURL)/"]
+            case .delete(let prefix):
+                return ["bucket_name": "packages", "prefix": prefix]
             }
         }
     }

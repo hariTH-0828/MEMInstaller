@@ -32,7 +32,7 @@ struct HomeSideBarAppLabel: View {
                 .font(.footnote)
                 .foregroundStyle(StyleManager.colorStyle.systemGray)
         }
-        .frame(height: 35)
+        .frame(height: 40)
     }
 }
 
@@ -74,12 +74,17 @@ struct AppIconView: View {
         }else if let iconData = icon {
             Image(uiImage: UIImage(data: iconData)!)
                 .resizable()
-                .frame(width: 40, height: 40)
+                .frame(width: width, height: height)
                 .clipShape(Circle())
         }
     }
 }
 
 #Preview {
-    AppIconView(iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
+//    AppIconView(iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
+    HomeSideBarAppLabel(bucketObject: .preview, iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
 }
+
+//struct HomeSideBarAppLabel_preview: PreviewProvider {
+//
+//}

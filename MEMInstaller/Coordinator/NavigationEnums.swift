@@ -22,6 +22,7 @@ enum Sheet: Identifiable, Hashable {
     case activityRepresentable(URL)
     case AttachedFileDetail(AttachedFileDetailViewModel, PackageExtractionModel, AttachmentMode)
     case QRCodeProvider(QRProvider)
+    case presentDeleteAlert(() -> Void)
     
     var id: Self { self }
 }
@@ -43,6 +44,7 @@ extension Sheet {
             return ObjectIdentifier(lhsAFD) == ObjectIdentifier(rhsAFD) && lhsPackage == rhsPackage && lhsMode == rhsMode
         case (.QRCodeProvider(let lhsQRProvider), .QRCodeProvider(let rhsQRProvider)):
             return lhsQRProvider == rhsQRProvider
+        case (.presentDeleteAlert(_), .presentDeleteAlert(_)): return true
         default: return false
         }
     }
@@ -64,6 +66,8 @@ extension Sheet {
             hasher.combine(mode)
         case .QRCodeProvider(let qrprovider):
             hasher.combine(qrprovider)
+        case .presentDeleteAlert(_):
+            hasher.combine("presentDeleteAlert")
         }
     }
 }

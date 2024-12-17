@@ -8,7 +8,7 @@
 import SwiftUI
 
 @ViewBuilder
-func textViewForIdleState(_ message: String) -> Text {
+func textViewForIdleState(_ message: String) -> some View {
     Text(message)
         .font(.footnote)
         .foregroundStyle(StyleManager.colorStyle.systemGray)

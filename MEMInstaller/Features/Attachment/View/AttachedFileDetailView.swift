@@ -23,6 +23,7 @@ struct AttachedFileDetailView: View {
     let attachmentMode: AttachmentMode
     
     @State private var showExpiredAlert = false
+    @State private var presentationDetents: Set<PresentationDetent> = [.medium]
 
     // MARK: Initialize view with BucketObjectModel
     init(viewModel: AttachedFileDetailViewModel,
@@ -249,7 +250,7 @@ private extension AttachedFileDetailView {
                 appCoordinator.pop(.QRCodeProvider(provider))
             }
         }, label: {
-            Text("QR Code")
+            Text("Share")
                 .defaultButtonStyle(width: min(UIScreen.screenWidth * 0.3, 180))
         })
         .padding(.bottom, 30)
