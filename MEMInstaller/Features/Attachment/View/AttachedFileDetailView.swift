@@ -36,7 +36,7 @@ struct AttachedFileDetailView: View {
         self.packageModel = packageModel
         self.attachmentMode = attachmentMode
         
-        mainQueue {
+        DispatchQueue.main.async {
             viewModel.readFileDataToProperites(infoProperties: packageModel?.infoPropertyList, mobileProvision: packageModel?.mobileProvision)
         }
     }
@@ -162,9 +162,16 @@ private extension AttachedFileDetailView {
                     HorizontalKeyValueContainer(key: identifier.rawValue, value: bundleProperties.value(for: identifier))
                 }
             }
+        }else if let url = bucketObjectModel?.getInfoPropertyListURL() {
+            loadingRoundedRectangleView(taskType: .infoFile, url: url)
         }else {
-            loadingRoundedRectangleView(taskType: .infoFile) {
-                self.bucketObjectModel?.getInfoPropertyListURL()
+            RoundedRectangleOutlineView {
+                ZStack {
+                    Text("File unavailable")
+                        .font(.footnote)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
         }
     }
@@ -177,9 +184,16 @@ private extension AttachedFileDetailView {
                     mobileProvisionCellView(provision: mobileProvision, identifier)
                 }
             }
+        }else if let url = bucketObjectModel?.getMobileProvisionURL() {
+            loadingRoundedRectangleView(taskType: .provision, url: url)
         }else {
-            loadingRoundedRectangleView(taskType: .provision) {
-                self.bucketObjectModel?.getMobileProvisionURL()
+            RoundedRectangleOutlineView {
+                ZStack {
+                    Text("File unavailable")
+                        .font(.footnote)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
         }
     }
@@ -198,15 +212,14 @@ private extension AttachedFileDetailView {
     }
     
     @ViewBuilder
-    func loadingRoundedRectangleView(taskType: DownloadType, urlProvider: @escaping () -> String?) -> some View {
+    func loadingRoundedRectangleView(taskType: DownloadType, url urlProvider: String) -> some View {
         RoundedRectangleOutlineView {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .frame(maxWidth: .infinity)
         .task {
-            guard let url = urlProvider() else { return }
-            await viewModel.downloadFile(url: url, type: taskType)
+            await viewModel.downloadFile(url: urlProvider, type: taskType)
         }
     }
     

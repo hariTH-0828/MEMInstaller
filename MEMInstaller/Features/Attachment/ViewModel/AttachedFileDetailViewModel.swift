@@ -118,7 +118,7 @@ class AttachedFileDetailViewModel: ObservableObject {
             try await uploadComponent(type: .installerPlist(appName), endpoint: endpoint, message: "Uploading Installer")
             await callBack()
         }catch {
-            // MARK: Handle Deletion
+            handleUploadCancelledFileDeletion(endpoint+"/")
             handleLogs(error.localizedDescription)
         }
     }
@@ -208,6 +208,20 @@ class AttachedFileDetailViewModel: ObservableObject {
         let result = try await repository.uploadObjects(object)
         if case .failure(let error) = result {
             throw error
+        }
+    }
+    
+    @MainActor
+    private func handleUploadCancelledFileDeletion(_ prefix: String) {
+        Task {
+            do {
+                let bucketObjectModel = try await repository.getFoldersFromBucket(ZAPIStrings.Parameter.folders(prefix).value)
+                if bucketObjectModel.keyCount != 5 {
+                    _ = try await repository.deletePathObject(endpoint: .delete, parameters: ZAPIStrings.Parameter.delete(prefix).value)
+                }
+            }catch {
+                handleLogs(error.localizedDescription)
+            }
         }
     }
     
