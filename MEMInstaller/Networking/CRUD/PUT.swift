@@ -12,12 +12,19 @@ class PUT: ObservableObject {
     private var request: NetworkRequest
     private let tokenProvider: TokenProvider
     private var uploadRequest: UploadRequest?
+    private let session: Session
     
     @Published var uploadProgress: Double = 0.0
     
     init(request: NetworkRequest, tokenProvider: TokenProvider = ZIAMTokenProvider()) {
         self.request = request
         self.tokenProvider = tokenProvider
+        
+        // Configure Alamofire session with timeout
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 60
+        self.session = Session(configuration: configuration)
     }
     
     func execute() async throws -> Result<String, Error> {
@@ -35,7 +42,7 @@ class PUT: ObservableObject {
         guard let fileData = request.data else { throw ZError.LocalError.noFileFound }
         
         return try await withCheckedThrowingContinuation { continuation in
-            self.uploadRequest = AF.upload(fileData, to: url, method: .put, headers: request.headers)
+            self.uploadRequest = session.upload(fileData, to: url, method: .put, headers: request.headers)
                 .uploadProgress(closure: { progress in
                     DispatchQueue.main.async {
                         self.uploadProgress = progress.fractionCompleted

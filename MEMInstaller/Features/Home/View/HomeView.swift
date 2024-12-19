@@ -17,12 +17,14 @@ struct HomeView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @ObservedObject var appCoordinator: AppCoordinatorImpl
     
+    @State var navigationSplitVisibility: NavigationSplitViewVisibility = .doubleColumn
+    
     @StateObject var sideBarViewModel: HomeViewModel = HomeViewModel()
     @StateObject var detailViewModel: AttachedFileDetailViewModel = AttachedFileDetailViewModel()
     
     // MARK: BODY
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $navigationSplitVisibility) {
             NavigationStack(path: $appCoordinator.navigationPath) {
                 HomeSidebarView(viewModel: sideBarViewModel)
                     .navigationDestination(for: Screen.self) {
@@ -43,10 +45,11 @@ struct HomeView: View {
             }else if sideBarViewModel.bucketObjectModels.isEmpty && sideBarViewModel.sideBarLoadingState == .loaded {
                 EmptyBucketView(viewModel: sideBarViewModel)
             }else {
-                IdleStateView(viewModel: sideBarViewModel)
+                IdleStateView()
             }
         }
         .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)
+        .toastViewStyle(.defaultToastStyle)
         .environmentObject(appCoordinator)
         .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
             detailViewModel.detailLoadingState = .loading

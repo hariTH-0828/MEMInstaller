@@ -34,7 +34,8 @@ final class ZIAMManager {
             "ZohoCatalyst.buckets.READ",
             "ZohoCatalyst.buckets.objects.READ",
             "Stratus.fileop.READ",
-            "Stratus.fileop.CREATE"
+            "Stratus.fileop.CREATE",
+            "ZohoCatalyst.buckets.objects.DELETE"
         ]
     }
     

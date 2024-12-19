@@ -46,9 +46,10 @@ class ZLogs {
         let fileName = (file as NSString).lastPathComponent
         let logMessage = ("[\(level.rawValue)] \(fileName):\(line) \(function) -> \(message)")
         
-        print(logMessage)
-        
-        writeToFile(logMessage)
+        mainQueue {
+            print(logMessage)
+            self.writeToFile(logMessage)
+        }
     }
     
     /// Convenience methods for specific log levels

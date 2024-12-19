@@ -17,6 +17,7 @@ struct BundleProperties: Decodable, Identifiable, Hashable {
     let requiredDeviceCompability: [String]?
     let supportedPlatform: [String]?
     let bundleIcon: String?
+    let redirectURL: String?
     
     enum CodingKeys: String, CodingKey {
         case bundleName = "CFBundleName"
@@ -27,6 +28,7 @@ struct BundleProperties: Decodable, Identifiable, Hashable {
         case requiredDeviceCompability = "UIRequiredDeviceCapabilities"
         case supportedPlatform = "CFBundleSupportedPlatforms"
         case bundleIcon = "CFBundleIcons"
+        case redirectURL = "CFBundleURLTypes"
     }
     
     init(from decoder: any Decoder) throws {
@@ -45,6 +47,11 @@ struct BundleProperties: Decodable, Identifiable, Hashable {
         }else {
             self.bundleIcon = nil
         }
+        
+        let redirectURLDecoder = try container.decodeIfPresent([BundleURLTypes].self, forKey: .redirectURL)
+        if let urlName = redirectURLDecoder?.first?.urlName {
+            self.redirectURL = urlName
+        }else { self.redirectURL = nil }
     }
     
     // Custom initializer for testing purposes
@@ -56,7 +63,8 @@ struct BundleProperties: Decodable, Identifiable, Hashable {
         minimumOSVersion: String? = nil,
         requiredDeviceCompability: [String] = ["arm64"],
         supportedPlatform: [String] = ["iPhoneOS"],
-        bundleIcon: String? = nil
+        bundleIcon: String? = nil,
+        redirectURL: String? = "zadminfacimap"
     ) {
         self.bundleName = bundleName
         self.bundleVersionShort = bundleVersionShort
@@ -66,6 +74,7 @@ struct BundleProperties: Decodable, Identifiable, Hashable {
         self.requiredDeviceCompability = requiredDeviceCompability
         self.supportedPlatform = supportedPlatform
         self.bundleIcon = bundleIcon
+        self.redirectURL = redirectURL
     }
 }
 
@@ -92,6 +101,14 @@ fileprivate struct BundleIcon: Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.primaryIcon = try container.decodeIfPresent(PrimaryIcon.self, forKey: .primaryIcon)
+    }
+}
+
+fileprivate struct BundleURLTypes: Decodable {
+    let urlName: String
+    
+    enum CodingKeys: String, CodingKey {
+        case urlName = "CFBundleURLName"
     }
 }
 

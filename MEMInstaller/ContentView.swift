@@ -16,15 +16,17 @@ struct ContentView: View {
         ZStack {
             if appViewModel.isUserLoggedIn {
                 HomeView(appCoordinator: appCoordinator)
+                    .onAppear {
+                        appViewModel.coordinator = appCoordinator
+                    }
             }else {
                 LoginView(appCoordinator: appCoordinator)
+                    .onAppear {
+                        appViewModel.coordinator = appCoordinator
+                    }
             }
         }
         .environmentObject(appViewModel)
-        .onAppear(perform: {
-            // Handled when logout / login make the view as top view
-            appViewModel.coordinator = appCoordinator
-        })
     }
 }
 

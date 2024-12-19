@@ -37,4 +37,8 @@ extension View {
     func settingButtonView<S: ShapeStyle>(background: S = .regularMaterial) -> some View {
         modifier(SettingButtonView(background: background))
     }
+    
+    func zpresentationDetent(detents: Binding<Set<PresentationDetent>>) -> some View {
+        modifier(ZPresentation(sheetContentHeight: detents))
+    }
 }

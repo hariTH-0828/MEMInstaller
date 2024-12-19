@@ -10,6 +10,7 @@ import SwiftUI
 struct HorizontalLoadingWrapper: View {
     var title: String = "Loading"
     var value: Double? = nil
+    var action: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -17,12 +18,22 @@ struct HorizontalLoadingWrapper: View {
                 .ignoresSafeArea()
                 .opacity(0.6)
             
-            if let value {
-                ProgressView(title, value: value)
-                    .lineLimit(1)
-                    .padding()
-                    .frame(width: 250)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(.regularMaterial))
+            if let value, let action {
+                HStack {
+                    ProgressView(title, value: value)
+                        .lineLimit(1)
+                        .padding()
+                    
+                    Spacer()
+                    
+                    Button(action: action, label: {
+                        Image(systemName: "x.circle.fill")
+                            .foregroundStyle(StyleManager.colorStyle.invertBackground)
+                            .padding(10)
+                    })
+                }
+                .frame(width: 280)
+                .background(RoundedRectangle(cornerRadius: 8).fill(.regularMaterial))
             }else {
                 ProgressView(title)
                     .progressViewStyle(.horizontalCircular)
@@ -32,5 +43,8 @@ struct HorizontalLoadingWrapper: View {
 }
 
 #Preview {
-    HorizontalLoadingWrapper(title: "Uploading application", value: 0.7)
+    HorizontalLoadingWrapper(title: "Uploading application", value: 0.7, action: {
+        
+    })
+    .preferredColorScheme(.light)
 }

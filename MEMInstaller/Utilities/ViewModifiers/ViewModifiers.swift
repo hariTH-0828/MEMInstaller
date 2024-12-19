@@ -173,3 +173,28 @@ struct SettingButtonView<S>: ViewModifier where S: ShapeStyle {
             .padding(.horizontal)
     }
 }
+
+struct ZPresentation: ViewModifier {
+    @Binding var sheetContentHeight: Set<PresentationDetent>
+    
+    init(sheetContentHeight: Binding<Set<PresentationDetent>>) {
+        self._sheetContentHeight = sheetContentHeight
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                GeometryReader(content: { proxy in
+                    Color.clear
+                        .clipped()
+                        .task {
+                            let contentHeight = proxy.size.height + 100
+                            print("Height: \(contentHeight)")
+                            if contentHeight < 420 {
+                                sheetContentHeight = [.height(contentHeight)]
+                            }
+                        }
+                })
+            )
+    }
+}

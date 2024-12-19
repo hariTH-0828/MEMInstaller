@@ -27,14 +27,14 @@ struct HorizontalKeyValueContainer<T>: View where T: View {
     var body: some View {
         HStack {
             Text(key)
-                .font(.system(.footnote))
+                .font(.system(.callout))
                 .foregroundStyle(Color(uiColor: .secondaryLabel))
             
             Spacer()
             
             if let value {
                 Text(value)
-                    .font(.system(.footnote))
+                    .font(.system(.callout))
                     .foregroundStyle(Color(uiColor: .secondaryLabel))
             }else {
                 customValueView
