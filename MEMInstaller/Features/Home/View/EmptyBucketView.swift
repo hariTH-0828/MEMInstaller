@@ -23,21 +23,25 @@ struct EmptyBucketView: View {
     var body: some View {
         GeometryReader(content: { geometry in
             VStack {
-                ContentUnavailableView(label: {
-                    Label(
-                        title: {
-                            Text("com.learn.meminstaller.home.no-file-title")
-                        },
-                        icon: {
-                           Image("no-file-found")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: geometry.size.height * 0.4)
-                        }
-                    )
-                }, description: {
-                    Text("com.learn.meminstaller.home.no-file-description")
-                })
+                if #available(iOS 17.0, *) {
+                    ContentUnavailableView(label: {
+                        Label(
+                            title: {
+                                Text("com.learn.meminstaller.home.no-file-title")
+                            },
+                            icon: {
+                                Image("no-file-found")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: geometry.size.height * 0.4)
+                            }
+                        )
+                    }, description: {
+                        Text("com.learn.meminstaller.home.no-file-description")
+                    })
+                }else {
+                    // TODO: HANDLE EARLIER VERSION
+                }
                 
                 HStack(spacing: 20) {
                     Button {

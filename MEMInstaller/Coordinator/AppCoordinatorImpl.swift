@@ -90,10 +90,16 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                                    packageModel: packageExtractionModel,
                                    attachmentMode: attachedMode).interactiveDismissDisabled(true)
         case .QRCodeProvider(let qrprovider):
-            QRCodeProviderView(qrProvider: qrprovider)
-                .presentationDetents([.medium])
-                .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
-                .presentationDragIndicator(.visible)
+            if #available(iOS 17.0, *) {
+                QRCodeProviderView(qrProvider: qrprovider)
+                    .presentationDetents([.medium])
+                    .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
+                    .presentationDragIndicator(.visible)
+            }else {
+                QRCodeProviderView(qrProvider: qrprovider)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            }
         }
     }
     

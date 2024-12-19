@@ -105,7 +105,6 @@
 		52F393CA2CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */; };
 		52F6EA612D0721C300ACA676 /* AppPackageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA602D0721C300ACA676 /* AppPackageProcessor.swift */; };
 		52F6EA632D081AC300ACA676 /* PackageExtractionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */; };
-		52F6EA652D084AC300ACA676 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA642D084AC300ACA676 /* PreviewView.swift */; };
 		52F6EA672D084F1200ACA676 /* SettingLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6EA662D084F1200ACA676 /* SettingLabelView.swift */; };
 		6E3D27AADF1F079DA4CBBB12 /* Pods_MEMInstallerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB9327342D097D191A35EF33 /* Pods_MEMInstallerTests.framework */; };
 		D274DE099541BB3B55AE12EB /* Pods_MEMInstaller_MEMInstallerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0424D3F1459B5F266A470349 /* Pods_MEMInstaller_MEMInstallerUITests.framework */; };
@@ -233,7 +232,6 @@
 		52F393C92CE5EA3C00C9B23C /* HorizontalCircularViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalCircularViewStyle.swift; sourceTree = "<group>"; };
 		52F6EA602D0721C300ACA676 /* AppPackageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPackageProcessor.swift; sourceTree = "<group>"; };
 		52F6EA622D081AC300ACA676 /* PackageExtractionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageExtractionModel.swift; sourceTree = "<group>"; };
-		52F6EA642D084AC300ACA676 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		52F6EA662D084F1200ACA676 /* SettingLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingLabelView.swift; sourceTree = "<group>"; };
 		5748362C25EFD1E552A2E6D5 /* Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig"; path = "Target Support Files/Pods-MEMInstaller-MEMInstallerUITests/Pods-MEMInstaller-MEMInstallerUITests.release.xcconfig"; sourceTree = "<group>"; };
 		5C6B37B5A17A963E0B94C925 /* Pods-MEMInstallerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MEMInstallerTests.release.xcconfig"; path = "Target Support Files/Pods-MEMInstallerTests/Pods-MEMInstallerTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -420,7 +418,6 @@
 				525AD9942CF5B83B00BF08AF /* Attachment */,
 				523F72032CDB34C100D564E7 /* Login */,
 				523F72022CDB34BD00D564E7 /* Home */,
-				52F6EA642D084AC300ACA676 /* PreviewView.swift */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -1010,7 +1007,6 @@
 				52B7D08E2D001FFC0095707B /* SettingPrivacyView.swift in Sources */,
 				523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */,
 				52D0B5542CEB3D6C00214F41 /* String+.swift in Sources */,
-				52F6EA652D084AC300ACA676 /* PreviewView.swift in Sources */,
 				520072342CF77ED40080D8E8 /* SettingsView.swift in Sources */,
 				52F393B52CE520A800C9B23C /* ZAPIStrings.swift in Sources */,
 				52F393B72CE5D0AA00C9B23C /* GET.swift in Sources */,
@@ -1117,7 +1113,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1174,7 +1170,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1208,7 +1204,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1250,7 +1246,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

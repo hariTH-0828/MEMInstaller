@@ -36,7 +36,7 @@ struct HomeSidebarView: View {
         .navigationSplitViewColumnWidth(250)
         .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentDeletionToast)
         .toastViewStyle(DeletionToastStyle())
-        .toolbar(removing: .sidebarToggle)
+        .removeSideBarToggle()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) { UserProfileButtonView() }
         }

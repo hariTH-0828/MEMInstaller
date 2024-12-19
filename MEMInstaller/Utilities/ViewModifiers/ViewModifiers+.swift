@@ -41,4 +41,12 @@ extension View {
     func zpresentationDetent(detents: Binding<Set<PresentationDetent>>) -> some View {
         modifier(ZPresentation(sheetContentHeight: detents))
     }
+    
+    func removeSideBarToggle() -> some View {
+        modifier(RemoveSideBarToggle())
+    }
+    
+    func onChange<E>(of equatable: E, action: @escaping (E, E) -> Void) -> some View where E: Equatable {
+        modifier(OnChangeModifier(of: equatable, action: action))
+    }
 }

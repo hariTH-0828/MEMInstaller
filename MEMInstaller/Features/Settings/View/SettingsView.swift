@@ -33,60 +33,68 @@ struct SettingsView: View {
     var body: some View {
         GeometryReader { _ in
             VStack {
-                UserProfileImageView(userProfile: userProfile!)
-                
-//                NavigationLink { coordinator.build(forScreen: .privacy) } label: {
-//                    SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
-//                }
-//                .settingButtonView()
-                
-                NavigationLink { coordinator.build(forScreen: .about) } label: {
-                    SettingLabelView("About", iconName: "i.circle", iconColor: .accentColor)
-                    Text("version " + (Bundle.appVersion ?? "v1.0"))
-                        .font(.system(size: 14))
-                        .foregroundStyle(StyleManager.colorStyle.systemGray)
-                }
-                .settingButtonView()
-                
-                Button(action: {
-                    coordinator.presentSheet(.activityRepresentable(logFileURL))
-                }, label: {
-                    SettingLabelView("com.learn.meminstaller.setting.share-log", iconName: "square.and.arrow.up", iconColor: .cyan)
-                })
-                .settingButtonView()
-                
-                Button(action: {
-                    clearCacheData()
-                }, label: {
-                    SettingLabelView("com.learn.meminstaller.setting.clear_cache", iconName: "ico_database", iconColor: .blue)
-                    
-                    Text(totalCacheSize ?? "0")
-                        .font(.system(size: 14))
-                        .foregroundStyle(StyleManager.colorStyle.systemGray)
-                })
-                .settingButtonView()
-                
-                Section {
-                    Button(action: {
-                        Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
-                    }, label: {
-                        SettingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
-                    })
-                    .settingButtonView()
-                    .popover(item: $coordinator.popView, arrowEdge: .bottom) { pop in
-                        coordinator.build(forPop: pop)
-                    }
-                } footer: {
-                    footerView
-                }
+                contentView()
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .showToast(message: toastMessage, isShowing: $isPresentToast)
-            .toolbar(removing: .sidebarToggle)
+            .removeSideBarToggle()
             .onAppear(perform: {
                 self.totalCacheSize = try? ZFFileManager.shared.getDirectorySize(at: ZFFileManager.shared.getAppCacheDirectory())
             })
+        }
+    }
+    
+    @ViewBuilder
+    private func contentView() -> some View {
+        UserProfileImageView(userProfile: userProfile!)
+        
+        // Uncomment and implement Privacy when needed
+        /*
+        NavigationLink { coordinator.build(forScreen: .privacy) } label: {
+            SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
+        }
+        .settingButtonView()
+         */
+        
+        NavigationLink { coordinator.build(forScreen: .about) } label: {
+            SettingLabelView("About", iconName: "i.circle", iconColor: .accentColor)
+            Text("version " + (Bundle.appVersion ?? "v1.0"))
+                .font(.system(size: 14))
+                .foregroundStyle(StyleManager.colorStyle.systemGray)
+        }
+        .settingButtonView()
+        
+        Button(action: {
+            coordinator.presentSheet(.activityRepresentable(logFileURL))
+        }, label: {
+            SettingLabelView("com.learn.meminstaller.setting.share-log", iconName: "square.and.arrow.up", iconColor: .cyan)
+        })
+        .settingButtonView()
+        
+        Button(action: {
+            clearCacheData()
+        }, label: {
+            SettingLabelView("com.learn.meminstaller.setting.clear_cache", iconName: "ico_database", iconColor: .blue)
+            
+            Text(totalCacheSize ?? "0")
+                .font(.system(size: 14))
+                .foregroundStyle(StyleManager.colorStyle.systemGray)
+        })
+        .settingButtonView()
+        
+        Section {
+            Button(action: {
+                Device.isIpad ? coordinator.pop(.logout) : coordinator.presentSheet(.logout)
+            }, label: {
+                SettingLabelView("com.learn.meminstaller.setting.signout", color: .red, iconName: "power", iconColor: .red)
+            })
+            .settingButtonView()
+            .popover(item: $coordinator.popView, arrowEdge: .bottom) { pop in
+                coordinator.build(forPop: pop)
+            }
+        } footer: {
+            footerView
         }
     }
     

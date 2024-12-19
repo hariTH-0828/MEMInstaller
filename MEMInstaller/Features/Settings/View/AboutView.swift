@@ -14,7 +14,7 @@ struct AboutView: View {
                 Image(uiImage: UIImage.getCurrentAppIcon())
                     .resizable()
                     .frame(width: 100, height: 100, alignment: .center)
-                    .clipShape(.buttonBorder)
+                    .clipShape(.rect(cornerRadius: 8))
                 
                 Text("com.learn.meminstaller.loginview.appName")
                     .font(.system(size: 20).bold())
