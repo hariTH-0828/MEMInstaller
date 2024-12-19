@@ -49,6 +49,7 @@ struct HomeView: View {
             }
         }
         .showToast(message: sideBarViewModel.toastMessage, isShowing: $sideBarViewModel.isPresentToast)
+        .toastViewStyle(.defaultToastStyle)
         .environmentObject(appCoordinator)
         .onChange(of: sideBarViewModel.selectedBucketObject) { _, _ in
             detailViewModel.detailLoadingState = .loading

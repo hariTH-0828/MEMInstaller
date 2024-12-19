@@ -77,8 +77,10 @@ struct AttachedFileDetailView: View {
             .overlay {
                 switch viewModel.detailLoadingState {
                 case .uploading(let uploadingMessage):
-                    HorizontalLoadingWrapper(title: uploadingMessage, value: viewModel.uploadProgress)
-                        .allowsHitTesting(true)
+                    HorizontalLoadingWrapper(title: uploadingMessage, value: viewModel.uploadProgress, action: {
+                        viewModel.cancelAllTasks()
+                    })
+                    .allowsHitTesting(true)
                 default:
                     Color.clear
                 }

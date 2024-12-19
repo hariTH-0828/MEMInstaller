@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import SwiftData
 import UniformTypeIdentifiers
+import MEMToast
 
 struct HomeSidebarView: View {
     let packageHandler: PackageExtractionHandler = PackageExtractionHandler()
@@ -32,6 +34,8 @@ struct HomeSidebarView: View {
         }
         .navigationBarTitleDisplayMode(.large)
         .navigationSplitViewColumnWidth(250)
+        .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentDeletionToast)
+        .toastViewStyle(DeletionToastStyle())
         .toolbar(removing: .sidebarToggle)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) { UserProfileButtonView() }
@@ -49,7 +53,7 @@ struct HomeSidebarView: View {
             HomeSideBarAppLabel(bucketObject: bucketObject, iconURL: bucketObject.getAppIcon())
                 .tag(bucketObject)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
-                    Button("Delete", systemImage: "trash", role: .destructive) {
+                    Button("Delete", systemImage: "trash", role: .cancel) {
                         viewModel.deleteContentFromBucket(bucketObject.prefix)
                     }
                     .tint(Color.red)

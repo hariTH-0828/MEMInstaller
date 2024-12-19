@@ -35,10 +35,10 @@ struct SettingsView: View {
             VStack {
                 UserProfileImageView(userProfile: userProfile!)
                 
-                NavigationLink { coordinator.build(forScreen: .privacy) } label: {
-                    SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
-                }
-                .settingButtonView()
+//                NavigationLink { coordinator.build(forScreen: .privacy) } label: {
+//                    SettingLabelView("com.learn.meminstaller.setting.privacy", iconName: "shield", iconColor: Color.green)
+//                }
+//                .settingButtonView()
                 
                 NavigationLink { coordinator.build(forScreen: .about) } label: {
                     SettingLabelView("About", iconName: "i.circle", iconColor: .accentColor)

@@ -31,6 +31,7 @@ class AttachedFileDetailViewModel: ObservableObject {
     @Published var mobileProvision: MobileProvision?
     
     private var packageExtractionModel: PackageExtractionModel?
+    private var uploadTask = [PUT]()
 
     private let repository: StratusRepository = StratusRepositoryImpl()
     private let userDataManager: UserManagerProtocol = UserDataManager()
@@ -66,7 +67,7 @@ class AttachedFileDetailViewModel: ObservableObject {
             let data = try await downloadFile(from: url)
             handleDownloadSuccess(data: data, type: type)
         }catch {
-            handleError(error.localizedDescription)
+            handleLogs(error.localizedDescription)
         }
     }
     
@@ -118,13 +119,18 @@ class AttachedFileDetailViewModel: ObservableObject {
             await callBack()
         }catch {
             // MARK: Handle Deletion
-            handleError(error.localizedDescription)
+            handleLogs(error.localizedDescription)
         }
     }
 
     @MainActor
     private func uploadPackageComponents(endpoint: String, appName: String) async throws {
-        let components: [(UploadComponentType, String)] = [(.application(appName), "Uploading application"), (.icon, "Uploading app icon"), (.infoPlist, "Uploading Info.plist"), (.provision, "Uploading provision")]
+        let components: [(UploadComponentType, String)] = [
+            (.application(appName), "Uploading application"),
+            (.icon, "Uploading app icon"),
+            (.infoPlist, "Uploading Info.plist"),
+            (.provision, "Uploading provision")
+        ]
 
         for (type, message) in components {
             try await uploadComponent(type: type, endpoint: endpoint, message: message)
@@ -136,7 +142,9 @@ class AttachedFileDetailViewModel: ObservableObject {
         self.detailLoadingState = .uploading(message)
         guard let data = try fetchData(for: type) else { throw ZError.NetworkError.missingData }
         let apiEndpoint = type.endpoint(for: endpoint)
-        try await upload(data: data, to: apiEndpoint, contentType: type.contentType)
+        let uploadRequest = createRequest(data: data, to: apiEndpoint, contentType: type.contentType)
+        uploadTask.append(uploadRequest)
+        try await upload(requestObject: uploadRequest)
     }
 
     @MainActor
@@ -189,24 +197,35 @@ class AttachedFileDetailViewModel: ObservableObject {
 
             return bucketData.getPackageURL()
         } catch {
-            handleError(error.localizedDescription)
+            handleLogs(error.localizedDescription)
         }
 
         return nil
     }
 
     @MainActor
-    private func upload(data: Data, to endpoint: ZAPIStrings.Endpoint, contentType: ContentType) async throws {
-        let headers = HTTPHeaders([.contentType(contentType.rawValue)])
-        let result = try await repository.uploadObjects(endpoint: endpoint, headers: headers, data: data)
+    private func upload(requestObject object: PUT) async throws {
+        let result = try await repository.uploadObjects(object)
         if case .failure(let error) = result {
             throw error
         }
     }
     
+    private func createRequest(data: Data, to endpoint: ZAPIStrings.Endpoint, contentType: ContentType) -> PUT {
+        let headers = HTTPHeaders([.contentType(contentType.rawValue)])
+        let networkRequest: NetworkRequest = NetworkRequest(endpoint: endpoint, headers: headers, data: data)
+        return PUT(request: networkRequest)
+    }
+    
+    func cancelAllTasks() {
+        // Cancel all active FileUploader uploads
+        uploadTask.forEach { $0.cancelUpload() }
+        uploadTask.removeAll()
+    }
+    
     func installApplication(_ installationFileURL: String?) {
         guard let objectURL = installationFileURL else {
-            handleError("Error: Installation - objectURL not found")
+            handleLogs("Error: Installation - objectURL not found")
             return
         }
 
@@ -226,9 +245,18 @@ class AttachedFileDetailViewModel: ObservableObject {
         imageWith(name: bundleProperties?.bundleName)?.pngData()
     }
     
-    func handleError(_ error: String) {
-        ZLogs.shared.error(error)
+    func handleLogs(with type: LogLevel = .error, _ error: String) {
+        switch type {
+        case .info:
+            ZLogs.shared.info(error)
+        case .warning:
+            ZLogs.shared.warning(error)
+        case .error:
+            ZLogs.shared.error(error)
+        }
+        
         showToast(error)
+        
         self.detailLoadingState = .loaded
     }
 

@@ -94,10 +94,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                 .presentationDetents([.medium])
                 .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
                 .presentationDragIndicator(.visible)
-        case .presentDeleteAlert(let action):
-            PresentContentDeletionView(action: action)
-                .presentationDetents([.height(140)])
-                .presentationDragIndicator(.visible)
         }
     }
     

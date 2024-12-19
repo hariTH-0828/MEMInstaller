@@ -23,7 +23,6 @@
 		521648112CFD98D700D599E2 /* HorizontalLoadingWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */; };
 		522C7F632D01942D0032F25E /* AttachedFileDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */; };
 		5234A0E62D11804E00AFF3A0 /* DeletionToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234A0E52D11804E00AFF3A0 /* DeletionToastStyle.swift */; };
-		5234A0E82D11868E00AFF3A0 /* PresentContentDeletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */; };
 		523F71D32CDB323100D564E7 /* MEMInstallerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */; };
 		523F71D52CDB323100D564E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F71D42CDB323100D564E7 /* ContentView.swift */; };
 		523F71D72CDB323600D564E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523F71D62CDB323600D564E7 /* Assets.xcassets */; };
@@ -148,7 +147,6 @@
 		521648102CFD98D700D599E2 /* HorizontalLoadingWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLoadingWrapper.swift; sourceTree = "<group>"; };
 		522C7F622D01942D0032F25E /* AttachedFileDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedFileDetailViewModel.swift; sourceTree = "<group>"; };
 		5234A0E52D11804E00AFF3A0 /* DeletionToastStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletionToastStyle.swift; sourceTree = "<group>"; };
-		5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentContentDeletionView.swift; sourceTree = "<group>"; };
 		523F71CF2CDB323100D564E7 /* MEMInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MEMInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F71D22CDB323100D564E7 /* MEMInstallerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEMInstallerApp.swift; sourceTree = "<group>"; };
 		523F71D42CDB323100D564E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -532,7 +530,6 @@
 				52E109E02CE67994002D1EDD /* EmptyBucketView.swift */,
 				5216480A2CFD7A8700D599E2 /* HomeSideBarAppLabel.swift */,
 				5204A3C82D0CB82D003FBDF0 /* IdleStateView.swift */,
-				5234A0E72D11868E00AFF3A0 /* PresentContentDeletionView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1019,7 +1016,6 @@
 				52F393B72CE5D0AA00C9B23C /* GET.swift in Sources */,
 				523F72232CDB4AB800D564E7 /* KeyChainKeys.swift in Sources */,
 				523F72472CDBAD3000D564E7 /* ActivityViewRepresentable.swift in Sources */,
-				5234A0E82D11868E00AFF3A0 /* PresentContentDeletionView.swift in Sources */,
 				52F393C02CE5DBF000C9B23C /* StratusRepository.swift in Sources */,
 				525AD9932CF5784900BF08AF /* MobileProvision.swift in Sources */,
 				52E109EB2CE70A7F002D1EDD /* UIViewController+.swift in Sources */,

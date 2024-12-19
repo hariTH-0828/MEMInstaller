@@ -9,6 +9,7 @@ import SwiftUI
 import Zip
 import Alamofire
 import UniformTypeIdentifiers
+import MEMToast
 
 // MARK: - File Types
 enum SupportedFileTypes {
@@ -34,6 +35,7 @@ class HomeViewModel: ObservableObject {
     // Toast properties
     @Published private(set) var toastMessage: String?
     @Published var isPresentToast: Bool = false
+    @Published var isPresentDeletionToast: Bool = false
     
     @Published var sideBarLoadingState: LoadingState = .loading {
         didSet {
@@ -56,6 +58,11 @@ class HomeViewModel: ObservableObject {
     }
     
     func fetchFolders() {
+        guard ConnectionStatus.shared.isNetworkAvailable else {
+            handleError(with: .warning, error: ZError.NetworkError.noNetworkAvailable.localizedDescription)
+            return
+        }
+        
         Task {
             await fetchFoldersFromBucket()
         }
@@ -100,7 +107,8 @@ class HomeViewModel: ObservableObject {
         Task {
             let bucketDeletionModel = try await repository.deletePathObject(endpoint: .delete, parameters: ZAPIStrings.Parameter.delete(prefix).value)
             ZLogs.shared.info("This path \(bucketDeletionModel.path) is scheduled for deletion")
-            self.showToast(bucketDeletionModel.message)
+            self.toastMessage = bucketDeletionModel.message
+            self.isPresentDeletionToast = true
         }
     }
     

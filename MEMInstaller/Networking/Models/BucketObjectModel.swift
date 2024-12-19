@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum ContentKeyType: String {
+enum ContentKeyType: String, Codable {
     case folder = "folder"
     case file = "file"
 }
 
-enum ContentType: String {
+enum ContentType: String, Codable {
     case document = "application/octet-stream"
     case mobileProvision = "application/x-apple-aspen-mobileprovision"
     case png = "image/png"
@@ -111,7 +111,7 @@ extension BucketObjectModel {
     }
     
     func getPackageURL() -> String? {
-        contents.filter({ $0.actualContentType == .document && $0.key.contains(".ipa")}).first?.url
+        contents.first(where: { $0.actualContentType == .document && $0.key.contains(".ipa")})?.url
     }
     
     func getInfoPropertyListURL() -> String? {

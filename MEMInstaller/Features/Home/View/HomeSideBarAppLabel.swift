@@ -79,12 +79,3 @@ struct AppIconView: View {
         }
     }
 }
-
-#Preview {
-//    AppIconView(iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
-    HomeSideBarAppLabel(bucketObject: .preview, iconURL: "https://packages-development.zohostratus.com/hariharan.rs@zohocorp.com/SDP/AppIcon60x60@2x.png")
-}
-
-//struct HomeSideBarAppLabel_preview: PreviewProvider {
-//
-//}
