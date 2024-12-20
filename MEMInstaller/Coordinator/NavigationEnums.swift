@@ -17,11 +17,11 @@ enum Screen: Hashable, Identifiable {
 }
 
 enum Sheet: Identifiable, Hashable {
-    case settings
     case logout
     case activityRepresentable(URL)
     case AttachedFileDetail(AttachedFileDetailViewModel, PackageExtractionModel, AttachmentMode)
     case QRCodeProvider(QRProvider)
+    case fileImporter
     
     var id: Self { self }
 }
@@ -36,13 +36,14 @@ enum Pop: Identifiable, Hashable {
 extension Sheet {
     static func == (lhs: Sheet, rhs: Sheet) -> Bool {
         switch (lhs, rhs) {
-        case (.settings, .settings), (.logout, .logout): return true
+        case (.logout, .logout): return true
         case(.activityRepresentable(let lhsURL), .activityRepresentable(let rhsURL)): return lhsURL == rhsURL
         case (.AttachedFileDetail(let lhsAFD, let lhsPackage, let lhsMode),
                       .AttachedFileDetail(let rhsAFD, let rhsPackage, let rhsMode)):
             return ObjectIdentifier(lhsAFD) == ObjectIdentifier(rhsAFD) && lhsPackage == rhsPackage && lhsMode == rhsMode
         case (.QRCodeProvider(let lhsQRProvider), .QRCodeProvider(let rhsQRProvider)):
             return lhsQRProvider == rhsQRProvider
+        case (.fileImporter, .fileImporter): return true
         default: return false
         }
     }
@@ -50,8 +51,6 @@ extension Sheet {
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case .settings:
-            hasher.combine("settings")
         case .logout:
             hasher.combine("logout")
         case .activityRepresentable(let url):
@@ -64,6 +63,8 @@ extension Sheet {
             hasher.combine(mode)
         case .QRCodeProvider(let qrprovider):
             hasher.combine(qrprovider)
+        case .fileImporter:
+            hasher.combine("FileImporter")
         }
     }
 }

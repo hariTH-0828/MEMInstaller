@@ -30,9 +30,7 @@ struct EmptyBucketView: View {
                                 Text("com.learn.meminstaller.home.no-file-title")
                             },
                             icon: {
-                                Image("no-file-found")
-                                    .resizable()
-                                    .scaledToFit()
+                                imageView
                                     .frame(height: geometry.size.height * 0.4)
                             }
                         )
@@ -40,9 +38,13 @@ struct EmptyBucketView: View {
                         Text("com.learn.meminstaller.home.no-file-description")
                     })
                 }else {
-                    // TODO: HANDLE EARLIER VERSION
+                    PlaceholderView(image: {
+                        imageView
+                            .frame(height: geometry.size.height * 0.4)
+                    }, title: "com.learn.meminstaller.home.no-file-title", description: "com.learn.meminstaller.home.no-file-description")
                 }
                 
+                // Action Buttons
                 HStack(spacing: 20) {
                     Button {
                         coordinator.openFileImporter { result in
@@ -69,6 +71,7 @@ struct EmptyBucketView: View {
                 }
                 .padding(.bottom, 30)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             .onDrop(of: [UTType.ipa], isTargeted: $isDropTarget) { providers in
                 guard let provider = providers.first else { return false }
                 return viewModel.handleDrop(provider: provider)
@@ -76,9 +79,48 @@ struct EmptyBucketView: View {
         })
     }
     
+    @ViewBuilder
+    private var imageView: some View {
+        Image("no-file-found")
+            .resizable()
+            .scaledToFit()
+    }
+    
     // MARK: HELPER METHOD
     /// Refresh SideBar
     func refreshView() {
         viewModel.fetchFolders()
+    }
+}
+
+struct PlaceholderView<V>: View where V: View {
+    let image: V
+    let title: LocalizedStringKey
+    let description: LocalizedStringKey?
+    
+    init(@ViewBuilder image: @escaping () -> V, title: LocalizedStringKey, description: LocalizedStringKey?) {
+        self.image = image()
+        self.title = title
+        self.description = description
+    }
+    
+    var body: some View {
+        VStack {
+            image
+
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            if let description = description {
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

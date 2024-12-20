@@ -33,7 +33,7 @@ struct HomeSidebarView: View {
             }
         }
         .navigationBarTitleDisplayMode(.large)
-        .navigationSplitViewColumnWidth(250)
+        .navigationSplitViewStyle(.balanced)
         .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentDeletionToast)
         .toastViewStyle(DeletionToastStyle())
         .removeSideBarToggle()
@@ -59,6 +59,7 @@ struct HomeSidebarView: View {
                     .tint(Color.red)
                 })
         }
+        .listStyle(SidebarListStyle())
         .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
         .onDrop(of: [UTType.ipa], isTargeted: $dragOver, perform: { providers in

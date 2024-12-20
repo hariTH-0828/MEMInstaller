@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UniformTypeIdentifiers
 
 final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresentationProtocol {
     @Published var navigationPath: NavigationPath = NavigationPath()
@@ -74,8 +75,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @ViewBuilder
     func build(forSheet sheet: Sheet) -> some View {
         switch sheet {
-        case .settings:
-            SettingsView()
         case .logout:
             PresentLogoutView()
         case .activityRepresentable(let logFileURL):
@@ -100,6 +99,8 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
+        case .fileImporter:
+            EmptyView()
         }
     }
     
