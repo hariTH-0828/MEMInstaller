@@ -33,9 +33,6 @@ struct HomeView: View {
                     .sheet(item: $appCoordinator.sheet, onDismiss: appCoordinator.onDismiss, content: { sheet in
                         appCoordinator.build(forSheet: sheet)
                     })
-                    .fileImporter(isPresented: $appCoordinator.shouldShowFileImporter, allowedContentTypes: [.ipa]) { result in
-                        appCoordinator.fileImportCompletion?(result)
-                    }
             }
         } detail: {
             if let bucketObjectModel = sideBarViewModel.selectedBucketObject {
@@ -63,3 +60,4 @@ struct HomeView: View {
 
     }
 }
+

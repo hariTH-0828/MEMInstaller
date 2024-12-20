@@ -50,11 +50,16 @@ struct QRCodeView: View {
             .resizable()
             .frame(width: qrcodeWidth, height: qrcodeHeight)
             .padding(10)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(.clear)
-                    .stroke(.thinMaterial, lineWidth: 2)
-            )
+            .background {
+                if #available(iOS 17.0, *) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.clear)
+                        .stroke(.thinMaterial, lineWidth: 2)
+                }else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(.thinMaterial, lineWidth: 2)
+                }
+            }
             .overlay {
                 if let appIcon {
                     AppIconView(icon: appIcon, width: 55, height: 55)

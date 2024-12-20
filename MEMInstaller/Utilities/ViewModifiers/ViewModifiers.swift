@@ -16,10 +16,16 @@ struct DefaultProfileImageView: ViewModifier {
             .scaledToFit()
             .clipShape(.circle)
             .overlay {
-                Circle()
-                    .fill(.clear)
-                    .strokeBorder(.gray)
-                    .frame(width: 41, height: 41)
+                if #available(iOS 17.0, *) {
+                    Circle()
+                        .fill(.clear)
+                        .strokeBorder(.gray)
+                        .frame(width: 41, height: 41)
+                }else {
+                    Circle()
+                        .strokeBorder(.gray)
+                        .frame(width: 41, height: 41)
+                }
             }
     }
 }
@@ -140,8 +146,13 @@ struct LabelWithFieldItem<Content>: View where Content: View {
     var body: some View {
         VStack(spacing: 4) {
             HStack(spacing: 2) {
-                Text(label)
-                    .foregroundStyle(.placeholder)
+                if #available(iOS 17, *) {
+                    Text(label)
+                        .foregroundStyle(.placeholder)
+                }else {
+                    Text(label)
+                        .foregroundStyle(StyleManager.colorStyle.placeholderText)
+                }
                 
                 if isMandatory {
                     Text(" *")
@@ -196,5 +207,47 @@ struct ZPresentation: ViewModifier {
                         }
                 })
             )
+    }
+}
+
+
+struct RemoveSideBarToggle: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content
+                .toolbar(removing: .sidebarToggle)
+        }else {
+            content
+        }
+    }
+}
+
+struct OnChangeModifier<E>: ViewModifier where E: Equatable {
+    let equatable: E
+    let action: (E, E) -> Void
+    @State private var previousValue: E
+    
+    init(of equatable: E, action: @escaping (E, E) -> Void) {
+        self.equatable = equatable
+        self.action = action
+        _previousValue = State(initialValue: equatable)
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                // Initialize the previous value on first appearance.
+                previousValue = equatable
+            }
+            .onChange(of: equatable) { newValue in
+                if #available(iOS 17.0, *) {
+                    action(previousValue, newValue)
+                } else {
+                    if newValue != previousValue {
+                        action(previousValue, newValue)
+                        previousValue = newValue
+                    }
+                }
+            }
     }
 }

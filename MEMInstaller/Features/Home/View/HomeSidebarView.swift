@@ -15,6 +15,8 @@ struct HomeSidebarView: View {
     
     @EnvironmentObject private var appCoordinator: AppCoordinatorImpl
     @ObservedObject var viewModel: HomeViewModel
+    @AppStorage(UserDefaultsKey.lastFilePickedURL)
+    private var lastFilePath: URL = .downloadsDirectory
     
     @State private var dragOver: Bool = false
     
@@ -33,10 +35,10 @@ struct HomeSidebarView: View {
             }
         }
         .navigationBarTitleDisplayMode(.large)
-        .navigationSplitViewColumnWidth(250)
+        .navigationSplitViewStyle(.balanced)
         .showToast(message: viewModel.toastMessage, isShowing: $viewModel.isPresentDeletionToast)
         .toastViewStyle(DeletionToastStyle())
-        .toolbar(removing: .sidebarToggle)
+        .removeSideBarToggle()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) { UserProfileButtonView() }
         }
@@ -59,6 +61,7 @@ struct HomeSidebarView: View {
                     .tint(Color.red)
                 })
         }
+        .listStyle(SidebarListStyle())
         .refreshable { viewModel.fetchFolders() }
         .toolbar { addPackageButtonView() }
         .onDrop(of: [UTType.ipa], isTargeted: $dragOver, perform: { providers in
@@ -77,17 +80,13 @@ struct HomeSidebarView: View {
     private func addPackageButtonView() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                appCoordinator.openFileImporter { result in
-                    switch result {
-                    case .success(let filePath):
-                        packageHandler.initiateAppExtraction(from: filePath)
-                        let packageExtractionModel = packageHandler.getPackageExtractionModel()
-                        viewModel.selectedPackageModel = packageExtractionModel
-                    case .failure(let failure):
-                        ZLogs.shared.error(failure.localizedDescription)
-                        viewModel.showToast(failure.localizedDescription)
-                    }
-                }
+                appCoordinator.presentSheet(.fileImporter(lastFilePath, { filePath in
+                    guard let filePath else { return }
+                    self.lastFilePath = filePath.deletingLastPathComponent()
+                    packageHandler.initiateAppExtraction(from: filePath)
+                    let packageExtractionModel = packageHandler.getPackageExtractionModel()
+                    viewModel.selectedPackageModel = packageExtractionModel
+                }))
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 16, weight: .regular))

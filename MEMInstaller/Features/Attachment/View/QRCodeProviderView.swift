@@ -64,11 +64,16 @@ struct StyledButton: View {
                 .font(.callout)
                 .padding(.horizontal)
                 .frame(height: 50)
-                .background(
-                    Capsule()
-                        .fill(.clear)
-                        .stroke(StyleManager.colorStyle.tintColor, lineWidth: 1)
-                )
+                .background {
+                    if #available(iOS 17.0, *) {
+                        Capsule()
+                            .fill(.clear)
+                            .stroke(StyleManager.colorStyle.tintColor, lineWidth: 1)
+                    }else {
+                        Capsule()
+                            .stroke(StyleManager.colorStyle.tintColor, lineWidth: 1)
+                    }
+                }
         }
     }
 }

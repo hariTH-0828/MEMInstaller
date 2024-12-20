@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UniformTypeIdentifiers
 
 final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelPresentationProtocol {
     @Published var navigationPath: NavigationPath = NavigationPath()
@@ -18,8 +19,7 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     var isPopover: Bool { Device.isIpad }
     
     // FileImporterProtocol
-    @Published var shouldShowFileImporter: Bool = false
-    var fileImportCompletion: ((Result<URL, any Error>) -> Void)?
+    var fileImportCompletion: ((URL) -> Void)?
     var fileExportCompletion: ((Bool, Error?) -> Void)?
 
     func push(_ screen: Screen) {
@@ -53,12 +53,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         self.onDismiss = nil // Reset for future use
     }
     
-    func openFileImporter(completion: @escaping (Result<URL, any Error>) -> Void) {
-        self.fileImportCompletion = completion
-        self.shouldShowFileImporter = true
-    }
-    
-    
     @ViewBuilder
     func build(forScreen screen: Screen) -> some View {
         switch screen {
@@ -74,8 +68,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     @ViewBuilder
     func build(forSheet sheet: Sheet) -> some View {
         switch sheet {
-        case .settings:
-            SettingsView()
         case .logout:
             PresentLogoutView()
         case .activityRepresentable(let logFileURL):
@@ -90,10 +82,20 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                                    packageModel: packageExtractionModel,
                                    attachmentMode: attachedMode).interactiveDismissDisabled(true)
         case .QRCodeProvider(let qrprovider):
-            QRCodeProviderView(qrProvider: qrprovider)
-                .presentationDetents([.medium])
-                .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
-                .presentationDragIndicator(.visible)
+            if #available(iOS 17.0, *) {
+                QRCodeProviderView(qrProvider: qrprovider)
+                    .presentationDetents([.medium])
+                    .presentationBackground(StyleManager.colorStyle.qrcodeBackgroundStyle)
+                    .presentationDragIndicator(.visible)
+            }else {
+                QRCodeProviderView(qrProvider: qrprovider)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            }
+        case .fileImporter(let lastDirectory, let filePicked):
+            FileImporterView(allowedContentTypes: [.ipa],
+                             startingDirectoryURL: lastDirectory,
+                             onFilePicked: filePicked)
         }
     }
     
