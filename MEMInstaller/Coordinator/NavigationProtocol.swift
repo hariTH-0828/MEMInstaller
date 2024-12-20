@@ -27,8 +27,5 @@ protocol ModelPresentationProtocol: ObservableObject {
 }
 
 protocol FileImporterProtocol: ObservableObject {
-    var shouldShowFileImporter: Bool { get set }
-    var fileImportCompletion: ((Result<URL, Error>) -> Void)? { get set }
-
-    func openFileImporter(completion: @escaping (Result<URL, Error>) -> Void)
+    var fileImportCompletion: ((URL) -> Void)? { get set }
 }

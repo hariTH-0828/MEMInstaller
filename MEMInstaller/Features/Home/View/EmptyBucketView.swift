@@ -16,6 +16,8 @@ struct EmptyBucketView: View {
     
     @ObservedObject var viewModel: HomeViewModel
     
+    @AppStorage(UserDefaultsKey.lastFilePickedURL) private var lastFilePath: URL = .downloadsDirectory
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
     }
@@ -47,16 +49,13 @@ struct EmptyBucketView: View {
                 // Action Buttons
                 HStack(spacing: 20) {
                     Button {
-                        coordinator.openFileImporter { result in
-                            switch result {
-                            case .success(let filePath):
-                                packageHandler.initiateAppExtraction(from: filePath)
-                                let packageExtractionModel = packageHandler.getPackageExtractionModel()
-                                viewModel.selectedPackageModel = packageExtractionModel
-                            case .failure(let failure):
-                                ZLogs.shared.error(failure.localizedDescription)
-                            }
-                        }
+                        coordinator.presentSheet(.fileImporter(lastFilePath, { filePath in
+                            guard let filePath else { return }
+                            self.lastFilePath = filePath.deletingLastPathComponent()
+                            packageHandler.initiateAppExtraction(from: filePath)
+                            let packageExtractionModel = packageHandler.getPackageExtractionModel()
+                            viewModel.selectedPackageModel = packageExtractionModel
+                        }))
                     } label: {
                         Text("com.learn.meminstaller.home.btn_upload")
                             .defaultButtonStyle(width: min(geometry.size.width * 0.4, 300))

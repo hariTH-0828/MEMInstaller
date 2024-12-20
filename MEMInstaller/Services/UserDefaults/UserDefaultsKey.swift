@@ -15,4 +15,5 @@ struct UserDefaultsKey {
     static let shareEmailAddress = "appUserEmailAddressSharing"
     static let enableCrashReport = "appCrashReporting"
     static let shakeToSendFeedback = "appFeedbackShare"
+    static let lastFilePickedURL = "lastFilePickedURL"
 }

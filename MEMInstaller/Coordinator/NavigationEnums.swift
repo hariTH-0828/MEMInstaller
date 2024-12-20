@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+typealias getFileImporterURL = ((URL?) -> Void)
+
 enum Screen: Hashable, Identifiable {
     case settings
     case about
@@ -21,7 +23,7 @@ enum Sheet: Identifiable, Hashable {
     case activityRepresentable(URL)
     case AttachedFileDetail(AttachedFileDetailViewModel, PackageExtractionModel, AttachmentMode)
     case QRCodeProvider(QRProvider)
-    case fileImporter
+    case fileImporter(URL?, getFileImporterURL)
     
     var id: Self { self }
 }

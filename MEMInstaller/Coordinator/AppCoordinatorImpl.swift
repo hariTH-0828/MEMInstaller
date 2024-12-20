@@ -19,8 +19,7 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
     var isPopover: Bool { Device.isIpad }
     
     // FileImporterProtocol
-    @Published var shouldShowFileImporter: Bool = false
-    var fileImportCompletion: ((Result<URL, any Error>) -> Void)?
+    var fileImportCompletion: ((URL) -> Void)?
     var fileExportCompletion: ((Bool, Error?) -> Void)?
 
     func push(_ screen: Screen) {
@@ -53,12 +52,6 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
         onDismissHandler?()  // Safely execute the captured closure
         self.onDismiss = nil // Reset for future use
     }
-    
-    func openFileImporter(completion: @escaping (Result<URL, any Error>) -> Void) {
-        self.fileImportCompletion = completion
-        self.shouldShowFileImporter = true
-    }
-    
     
     @ViewBuilder
     func build(forScreen screen: Screen) -> some View {
@@ -99,8 +92,10 @@ final class AppCoordinatorImpl: NavigationProtocol, FileImporterProtocol, ModelP
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
-        case .fileImporter:
-            EmptyView()
+        case .fileImporter(let lastDirectory, let filePicked):
+            FileImporterView(allowedContentTypes: [.ipa],
+                             startingDirectoryURL: lastDirectory,
+                             onFilePicked: filePicked)
         }
     }
     
